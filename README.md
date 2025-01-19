@@ -51,7 +51,7 @@ Esta solução busca **otimizar processos**, **reduzir custos** e **encorajar pr
 ## Arquitetura e Tecnologias
 
 - **Metodologia**: *Agile/SCRUM* 
-- **Front-End**: *HTML + CSS + TailwindCSS*  
+- **Front-End**: *HTML + CSS*  
 - **Back-End**: *ASP.NET*  
 - **Base de Dados**: *SQL Server*  
 - **Infraestrutura**: *Azure Cloud*  
