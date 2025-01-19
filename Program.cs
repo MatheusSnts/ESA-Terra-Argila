@@ -2,6 +2,9 @@ using ESA_Terra_Argila.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ESA_Terra_Argila.Models;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using ESA_Terra_Argila.Resources.ErrorDescribers;
 
 
 
@@ -17,6 +20,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
             options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders()
+    .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
     .AddDefaultUI();
 builder.Services.AddRazorPages();
 
@@ -36,6 +40,18 @@ using (var scope = app.Services.CreateScope())
     await Seeder.SeedUsersAsync(userManager);
     await Seeder.SeedProductsAsync(context);
 }
+
+/*
+var supportedCultures = new[] { new CultureInfo("pt-PT") };
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("pt-PT"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+app.UseRequestLocalization(localizationOptions);
+*/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
