@@ -1,0 +1,42 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<main class="main-content">
+    <form id="account" method="post" class="login-form">
+        <h1>Bem vindo de volta</h1>
+        <p>Introduz teus dados para continuar.</p>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <input asp-for="Input.Email" class="form-input" autocomplete="username"
+               aria-required="true" placeholder="Email" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+        <input asp-for="Input.Password" class="form-input" autocomplete="current-password"
+               aria-required="true" placeholder="Password" type="password" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+        <div class="auth-options">
+            <label class="remember-me">
+                <input type="checkbox" asp-for="Input.RememberMe">
+                <span>Manter-me ligado</span>
+            </label>
+            <a id="forgot-password" asp-page="./ForgotPassword" class="forgot-password">
+                Esqueceu-se da palavra-passe?
+            </a>
+        </div>
+
+        <button id="login-submit" type="submit" class="login-button">Login</button>
+    </form>
+
+    <div class="auth-merch-banner">
+        <h2>Merch Banner</h2>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

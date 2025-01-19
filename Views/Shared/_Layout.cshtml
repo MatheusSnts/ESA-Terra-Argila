@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/ESA_Terra_Argila.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+    @*<header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ESA_Terra_Argila</a>
@@ -17,7 +17,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse d-sm-inline-flex justify-content-between collapse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -30,7 +30,39 @@
                 </div>
             </div>
         </nav>
+    </header>*@
+    <header class="header">
+        <a href="#" class="logo">
+            <a href="#" class="logo">
+                <div class="logo-img">
+                    <img src="~/images/logo.png"
+                         alt="Terra & Argila Logo">
+                </div>
+                <h1>Terra&Argila</h1>
+            </a>
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar produtos ou empresas">
+            <span class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+            </span>
+        </div>
+        <div class="auth-links" style="color: white">
+            <partial name="_LoginPartial" />
+        </div>
     </header>
+
+    <nav class="nav">
+        <a asp-area="" asp-controller="Home" asp-action="Index">Nossas ofertas</a>
+        <a asp-area="" asp-controller="Home" asp-action="Index">Produtos</a>
+        <a asp-area="" asp-controller="Home" asp-action="Index">Empresas</a>
+        <a asp-area="" asp-controller="Home" asp-action="Index">Fornecedores</a>
+    </nav>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
