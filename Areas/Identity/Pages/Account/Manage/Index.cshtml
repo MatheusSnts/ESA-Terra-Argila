@@ -1,29 +1,87 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Editar perfil";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
-<partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label"></label>
+<main class="mt-5">
+    <h1 class="form-title">Editar perfil</h1>
+    <partial name="_StatusMessage" for="StatusMessage" />
+
+    <form id="profile-form" method="post" class="profile-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="form-group">
+            <label asp-for="Username" class="form-label">Email</label>
+            <input asp-for="Username" class="form-input" disabled />
+        </div>
+
+        @if (User.IsInRole("Vendor") || User.IsInRole("Supplier"))
+        {
+            <div class="form-group">
+                <label class="form-label">Nome da empresa</label>
+                <input asp-for="Input.FullName" class="form-input" placeholder="Nome da sua empresa" />
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+
+            <div class="form-group">
+                <label asp-for="Input.Website" class="form-label">Website</label>
+                <input asp-for="Input.Website" class="form-input" placeholder="Seu website" />
+                <span asp-validation-for="Input.Website" class="text-danger"></span>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="form-label">Nome Completo</label>
+                <input asp-for="Input.FullName" class="form-input" placeholder="Seu nome completo" />
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            </div>
+        }
+
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label asp-for="Input.Address" class="form-label">Morada</label>
+                <input asp-for="Input.Address" class="form-input" placeholder="Sua morada" />
+                <span asp-validation-for="Input.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="Input.City" class="form-label">Localidade</label>
+                <input asp-for="Input.City" class="form-input" placeholder="Sua cidade" />
+                <span asp-validation-for="Input.City" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label asp-for="Input.PostalCode" class="form-label">Código postal</label>
+                <input asp-for="Input.PostalCode" class="form-input" placeholder="Seu código postal" />
+                <span asp-validation-for="Input.PostalCode" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="Input.PhoneNumber" class="form-label">Telefone</label>
+                <input asp-for="Input.PhoneNumber" class="form-input" placeholder="Seu telefone" />
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
-    </div>
-</div>
+        </div>
+
+        @if (User.IsInRole("Vendor"))
+        {
+            <div class="form-group">
+                <label asp-for="Input.Description" class="form-label">Descrição</label>
+                <textarea asp-for="Input.Description" class="form-textarea" placeholder="Sua descrição"></textarea>
+                <span asp-validation-for="Input.Description" class="text-danger"></span>
+            </div>
+        }
+
+        <div class="buttons-container">
+            <button id="update-profile-button" type="submit" class="action-button">Salvar alterações</button>
+            @* <a asp-page="./ChangePassword" class="action-button" style="text-align: center; text-decoration: none;">Alterar palavra-passe</a> *@
+            <a asp-page="./DeletePersonalData" class="delete-button" style="text-align: center; text-decoration: none;">Excluir minha conta</a>
+        </div>
+    </form>
+</main>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

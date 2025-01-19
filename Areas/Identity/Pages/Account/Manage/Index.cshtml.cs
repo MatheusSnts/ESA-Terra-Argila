@@ -52,14 +52,35 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required(ErrorMessage = "O campo número de telefone é obrigatório.")]
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Required(ErrorMessage = "O campo nome completo é obrigatório.")]
+            [Display(Name = "Nome completo")]
+            public string FullName { get; set; }
+
+            [Required(ErrorMessage = "O campo website é obrigatório.")]
+            [Display(Name = "Website")]
+            public string Website { get; set; }
+
+            [Required(ErrorMessage = "O campo morada é obrigatório.")]
+            [Display(Name = "Morada")]
+            public string Address { get; set; }
+
+            [Required(ErrorMessage = "O campo localidade é obrigatório.")]
+            [Display(Name = "Localidade")]
+            public string City { get; set; }
+
+            [Required(ErrorMessage = "O campo código postal é obrigatório.")]
+            [Display(Name = "Código postal")]
+            public string PostalCode { get; set; }
+
+            [Display(Name = "Descrição")]
+            public string Description { get; set; }
         }
+
 
         private async Task LoadAsync(User user)
         {

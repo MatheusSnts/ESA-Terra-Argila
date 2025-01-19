@@ -41,18 +41,6 @@ using (var scope = app.Services.CreateScope())
     await Seeder.SeedProductsAsync(context);
 }
 
-/*
-var supportedCultures = new[] { new CultureInfo("pt-PT") };
-var localizationOptions = new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture("pt-PT"),
-    SupportedCultures = supportedCultures,
-    SupportedUICultures = supportedCultures
-};
-
-app.UseRequestLocalization(localizationOptions);
-*/
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

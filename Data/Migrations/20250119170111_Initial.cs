@@ -28,12 +28,55 @@ namespace ESA_Terra_Argila.Data.Migrations
                 oldType: "nvarchar(128)",
                 oldMaxLength: 128);
 
+            migrationBuilder.AddColumn<bool>(
+                name: "AcceptedByAdmin",
+                table: "AspNetUsers",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<string>(
+                name: "City",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "FullName",
                 table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "Street",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "StreetNumber",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Website",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "ZipCode",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "ProviderKey",
@@ -77,7 +120,35 @@ namespace ESA_Terra_Argila.Data.Migrations
                 name: "Products");
 
             migrationBuilder.DropColumn(
+                name: "AcceptedByAdmin",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "City",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "Description",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
                 name: "FullName",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "Street",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "StreetNumber",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "Website",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "ZipCode",
                 table: "AspNetUsers");
 
             migrationBuilder.AlterColumn<string>(
