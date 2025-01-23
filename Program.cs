@@ -5,7 +5,7 @@ using ESA_Terra_Argila.Models;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using ESA_Terra_Argila.Resources.ErrorDescribers;
-
+using ESA_Terra_Argila.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +23,9 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
     .AddDefaultUI();
 builder.Services.AddRazorPages();
+
+
+
 
 var app = builder.Build();
 
@@ -58,6 +61,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseMiddleware<LoggingMiddleware>();
+
 app.UseAuthorization();
 
 app.MapRazorPages();
@@ -67,4 +72,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
