@@ -126,14 +126,14 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Verificação de email",
+                    $"Por favor, verifique o email da sua conta ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>carregar aqui</a>.");
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                StatusMessage = "Email de verificação enviado.";
                 return RedirectToPage();
             }
 
-            StatusMessage = "Your email is unchanged.";
+            StatusMessage = "Seu email não foi alterado.";
             return RedirectToPage();
         }
 
@@ -162,10 +162,10 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                "Verificação de email",
+                $"Por favor, verifique o email da sua conta ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>carregar aqui</a>.");
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            StatusMessage = "Email de verificação enviado.";
             return RedirectToPage();
         }
     }

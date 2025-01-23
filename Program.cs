@@ -5,6 +5,8 @@ using ESA_Terra_Argila.Models;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using ESA_Terra_Argila.Resources.ErrorDescribers;
+using ESA_Terra_Argila.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 
 
@@ -15,6 +17,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
             options.SignIn.RequireConfirmedAccount = false)
