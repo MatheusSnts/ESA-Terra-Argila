@@ -55,7 +55,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
             /// </summary>
             [Required]
             [DataType(DataType.Password)]
-            [Display(Name = "Current password")]
+            [Display(Name = "Palavra-passe atual")]
             public string OldPassword { get; set; }
 
             /// <summary>
@@ -63,9 +63,9 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "Este campo deve ter entre {2} e {1} caracteres.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "New password")]
+            [Display(Name = "Palavra-passe nova")]
             public string NewPassword { get; set; }
 
             /// <summary>
@@ -73,8 +73,8 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm new password")]
-            [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+            [Display(Name = "Confirme a nova palavra-passe")]
+            [Compare("NewPassword", ErrorMessage = "As palavras-passes devem ser iguais.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -120,7 +120,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
 
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("User changed their password successfully.");
-            StatusMessage = "Your password has been changed.";
+            StatusMessage = "Sua palavra-passe foi alterada.";
 
             return RedirectToPage();
         }
