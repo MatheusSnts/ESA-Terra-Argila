@@ -30,7 +30,11 @@ namespace ESA_Terra_Argila.Data
                     Email = "admin@example.com",
                     FullName = "Admin User",
                     EmailConfirmed = true
+
                 };
+                var hasher = new PasswordHasher<User>();
+                admin.PasswordHash = hasher.HashPassword(admin, "Admin@123");
+
                 await userManager.CreateAsync(admin, "Admin@123");
                 await userManager.AddToRoleAsync(admin, "Admin");
             }
