@@ -61,14 +61,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseMiddleware<LoggingMiddleware>();
+
 
 app.UseAuthorization();
+
+app.UseMiddleware<LoggingMiddleware>();
 
 app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

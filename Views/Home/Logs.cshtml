@@ -1,0 +1,44 @@
+﻿@model IEnumerable<ESA_Terra_Argila.Models.AccessLog>
+
+@{
+    ViewData["Title"] = "Logs de Acesso";
+}
+
+<h1>Logs de Acesso</h1>
+
+<form method="get" asp-action="Index">
+    
+    <div>
+        <label for="searchIP">IP:</label>
+        <input type="text" id="searchIP" name="searchIP" placeholder="Ex.: 192.168.0.1" />
+    </div>
+    <div>
+        <label for="searchPath">Caminho:</label>
+        <input type="text" id="searchPath" name="searchPath" placeholder="Ex.: /login" />
+    </div>
+    <button type="submit">Filtrar</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Data e Hora</th>
+            <th>IP</th>
+            <th>Caminho</th>
+            <th>Método</th>
+          
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.Timestamp</td>
+                <td>@log.IP</td>
+                <td>@log.Path</td>
+                <td>@log.Method</td>
+               
+            </tr>
+        }
+    </tbody>
+</table>
