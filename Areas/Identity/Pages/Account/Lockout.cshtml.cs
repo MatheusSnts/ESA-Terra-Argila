@@ -7,19 +7,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
 {
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     [AllowAnonymous]
     public class LockoutModel : PageModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        // Propriedade para a mensagem de bloqueio
+        public string LockoutMessage { get; private set; }
+
         public void OnGet()
         {
+            LockoutMessage = "A sua conta foi temporariamente bloqueada devido a várias tentativas de login falhadas. Tente novamente após 5 minutos ou contacte o suporte.";
         }
     }
 }
