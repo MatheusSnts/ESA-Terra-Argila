@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ESA_Terra_Argila.Models
 {
@@ -7,11 +8,11 @@ namespace ESA_Terra_Argila.Models
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
-        // Relacionamentos
+        [JsonIgnore]
         public virtual ICollection<Product> Products { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Material> Materials { get; set; }
 
         public Category()

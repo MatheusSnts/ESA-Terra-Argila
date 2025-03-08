@@ -14,9 +14,9 @@ namespace ESA_Terra_Argila.Models
 
         // Relacionamentos
         [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; } = default!;
 
         [ForeignKey("MaterialId")]
-        public virtual Material Material { get; set; }
+        public virtual Material Material { get; set; } = default!;
     }
 }

@@ -14,9 +14,9 @@ namespace ESA_Terra_Argila.Models
 
         // Relacionamentos
         [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; } = default!;
 
         [ForeignKey("TagId")]
-        public virtual Tag Tag { get; set; }
+        public virtual Tag Tag { get; set; } = default!;
     }
 }

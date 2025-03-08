@@ -1,14 +1,27 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ESA_Terra_Argila.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace ESA_Terra_Argila.Controllers
 {
     public class ProductController : Controller
     {
-        // GET: ProductController
-        public ActionResult Index()
+        private readonly ApplicationDbContext _context;
+
+        public ProductController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        // GET: ProductController
+        public async Task<IActionResult> Index()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var products = await _context.Products.Where(p => p.UserId == userId).Include(p => p.Category).ToListAsync();
+            return View(products);
         }
 
         // GET: ProductController/Details/5
