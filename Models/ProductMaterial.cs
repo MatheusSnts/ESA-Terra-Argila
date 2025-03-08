@@ -6,11 +6,11 @@ namespace ESA_Terra_Argila.Models
     public class ProductMaterial
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
-        public string ProductId { get; set; }
+        public int ProductId { get; set; }
 
-        public string MaterialId { get; set; }
+        public int MaterialId { get; set; }
 
         // Relacionamentos
         [ForeignKey("ProductId")]

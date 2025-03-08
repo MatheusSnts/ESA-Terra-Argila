@@ -5,7 +5,7 @@ namespace ESA_Terra_Argila.Models
     public class Tag
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
