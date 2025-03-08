@@ -1,12 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-
-//using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ESA_Terra_Argila.Models
 {
-    public class Product
+    public class Material
     {
         [Key]
         public string Id { get; set; }
@@ -29,12 +26,12 @@ namespace ESA_Terra_Argila.Models
 
         public virtual ICollection<ProductMaterial> ProductMaterials { get; set; }
 
-        public virtual ICollection<ProductTag> ProductTags { get; set; }
+        public virtual ICollection<MaterialTag> MaterialTags { get; set; }
 
-        public Product()
+        public Material()
         {
             ProductMaterials = new HashSet<ProductMaterial>();
-            ProductTags = new HashSet<ProductTag>();
+            MaterialTags = new HashSet<MaterialTag>();
         }
     }
 }
