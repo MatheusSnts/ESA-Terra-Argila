@@ -37,7 +37,7 @@ namespace ESA_Terra_Argila.Controllers
             // Ordenar por data mais recente
             var logList = await logs.OrderByDescending(log => log.Timestamp).ToListAsync();
 
-            return View(logList);
+            return View("~/Views/Home/Logs.cshtml",logList);
         }
     }
 }

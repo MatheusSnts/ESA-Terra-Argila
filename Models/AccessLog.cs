@@ -9,6 +9,8 @@ namespace ESA_Terra_Argila.Models
         public string? Path { get; set; }
         public string? Method { get; set; }
         public DateTime Timestamp { get; set; }
-      
+
+        public string? UserName { get; set; }
+
     }
 }

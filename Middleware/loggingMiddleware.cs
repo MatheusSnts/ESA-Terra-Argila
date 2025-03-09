@@ -1,12 +1,13 @@
 ﻿using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ESA_Terra_Argila.Middleware
 {
+
     public class LoggingMiddleware
     {
         private readonly RequestDelegate _next;
@@ -16,39 +17,23 @@ namespace ESA_Terra_Argila.Middleware
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
+        public async Task Invoke(HttpContext context, ApplicationDbContext dbContext)
         {
-            var ip = context.Connection.RemoteIpAddress?.ToString();
-            var path = context.Request.Path;
-            var method = context.Request.Method;
-            var timestamp = DateTime.UtcNow;
-
-            try
-            {
-                await _next(context);
-            }
-            finally
-            {
-                if (path.StartsWithSegments("/login") || path.StartsWithSegments("/logout"))
+           
+                var log = new AccessLog
                 {
-                    using (var scope = serviceProvider.CreateScope())
-                    {
-                        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-                        var log = new AccessLog
-                        {
-                            IP = ip,
-                            Path = path,
-                            Method = method,
-                            Timestamp = timestamp,
-
-                        };
-
-                        await dbContext.AccessLogs.AddAsync(log);
-                        await dbContext.SaveChangesAsync();
-                    }
-                }
+                Timestamp = DateTime.UtcNow,
+                IP = context.Connection.RemoteIpAddress?.ToString(),
+                Path = context.Request.Path,
+                Method = context.Request.Method,
+                UserName = "zxzx"
+                };
+            if (log.Path.StartsWith("/Identity/Account/Login") || log.Path.StartsWith("/Identity/Account/Logout"))
+            {
+                dbContext.AccessLogs.Add(log);
+                await dbContext.SaveChangesAsync();
             }
+                await _next(context);
+            
         }
-    }
-}
+    }}
