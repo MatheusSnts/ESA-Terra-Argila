@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -11,32 +11,47 @@ namespace ESA_Terra_Argila.Models
         [Key]
         public int Id { get; set; }
 
-        public string UserId { get; set; } = default!;
+        public string? UserId { get; set; }
 
-        public int CategoryId { get; set; }
+        [Display(Name = "Categoria")]
+        public int? CategoryId { get; set; }
 
-        [Display(Name = "Nome")]
+        [Required(ErrorMessage = "O campo Nome é obrigatório.")]
+        [StringLength(100, ErrorMessage = "O Nome deve ter no máximo 100 caracteres.")]
+        [Display(Name = "Nome do Produto")]
         public string Name { get; set; } = default!;
 
-        [Display(Name = "Ref.")]
+        [Required(ErrorMessage = "O campo Referência é obrigatório.")]
+        [StringLength(50, ErrorMessage = "A Referência deve ter no máximo 50 caracteres.")]
+        [Display(Name = "Código de Referência")]
         public string Reference { get; set; } = default!;
 
-        [Display(Name = "Descrição")]
+        [Required(ErrorMessage = "O campo Descrição é obrigatório.")]
+        [StringLength(500, ErrorMessage = "A Descrição deve ter no máximo 500 caracteres.")]
+        [Display(Name = "Descrição Completa")]
         public string Description { get; set; } = default!;
 
+        [Required(ErrorMessage = "O campo Preço é obrigatório.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O Preço deve ser maior que 0,00 €.")]
         [Display(Name = "Preço")]
         public float Price { get; set; }
 
-        [Display(Name = "Unidade")]
+        [Required(ErrorMessage = "O campo Unidade é obrigatório.")]
+        [StringLength(20, ErrorMessage = "A Unidade deve ter no máximo 20 caracteres.")]
+        [Display(Name = "Unidade de Medida")]
         public string Unit { get; set; } = default!;
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Display(Name = "Criado em")]
+        public DateTime CreatedAt { get; set; }
 
         // Relacionamentos
         [ForeignKey("CategoryId")]
         [Display(Name = "Categoria")]
-        public virtual Category Category { get; set; } = default!;
+        public virtual Category? Category { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual User User { get; set; } = default!;
+        public virtual User? User { get; set; }
 
         [Display(Name = "Materiais")]
         [JsonIgnore]
@@ -50,6 +65,7 @@ namespace ESA_Terra_Argila.Models
         {
             ProductMaterials = new HashSet<ProductMaterial>();
             ProductTags = new HashSet<ProductTag>();
+            CreatedAt = DateTime.UtcNow;
         }
     }
 }

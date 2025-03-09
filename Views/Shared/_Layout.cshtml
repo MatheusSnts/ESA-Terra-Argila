@@ -6,8 +6,9 @@
     <title>@ViewData["Title"] - ESA_Terra_Argila</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ESA_Terra_Argila.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css" integrity="sha512-7uSoC3grlnRktCWoO4LjHMjotq8gf9XDFQerPuaph+cqR7JC9XKGdvN+UwZMC14aAaBDItdRj3DcSDs4kMWUgg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
     @*<header>
@@ -62,69 +63,65 @@
         <a asp-area="" asp-controller="Home" asp-action="Index">Fornecedores</a>
     </nav>
 
-    <div">
+    <div>
         <main role="main" class="pb-3">
-    @RenderBody()
+            @RenderBody()
         </main>
-        </div>
+    </div>
 
     @* <footer class="border-top footer text-muted"> *@
     @*     <div class="container"> *@
     @*         &copy; 2025 - ESA_Terra_Argila - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
     @*     </div> *@
     @* </footer> *@
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.js" integrity="sha512-9e9rr82F9BPzG81+6UrwWLFj8ZLf59jnuIA/tIf8dEGoQVu7l5qvr02G/BiAabsFOYrIUTMslVN+iDYuszftVQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    @* <script> *@
-    @*     $(document).ready(function() { *@
-    @*         $('#datatable').DataTable({ *@
-    @*             "columnDefs": [ *@
-    @*                 { "className": "text-end", "targets": -1 } // Última coluna *@
-    @*             ] *@
-    @*         }); *@
-    @*     }); *@
-    @* </script> *@
-
-        <script>
-            $(document).ready(function() {
-                $('#datatable').DataTable({
-                    "responsive": true, // Torna a tabela responsiva
-                    "autoWidth": false, // Evita que a largura das colunas fique fixa
-                    "columnDefs": [
-                        { "className": "text-end", "targets": -1 } // Última coluna alinhada à direita
-                    ],
-                    "language": {
-                        "decimal": ",",
-                        "thousands": ".",
-                        "sEmptyTable": "Nenhum dado disponível na tabela",
-                        "sInfo": "A mostrar _START_ até _END_ de _TOTAL_ registos",
-                        "sInfoEmpty": "A mostrar 0 até 0 de 0 registos",
-                        "sInfoFiltered": "(filtrado de um total de _MAX_ registos)",
-                        "sInfoPostFix": "",
-                        "sInfoThousands": ".",
-                        "sLengthMenu": "Mostrar _MENU_ registos por página",
-                        "sLoadingRecords": "A carregar...",
-                        "sProcessing": "A processar...",
-                        "sSearch": "Pesquisar:",
-                        "sZeroRecords": "Nenhum registo encontrado",
-                        "oPaginate": {
-                            "sFirst": "Primeiro",
-                            "sLast": "Último",
-                            "sNext": "Seguinte",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending": ": ativar para ordenar a coluna de forma ascendente",
-                            "sSortDescending": ": ativar para ordenar a coluna de forma descendente"
-                        }
+    <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                "responsive": true, // Torna a tabela responsiva
+                "autoWidth": false, // Evita que a largura das colunas fique fixa
+                "columnDefs": [
+                    { "className": "text-end", "targets": -1 } // Última coluna alinhada à direita
+                ],
+                "language": {
+                    "decimal": ",",
+                    "thousands": ".",
+                    "sEmptyTable": "Nenhum dado disponível na tabela",
+                    "sInfo": "A mostrar _START_ até _END_ de _TOTAL_ registos",
+                    "sInfoEmpty": "A mostrar 0 até 0 de 0 registos",
+                    "sInfoFiltered": "(filtrado de um total de _MAX_ registos)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "Mostrar _MENU_ registos por página",
+                    "sLoadingRecords": "A carregar...",
+                    "sProcessing": "A processar...",
+                    "sSearch": "Pesquisar:",
+                    "sZeroRecords": "Nenhum registo encontrado",
+                    "oPaginate": {
+                        "sFirst": "Primeiro",
+                        "sLast": "Último",
+                        "sNext": "Seguinte",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": ativar para ordenar a coluna de forma ascendente",
+                        "sSortDescending": ": ativar para ordenar a coluna de forma descendente"
                     }
-                });
+                }
             });
-        </script>
+            $('.select2-tags').select2({
+                placeholder: "Tags",
+                allowClear: true // Isso adiciona um botão "X" para limpar a seleção
+            });
+
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -60,9 +60,9 @@ namespace ESA_Terra_Argila.Data
 
                 var categories = new List<Category>
                 {
-                    new Category { Name = "Categoria Teste 1" },
-                    new Category { Name = "Categoria Teste 2" },
-                    new Category { Name = "Categoria Teste 3" }
+                    new Category { Name = "Categoria Teste 1", Reference = "C1" },
+                    new Category { Name = "Categoria Teste 2", Reference = "C2" },
+                    new Category { Name = "Categoria Teste 3", Reference = "C3" }
                 };
                 await context.Categories.AddRangeAsync(categories);
                 await context.SaveChangesAsync();
@@ -105,10 +105,10 @@ namespace ESA_Terra_Argila.Data
 
                 var tags = new List<Tag>
                 {
-                    new Tag { Name = "Premium" },
-                    new Tag { Name = "Sustentável" },
-                    new Tag { Name = "Black-friday" },
-                    new Tag { Name = "Promoção" }
+                    new Tag { Name = "Premium", Reference = "T1" },
+                    new Tag { Name = "Sustentável", Reference = "T2" },
+                    new Tag { Name = "Black-friday", Reference = "T3" },
+                    new Tag { Name = "Promoção", Reference = "T4" }
                 };
                 await context.Tags.AddRangeAsync(tags);
                 await context.SaveChangesAsync();
