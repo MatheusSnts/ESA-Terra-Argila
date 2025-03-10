@@ -8,18 +8,18 @@
     <h2>Editar categoria</h2>
 </div>
 <form asp-action="Edit" method="post">
-    <div class="col-md-7 form-section pt-2 pb-4 px-4">
+    <div class="col-md-5 form-section pt-2 pb-4 px-4">
         <div class="form-group">
             <label>Nome</label>
             <input type="text" asp-for="Name" name="Name" class="form-control" placeholder="Nome da categoria...">
             <span asp-validation-for="Name" class="text-danger asp-validation"></span>
         </div>
-        <div class="form-group">
+        <div class="form-group mt-2">
             <label>Referência</label>
             <input type="text" asp-for="Reference" name="Reference" class="form-control" placeholder="Referência da categoria...">
             <span asp-validation-for="Reference" class="text-danger asp-validation"></span>
         </div>
-        <input type="submit" value="Guardar" class="add-button col-md-12 mt-2 text-center">
+        <input type="submit" value="Guardar" class="add-button col-md-12 mt-4 text-center">
     </div>
 </form>
 

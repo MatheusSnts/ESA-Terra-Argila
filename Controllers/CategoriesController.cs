@@ -11,36 +11,44 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ESA_Terra_Argila.Controllers
 {
-    [Authorize]
+    [Authorize] // Exige autenticação para todas as ações
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly string? userId;
+
 
         public CategoriesController(ApplicationDbContext context)
         {
             _context = context;
+            userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
         }
 
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Categories.Include(c => c.User);
-            return View(await applicationDbContext.ToListAsync());
+            var categories = _context.Categories.Where(c => c.UserId == userId).Include(c => c.User);
+            return View(await categories.ToListAsync());
         }
 
         // GET: Categories/Details/5
+        [AllowAnonymous] // Permite que qualquer pessoa veja detalhes da categoria
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
+                TempData["ErrorMessage"] = "Categoria não encontrada!";
                 return NotFound();
             }
 
             var category = await _context.Categories
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (category == null)
             {
+                TempData["ErrorMessage"] = "Categoria não encontrada!";
                 return NotFound();
             }
 
@@ -50,24 +58,25 @@ namespace ESA_Terra_Argila.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
         // POST: Categories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Reference,UserId,Name,CreatedAt")] Category category)
+        public async Task<IActionResult> Create([Bind("Reference,Name")] Category category)
         {
             if (ModelState.IsValid)
             {
+                category.UserId = userId;
+                category.CreatedAt = DateTime.UtcNow;
                 _context.Add(category);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Categoria criada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", category.UserId);
+
+            TempData["ErrorMessage"] = "Erro ao criar categoria! Verifique os campos.";
             return View(category);
         }
 
@@ -76,51 +85,60 @@ namespace ESA_Terra_Argila.Controllers
         {
             if (id == null)
             {
+                TempData["ErrorMessage"] = "Categoria não encontrada!";
                 return NotFound();
             }
 
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
             {
+                TempData["ErrorMessage"] = "Categoria não encontrada!";
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", category.UserId);
+
             return View(category);
         }
 
         // POST: Categories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Reference,UserId,Name,CreatedAt")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Reference,Name")] Category category)
         {
             if (id != category.Id)
             {
+                TempData["ErrorMessage"] = "Categoria não encontrada!";
                 return NotFound();
             }
+
+            var foundCategory = await _context.Categories.FindAsync(id);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(category);
+                    foundCategory.Name = category.Name;
+                    foundCategory.Reference = category.Reference;
+                    _context.Update(foundCategory);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Categoria atualizada com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!CategoryExists(category.Id))
                     {
+                        TempData["ErrorMessage"] = "Erro: A categoria não existe mais no sistema!";
                         return NotFound();
                     }
                     else
                     {
+                        TempData["ErrorMessage"] = "Erro ao atualizar categoria! Tente novamente.";
                         throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", category.UserId);
+
+            TempData["ErrorMessage"] = "Erro ao editar categoria! Verifique os campos.";
             return View(category);
         }
 
@@ -129,14 +147,17 @@ namespace ESA_Terra_Argila.Controllers
         {
             if (id == null)
             {
+                TempData["ErrorMessage"] = "Categoria não encontrada!";
                 return NotFound();
             }
 
             var category = await _context.Categories
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (category == null)
             {
+                TempData["ErrorMessage"] = "Categoria não encontrada!";
                 return NotFound();
             }
 
@@ -152,9 +173,14 @@ namespace ESA_Terra_Argila.Controllers
             if (category != null)
             {
                 _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Categoria removida com sucesso!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Erro ao remover categoria!";
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

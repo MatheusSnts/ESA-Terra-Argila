@@ -9,6 +9,7 @@ using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -16,16 +17,19 @@ namespace ESA_Terra_Argila.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly string? userId;
+
 
         public ProductsController(ApplicationDbContext context)
         {
             _context = context;
+            userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Products.Include(p => p.Category).Include(p => p.User);
+            var applicationDbContext = _context.Products.Where(p => p.UserId == userId).Include(p => p.Category).Include(p => p.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -66,9 +70,11 @@ namespace ESA_Terra_Argila.Controllers
         {
             if (ModelState.IsValid)
             {
-                TempData["SuccessMessage"] = "Produto adicionado com sucesso!";
+                product.UserId = userId;
+                product.CreatedAt = DateTime.UtcNow;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Produto adicionado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -89,8 +95,8 @@ namespace ESA_Terra_Argila.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", product.UserId);
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", product.UserId);
             return View(product);
         }
 
@@ -106,11 +112,20 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
+            var foundProduct = await _context.Products.FindAsync(id);
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(product);
+                    foundProduct.Name = product.Name;
+                    foundProduct.CategoryId = product.CategoryId;
+                    foundProduct.Reference = product.Reference;
+                    foundProduct.Description = product.Description;
+                    foundProduct.Price = product.Price;
+                    foundProduct.Unit = product.Unit;
+
+                    _context.Update(foundProduct);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Produto atualizado com sucesso!";
                 }

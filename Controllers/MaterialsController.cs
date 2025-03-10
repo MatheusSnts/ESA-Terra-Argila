@@ -15,16 +15,19 @@ namespace ESA_Terra_Argila.Controllers
     public class MaterialsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly string? userId;
+
 
         public MaterialsController(ApplicationDbContext context)
         {
             _context = context;
+            userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         }
 
         // GET: Materials
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Materials.Include(m => m.Category).Include(m => m.User);
+            var applicationDbContext = _context.Materials.Where(m => m.UserId == userId).Include(m => m.Category).Include(m => m.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -63,17 +66,11 @@ namespace ESA_Terra_Argila.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,Name,Reference,Description,Price,Unit")] Material material)
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-            {
-                TempData["ErrorMessage"] = "Usuário não autenticado!";
-                return Unauthorized();
-            }
-
-            material.UserId = userId; // Atribuir UserId no backend
-
             if (ModelState.IsValid)
             {
+                material.UserId = userId;
+                material.CreatedAt = DateTime.UtcNow;
+
                 _context.Add(material);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Material adicionado com sucesso!";
@@ -116,11 +113,20 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
+            var foundMaterial = await _context.Materials.FindAsync(id);
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(material);
+                    foundMaterial.Name = material.Name;
+                    foundMaterial.CategoryId = material.CategoryId;
+                    foundMaterial.Reference = material.Reference;
+                    foundMaterial.Description = material.Description;
+                    foundMaterial.Price = material.Price;
+                    foundMaterial.Unit = material.Unit;
+
+                    _context.Update(foundMaterial);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Material atualizado com sucesso!";
                 }
