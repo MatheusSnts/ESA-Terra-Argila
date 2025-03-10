@@ -185,5 +185,53 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
             }
             return (IUserEmailStore<User>)_userStore;
         }
+
+        public async Task<IActionResult> OnGetValidateFieldAsync(string field, string value)
+        {
+            value = value?.Trim(); 
+
+            if (string.IsNullOrEmpty(value))
+            {
+                return BadRequest("Este campo é obrigatório.");
+            }
+
+            switch (field)
+            {
+                case "FullName":
+                    if (value.Length < 5 || value.Length > 100)
+                        return BadRequest("O nome completo deve ter entre 5 e 100 caracteres.");
+                    break;
+
+                case "Email":
+                    if (!new EmailAddressAttribute().IsValid(value))
+                        return BadRequest("Formato de e-mail inválido.");
+
+                    var existingUser = await _userManager.FindByEmailAsync(value);
+                    if (existingUser != null)
+                        return BadRequest("Este e-mail já está em uso.");
+                    break;
+
+                case "Password":
+                    if (value.Length < 6)
+                        return BadRequest("A senha deve ter pelo menos 6 caracteres.");
+                    if (!value.Any(char.IsDigit))
+                        return BadRequest("A senha deve conter pelo menos um número.");
+                    if (!value.Any(char.IsUpper))
+                        return BadRequest("A senha deve conter pelo menos uma letra maiúscula.");
+                    break;
+
+                case "ConfirmPassword":
+                    if (!string.IsNullOrEmpty(Input?.Password) && Input.Password != value)
+                        return BadRequest("A confirmação da senha não corresponde.");
+                    break;
+
+                default:
+                    return BadRequest("Campo inválido.");
+            }
+
+            return new JsonResult("Válido");
+        }
+
+
     }
 }

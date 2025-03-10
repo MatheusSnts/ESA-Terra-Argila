@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "datatables.net-dt": "^2.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.22.0"
   }
 }

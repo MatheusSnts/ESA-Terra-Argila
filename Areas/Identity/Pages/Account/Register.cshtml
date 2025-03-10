@@ -11,32 +11,32 @@
 
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-
         <div class="form-group">
             <label asp-for="Input.FullName" class="form-label">Nome Completo</label>
-            <input asp-for="Input.FullName" class="form-input" autocomplete="off"
+            <input asp-for="Input.FullName" class="form-input" id="FullName" autocomplete="off"
                    aria-required="true" placeholder="Introduza seu nome completo" />
-            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            <span asp-validation-for="Input.FullName" class="text-danger" id="FullNameError"></span>
         </div>
+
         <div class="form-group">
             <label asp-for="Input.Email" class="form-label">Email</label>
-            <input asp-for="Input.Email" class="form-input" autocomplete="username"
+            <input asp-for="Input.Email" class="form-input" id="Email" autocomplete="username"
                    aria-required="true" placeholder="Introduza seu email" />
-            <span asp-validation-for="Input.Email" class="text-danger"></span>
+            <span asp-validation-for="Input.Email" class="text-danger" id="EmailError"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Input.Password" class="form-label">Palavra-passe</label>
-            <input asp-for="Input.Password" class="form-input" autocomplete="new-password"
+            <input asp-for="Input.Password" class="form-input" id="Password" autocomplete="new-password"
                    aria-required="true" placeholder="Introduza sua palavra-passe" type="password" />
-            <span asp-validation-for="Input.Password" class="text-danger"></span>
+            <span asp-validation-for="Input.Password" class="text-danger" id="PasswordError"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Input.ConfirmPassword" class="form-label">Confirmar Palavra-passe</label>
-            <input asp-for="Input.ConfirmPassword" class="form-input" autocomplete="new-password"
+            <input asp-for="Input.ConfirmPassword" class="form-input" id="ConfirmPassword" autocomplete="new-password"
                    aria-required="true" placeholder="Confirme sua palavra-passe" type="password" />
-            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger" id="ConfirmPasswordError"></span>
         </div>
 
         <div class="form-group">
@@ -60,4 +60,38 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fields = ["FullName", "Email", "Password", "ConfirmPassword"];
+
+            fields.forEach(field => {
+                const input = document.getElementById(field);
+                const errorSpan = document.getElementById(field + "Error");
+
+                // Validação apenas ao sair do campo
+                input.addEventListener("blur", async function () {
+                    const value = input.value.trim();
+
+                    try {
+                        const response = await fetch(`/Identity/Account/Register?handler=ValidateFieldAsync&field=${field}&value=${encodeURIComponent(value)}`);
+
+                        if (!response.ok) {
+                            const errorMessage = await response.text();
+                            throw new Error(errorMessage);
+                        }
+
+                        // Se o valor for válido, remove a mensagem de erro e o destaque
+                        errorSpan.textContent = "";
+                        input.classList.remove("input-error");
+
+                    } catch (error) {
+                        // Se o campo estiver incorreto, a mensagem de erro permanece
+                        errorSpan.textContent = error.message;
+                        input.classList.add("input-error");
+                    }
+                });
+            });
+        });
+    </script>
 }
