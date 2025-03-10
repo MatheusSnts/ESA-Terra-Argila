@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace ESA_Terra_Argila.Models
 {
-    public class Product
+    public class Material
     {
         [Key]
         public int Id { get; set; }
@@ -18,7 +16,7 @@ namespace ESA_Terra_Argila.Models
 
         [Required(ErrorMessage = "O campo Nome é obrigatório.")]
         [StringLength(100, ErrorMessage = "O Nome deve ter no máximo 100 caracteres.")]
-        [Display(Name = "Nome do Produto")]
+        [Display(Name = "Nome do Material")]
         public string Name { get; set; } = default!;
 
         [Required(ErrorMessage = "O campo Referência é obrigatório.")]
@@ -53,18 +51,18 @@ namespace ESA_Terra_Argila.Models
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
 
-        [Display(Name = "Materiais")]
+        [Display(Name = "Materiais Associados")]
         [JsonIgnore]
         public virtual ICollection<ProductMaterial> ProductMaterials { get; set; }
 
         [Display(Name = "Tags")]
         [JsonIgnore]
-        public virtual ICollection<ProductTag> ProductTags { get; set; }
+        public virtual ICollection<MaterialTag> MaterialTags { get; set; }
 
-        public Product()
+        public Material()
         {
             ProductMaterials = new HashSet<ProductMaterial>();
-            ProductTags = new HashSet<ProductTag>();
+            MaterialTags = new HashSet<MaterialTag>();
             CreatedAt = DateTime.UtcNow;
         }
     }

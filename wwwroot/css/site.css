@@ -22,7 +22,7 @@ html {
 }
 
 body {
-    background-color: #FEFAE0;
+    background-color: #FFFFFF;
     min-height: 100vh;
 }
 
@@ -385,3 +385,69 @@ body {
     display: flex;
     gap: 1rem;
 }
+
+/*Products / Materials */
+
+.action-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.add-button {
+    background-color: #5F6F52;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 8px 40px;
+}
+
+    .add-button:hover {
+        background-color: #C4661F;
+        color: white;
+    }
+    .alert {
+        margin: 1rem auto 0 auto;
+    }
+
+/*CREATE / EDIT*/
+
+.form-section {
+    border-radius: 5px;
+    background-color: #A9B388;
+}
+
+.add-image-button {
+    background-color: #C4661F;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    padding: 8px 40px;
+}
+
+    .add-image-button:hover {
+        background-color: #5F6F52;
+        color: white;
+    }
+
+.dropzone {
+    height: 75%;
+    padding: 10px;
+    width: 90%;
+    background-color: #A9B388 !important;
+    /* border:none; */
+}
+
+/* span.selection { */
+/*     width: 100%; */
+/* } */
+
+.select2-container .select2-selection--multiple {
+    min-height: 38px !important;
+}
+
+.asp-validation {
+    margin-top: -8px;
+    font-size: 12px;
+    font-weight: bold;
+}   

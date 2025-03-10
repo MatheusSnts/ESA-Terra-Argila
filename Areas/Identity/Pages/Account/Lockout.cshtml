@@ -1,10 +1,10 @@
 ﻿@page
-@model LockoutModel
+@model ESA_Terra_Argila.Areas.Identity.Pages.Account.LockoutModel
 @{
-    ViewData["Title"] = "Locked out";
+	ViewData["Title"] = "Conta Bloqueada";
 }
 
 <header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
+	<h1 class="text-danger">@ViewData["Title"]</h1>
+	<p class="text-danger">@Model.LockoutMessage</p>
 </header>

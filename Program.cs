@@ -22,11 +22,23 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
-            options.SignIn.RequireConfirmedAccount = false)
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders()
     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
     .AddDefaultUI();
+
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+// Configurações de Lockout
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 3;
+    options.Lockout.AllowedForNewUsers = true;
+});
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -63,7 +75,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapRazorPages();
 
@@ -71,5 +85,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+await app.RunAsync();
+
 
