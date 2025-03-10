@@ -99,21 +99,14 @@
             <div class="col-md-4 form-section pt-2 pb-3 px-4">
                 <div class="form-group">
                     <label>Categoria</label>
-                    <select class="form-control" asp-for="CategoryId" name="CategoryId">
+                    <select class="form-control" asp-for="CategoryId" asp-items="@(ViewData["Categories"] as SelectList)" name="CategoryId">
                         <option hidden disabled selected>Categoria</option>
-                        <option value="1">Categoria 1</option>
-                        <option value="2">Categoria 2</option>
-                        <option value="3">Categoria 3</option>
                     </select>
                     <span asp-validation-for="CategoryId" class="text-danger asp-validation"></span>
                 </div>
                 <div class="form-group">
                     <label>Tags</label>
-                    <select class="form-control select2-tags" name="Tags[]" multiple="multiple">
-                        <option hidden disabled>Tags</option>
-                        <option value="1">Tag 1</option>
-                        <option value="2">Tag 2</option>
-                        <option value="3">Tag 3</option>
+                    <select class="form-control select2-tags" asp-items="@(ViewData["Tags"] as SelectList)" name="Tags[]" multiple="multiple">
                     </select>
                 </div>
                 <input type="submit" value="Guardar" class="add-button col-md-12 mt-2 text-center">
