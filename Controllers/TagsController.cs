@@ -150,6 +150,11 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
+            _context.Tags.Remove(tag);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Tag removida com sucesso!";
+            return RedirectToAction("Index");
+
             return View(tag);
         }
 

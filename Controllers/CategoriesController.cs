@@ -161,7 +161,12 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            return View(category);
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Categoria removida com sucesso!";
+            return RedirectToAction("Index");
+
+            //return View(category);
         }
 
         // POST: Categories/Delete/5

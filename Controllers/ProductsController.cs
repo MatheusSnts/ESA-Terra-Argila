@@ -56,8 +56,8 @@ namespace ESA_Terra_Argila.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
+            ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
             return View();
         }
 
@@ -95,8 +95,8 @@ namespace ESA_Terra_Argila.Controllers
             {
                 return NotFound();
             }
-            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", product.UserId);
+            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
+            ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
             return View(product);
         }
 
@@ -165,7 +165,12 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            return View(product);
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Produto removido com sucesso!";
+            return RedirectToAction("Index");
+
+            //return View(product);
         }
 
         // POST: Products/Delete/5

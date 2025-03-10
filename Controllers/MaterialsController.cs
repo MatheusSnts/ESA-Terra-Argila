@@ -57,7 +57,8 @@ namespace ESA_Terra_Argila.Controllers
         // GET: Materials/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
+            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
+            ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
             return View();
         }
 
@@ -98,7 +99,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", material.CategoryId);
+            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
+            ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
             return View(material);
         }
 
@@ -170,8 +172,12 @@ namespace ESA_Terra_Argila.Controllers
                 TempData["ErrorMessage"] = "Material não encontrado!";
                 return NotFound();
             }
+            _context.Materials.Remove(material);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Material removido com sucesso!";
+            return RedirectToAction("Index");
 
-            return View(material);
+            //return View(material);
         }
 
         // POST: Materials/Delete/5

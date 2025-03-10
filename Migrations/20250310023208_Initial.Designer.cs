@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ESA_Terra_Argila.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250309205358_Initial")]
+    [Migration("20250310023208_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -497,7 +497,8 @@ namespace ESA_Terra_Argila.Migrations
                 {
                     b.HasOne("ESA_Terra_Argila.Models.Category", "Category")
                         .WithMany("Materials")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
                         .WithMany()
@@ -513,13 +514,13 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasOne("ESA_Terra_Argila.Models.Material", "Material")
                         .WithMany("MaterialTags")
                         .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ESA_Terra_Argila.Models.Tag", "Tag")
                         .WithMany("MaterialTags")
                         .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Material");
@@ -531,7 +532,8 @@ namespace ESA_Terra_Argila.Migrations
                 {
                     b.HasOne("ESA_Terra_Argila.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
                         .WithMany()
@@ -547,13 +549,13 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasOne("ESA_Terra_Argila.Models.Material", "Material")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ESA_Terra_Argila.Models.Product", "Product")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Material");
@@ -566,13 +568,13 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasOne("ESA_Terra_Argila.Models.Product", "Product")
                         .WithMany("ProductTags")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ESA_Terra_Argila.Models.Tag", "Tag")
                         .WithMany("ProductTags")
                         .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
