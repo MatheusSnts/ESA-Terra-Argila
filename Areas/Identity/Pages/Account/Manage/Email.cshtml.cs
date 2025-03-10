@@ -21,15 +21,18 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailSender _emailSender;
-
+        private readonly ILogger<ExternalLoginModel> _logger;
         public EmailModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ILogger<ExternalLoginModel> logger)
+
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _logger = logger;
         }
 
         /// <summary>
@@ -112,10 +115,13 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
                 await LoadAsync(user);
                 return Page();
             }
+            _logger.LogInformation("Debug 1");
 
             var email = await _userManager.GetEmailAsync(user);
+            _logger.LogInformation("Debug 2");
             if (Input.NewEmail != email)
             {
+                _logger.LogInformation("Debug 3");
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateChangeEmailTokenAsync(user, Input.NewEmail);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -124,11 +130,12 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
                     pageHandler: null,
                     values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
+                _logger.LogInformation("Debug 4");
                 await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
+                    email,
                     "Verificação de email",
-                    $"Por favor, verifique o email da sua conta ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>carregar aqui</a>.");
-
+                    $"Por favor, zika verifique o email da sua conta ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>carregar aqui</a>.");
+                _logger.LogInformation("Debug 5");
                 StatusMessage = "Email de verificação enviado.";
                 return RedirectToPage();
             }
