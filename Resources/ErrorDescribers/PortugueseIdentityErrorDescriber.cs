@@ -76,7 +76,7 @@ namespace ESA_Terra_Argila.Resources.ErrorDescribers
             };
         }
 
-        public override IdentityError InvalidUserName(string userName)
+        public override IdentityError InvalidUserName(string? userName)
         {
             return new IdentityError
             {
@@ -85,7 +85,7 @@ namespace ESA_Terra_Argila.Resources.ErrorDescribers
             };
         }
 
-        public override IdentityError InvalidEmail(string email)
+        public override IdentityError InvalidEmail(string? email)
         {
             return new IdentityError
             {
@@ -112,7 +112,7 @@ namespace ESA_Terra_Argila.Resources.ErrorDescribers
             };
         }
 
-        public override IdentityError InvalidRoleName(string role)
+        public override IdentityError InvalidRoleName(string? role)
         {
             return new IdentityError
             {
