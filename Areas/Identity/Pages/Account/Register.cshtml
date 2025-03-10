@@ -69,7 +69,6 @@
                 const input = document.getElementById(field);
                 const errorSpan = document.getElementById(field + "Error");
 
-                // Validação apenas ao sair do campo
                 input.addEventListener("blur", async function () {
                     const value = input.value.trim();
 
@@ -81,12 +80,10 @@
                             throw new Error(errorMessage);
                         }
 
-                        // Se o valor for válido, remove a mensagem de erro e o destaque
                         errorSpan.textContent = "";
                         input.classList.remove("input-error");
 
                     } catch (error) {
-                        // Se o campo estiver incorreto, a mensagem de erro permanece
                         errorSpan.textContent = error.message;
                         input.classList.add("input-error");
                     }
