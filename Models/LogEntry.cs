@@ -1,13 +1,14 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ESA_Terra_Argila.Models
 {
     public class LogEntry
     {
-        public int Id { get; set; } // Primary Key
+        [Key]
+        public int Id { get; set; }
         public string UserEmail { get; set; }
-        public string Action { get; set; } // "Login" or "Logout"
+        public string Action { get; set; }
         public DateTime Timestamp { get; set; }
-        public String Ip { get; set; }
+        public string Ip { get; set; }
     }
 }
