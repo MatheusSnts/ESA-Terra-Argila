@@ -121,7 +121,8 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                         {
                             UserEmail = Input.Email,
                             Action = "Login",
-                            Timestamp = DateTime.UtcNow
+                            Timestamp = DateTime.UtcNow,
+                            Ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown"
                         });
                         await dbContext.SaveChangesAsync();
                     }

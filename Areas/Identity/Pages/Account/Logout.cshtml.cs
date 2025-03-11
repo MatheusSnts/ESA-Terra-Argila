@@ -36,7 +36,8 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                 {
                     UserEmail = userEmail,
                     Action = "Logout",
-                    Timestamp = DateTime.UtcNow
+                    Timestamp = DateTime.UtcNow,
+                    Ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown"
                 });
                 await dbContext.SaveChangesAsync();
             }
