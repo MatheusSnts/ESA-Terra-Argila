@@ -1,0 +1,34 @@
+﻿@page
+@model ESA_Terra_Argila.Pages.LogsModel
+@{
+    ViewData["Title"] = "Registos de Login";
+}
+
+<h2>Logs de Login e Logout</h2>
+
+@if (Model.LogEntries.Count == 0)
+{
+    <p>Nenhum log encontrado.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Utilizador</th>
+                <th>Ação</th>
+                <th>Data/Hora</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in Model.LogEntries)
+            {
+                <tr>
+                    <td>@entry.UserEmail</td>
+                    <td>@entry.Action</td>
+                    <td>@entry.Timestamp</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

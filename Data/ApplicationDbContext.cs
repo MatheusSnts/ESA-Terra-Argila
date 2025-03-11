@@ -15,6 +15,7 @@ namespace ESA_Terra_Argila.Data
         public DbSet<ProductMaterial> ProductMaterials { get; set; } = default!;
         public DbSet<ProductTag> ProductTags { get; set; } = default!;
         public DbSet<MaterialTag> MaterialTags { get; set; } = default!;
+        public DbSet<LogEntry> LogEntries { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
