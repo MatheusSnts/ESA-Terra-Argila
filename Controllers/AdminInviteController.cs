@@ -10,36 +10,42 @@ using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
 using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class AdminInviteController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly EmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
         private readonly UserManager<User> _userManager;
 
-        public AdminInviteController(ApplicationDbContext context, UserManager<User> userManager)
+        public AdminInviteController(ApplicationDbContext context, UserManager<User> userManager, IEmailSender emailSender)
         {
             _context = context;
-           
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
-        /// <summary>
-        /// Envia um convite para um e-mail específico.
-        /// </summary>
-        [HttpPost]
-        public async Task<IActionResult> SendInvitation(string email)
+
+        [HttpPost("SendInvitation")]
+        public async Task<IActionResult> SendInvitation([FromBody] InvitationRequest request)
         {
-            // Gerar um token seguro
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return BadRequest("O e-mail não pode estar vazio.");
+            }
+
+           
             var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-            // Criar um novo convite no banco de dados
+            
             var invitation = new Invitation
             {
-                Email = email,
+                Email = request.Email,
                 Token = encodedToken,
                 ExpirationDate = DateTime.UtcNow.AddDays(7),
                 Used = false
@@ -48,18 +54,24 @@ namespace ESA_Terra_Argila.Controllers
             _context.Invitations.Add(invitation);
             await _context.SaveChangesAsync();
 
-            // Criar o link de convite
-            var callbackUrl = Url.Action("Register", "AdminInvite", new { token = encodedToken, email }, protocol: Request.Scheme);
+      
+            var callbackUrl = Url.Action("Register", "AdminInvite", new { token = encodedToken, email = request.Email }, protocol: Request.Scheme);
 
-            // Enviar o convite por e-mail
-            await _emailSender.SendInvitationEmailAsync(email, callbackUrl);
 
+            var subject = "Convite para Cadastro no Sistema";
+            var message = $@"
+        <p>Olá,</p>
+        <p>Você foi convidado para se cadastrar no sistema.</p>
+        <p>Clique no link abaixo para completar seu cadastro:</p>
+        <p><a href='{callbackUrl}'>Completar Cadastro</a></p>
+        <p>Este link expirará em 7 dias.</p>";
+
+            await _emailSender.SendEmailAsync(request.Email, subject, message);
+            
             return Ok("Convite enviado com sucesso.");
         }
 
-        /// <summary>
-        /// Verifica se o convite é válido e redireciona para o formulário de registro.
-        /// </summary>
+
         [HttpGet]
         public async Task<IActionResult> Register(string token, string email)
         {
@@ -71,13 +83,10 @@ namespace ESA_Terra_Argila.Controllers
                 return BadRequest("Convite inválido ou expirado.");
             }
 
-            // Redirecionar para a página de cadastro
+      
             return RedirectToPage("/Account/Register", new { email, token });
         }
 
-        /// <summary>
-        /// Completa o registro de um usuário convidado.
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CompleteRegistration(string email, string token, string password,string fullName)
         {
@@ -89,13 +98,13 @@ namespace ESA_Terra_Argila.Controllers
                 return BadRequest("Convite inválido ou expirado.");
             }
 
-            // Criar o usuário no Identity
+        
             var user = new User { UserName = email, Email = email, EmailConfirmed = true, FullName = fullName };
             var result = await _userManager.CreateAsync(user, password);
 
             if (result.Succeeded)
             {
-                // Marcar o convite como usado
+          
                 invitation.Used = true;
                 await _context.SaveChangesAsync();
 
@@ -105,4 +114,8 @@ namespace ESA_Terra_Argila.Controllers
             return BadRequest("Erro ao criar conta.");
         }
     }
+}
+public class InvitationRequest
+{
+    public string Email { get; set; }
 }

@@ -62,19 +62,7 @@ namespace ESA_Terra_Argila.Services
 
             await SendEmailAsync(user.Email, subject, message);
         }
-        public async Task SendInvitationEmailAsync(string email, string invitationLink)
-        {
-            var subject = "Convite para Cadastro no Sistema";
-            var message = $@"
-        <p>Olá,</p>
-        <p>Você foi convidado para se cadastrar no sistema.</p>
-        <p>Clique no link abaixo para completar seu cadastro:</p>
-        <p><a href='{invitationLink}'>Completar Cadastro</a></p>
-        <p>Este link expirará em 7 dias.</p>";
-
-            await SendEmailAsync(email, subject, message);
-        }
-
+      
 
         public async Task SendPasswordResetCodeAsync(User user, string resetCode, string provider)
         {
