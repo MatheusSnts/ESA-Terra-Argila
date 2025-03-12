@@ -36,6 +36,10 @@ namespace ESA_Terra_Argila.Models
         [Display(Name = "Preço")]
         public float Price { get; set; }
 
+        [Range(0, double.MaxValue, ErrorMessage = "O Stock não pode ser negativo")]
+        [Display(Name = "Stock")]
+        public float Stock { get; set; } = 0;
+
         [Required(ErrorMessage = "O campo Unidade é obrigatório.")]
         [StringLength(20, ErrorMessage = "A Unidade deve ter no máximo 20 caracteres.")]
         [Display(Name = "Unidade de Medida")]
