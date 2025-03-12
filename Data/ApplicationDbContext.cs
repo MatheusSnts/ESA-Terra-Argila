@@ -28,11 +28,6 @@ namespace ESA_Terra_Argila.Data
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<Product>()
-                .HasMany(p => p.Materials)
-                .WithMany(m => m.Products)
-                .UsingEntity(j => j.ToTable("ProductMaterials"));
-
             modelBuilder.Entity<ProductMaterial>()
                 .HasKey(pm => new { pm.ProductId, pm.MaterialId });
 

@@ -55,13 +55,7 @@ namespace ESA_Terra_Argila.Models
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
 
-        [Display(Name = "Materiais Associados")]
-        [JsonIgnore]
-        public virtual ICollection<Material> Materials { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<Product> Products { get; set; }
-
+        [Display(Name = "Produtos")]
         [JsonIgnore]
         public ICollection<ProductMaterial> ProductMaterials { get; set; }
 

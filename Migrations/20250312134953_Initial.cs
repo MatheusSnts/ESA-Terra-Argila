@@ -235,9 +235,9 @@ namespace ESA_Terra_Argila.Migrations
                     Reference = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Price = table.Column<float>(type: "real", nullable: false),
+                    Stock = table.Column<float>(type: "real", nullable: false),
                     Unit = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MaterialId = table.Column<int>(type: "int", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,11 +253,6 @@ namespace ESA_Terra_Argila.Migrations
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Materials_Materials_MaterialId",
-                        column: x => x.MaterialId,
-                        principalTable: "Materials",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -272,6 +267,7 @@ namespace ESA_Terra_Argila.Migrations
                     Reference = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Price = table.Column<float>(type: "real", nullable: false),
+                    Stock = table.Column<float>(type: "real", nullable: false),
                     Unit = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -316,24 +312,25 @@ namespace ESA_Terra_Argila.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductMaterials",
+                name: "ProductMaterial",
                 columns: table => new
                 {
-                    MaterialsId = table.Column<int>(type: "int", nullable: false),
-                    ProductsId = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    MaterialId = table.Column<int>(type: "int", nullable: false),
+                    Stock = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductMaterials", x => new { x.MaterialsId, x.ProductsId });
+                    table.PrimaryKey("PK_ProductMaterial", x => new { x.ProductId, x.MaterialId });
                     table.ForeignKey(
-                        name: "FK_ProductMaterials_Materials_MaterialsId",
-                        column: x => x.MaterialsId,
+                        name: "FK_ProductMaterial_Materials_MaterialId",
+                        column: x => x.MaterialId,
                         principalTable: "Materials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductMaterials_Products_ProductsId",
-                        column: x => x.ProductsId,
+                        name: "FK_ProductMaterial_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -413,11 +410,6 @@ namespace ESA_Terra_Argila.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Materials_MaterialId",
-                table: "Materials",
-                column: "MaterialId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Materials_UserId",
                 table: "Materials",
                 column: "UserId");
@@ -428,9 +420,9 @@ namespace ESA_Terra_Argila.Migrations
                 column: "TagsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductMaterials_ProductsId",
-                table: "ProductMaterials",
-                column: "ProductsId");
+                name: "IX_ProductMaterial_MaterialId",
+                table: "ProductMaterial",
+                column: "MaterialId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
@@ -478,7 +470,7 @@ namespace ESA_Terra_Argila.Migrations
                 name: "MaterialTags");
 
             migrationBuilder.DropTable(
-                name: "ProductMaterials");
+                name: "ProductMaterial");
 
             migrationBuilder.DropTable(
                 name: "ProductTags");
