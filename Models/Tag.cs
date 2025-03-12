@@ -31,18 +31,16 @@ namespace ESA_Terra_Argila.Models
         public DateTime CreatedAt { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<ProductTag> ProductTags { get; set; }
+        public virtual ICollection<Material> Materials { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<MaterialTag> MaterialTags { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
 
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
 
         public Tag()
         {
-            ProductTags = new HashSet<ProductTag>();
-            MaterialTags = new HashSet<MaterialTag>();
             CreatedAt = DateTime.UtcNow;
         }
     }

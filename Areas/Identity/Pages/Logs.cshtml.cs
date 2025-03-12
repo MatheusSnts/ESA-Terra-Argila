@@ -17,7 +17,7 @@ namespace ESA_Terra_Argila.Pages
             _dbContext = dbContext;
         }
 
-        public List<LogEntry> LogEntries { get; set; }
+        public List<LogEntry> LogEntries { get; set; } = default!;
 
         public void OnGet()
         {

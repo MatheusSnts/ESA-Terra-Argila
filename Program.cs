@@ -55,7 +55,6 @@ using (var scope = app.Services.CreateScope())
     // SEEDERS
     await Seeder.SeedRoles(roleManager);
     await Seeder.SeedUsersAsync(userManager);
-    await Seeder.SeedProductsAsync(context);
 }
 
 // Configure the HTTP request pipeline.

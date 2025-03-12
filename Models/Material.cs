@@ -53,16 +53,17 @@ namespace ESA_Terra_Argila.Models
 
         [Display(Name = "Materiais Associados")]
         [JsonIgnore]
-        public virtual ICollection<ProductMaterial> ProductMaterials { get; set; }
+        public virtual ICollection<Material> Materials { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Product> Products { get; set; }
 
         [Display(Name = "Tags")]
         [JsonIgnore]
-        public virtual ICollection<MaterialTag> MaterialTags { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; }
 
         public Material()
         {
-            ProductMaterials = new HashSet<ProductMaterial>();
-            MaterialTags = new HashSet<MaterialTag>();
             CreatedAt = DateTime.UtcNow;
         }
     }

@@ -236,7 +236,8 @@ namespace ESA_Terra_Argila.Migrations
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Price = table.Column<float>(type: "real", nullable: false),
                     Unit = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaterialId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -252,6 +253,11 @@ namespace ESA_Terra_Argila.Migrations
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Materials_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -289,23 +295,21 @@ namespace ESA_Terra_Argila.Migrations
                 name: "MaterialTags",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MaterialId = table.Column<int>(type: "int", nullable: false),
-                    TagId = table.Column<int>(type: "int", nullable: false)
+                    MaterialsId = table.Column<int>(type: "int", nullable: false),
+                    TagsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MaterialTags", x => x.Id);
+                    table.PrimaryKey("PK_MaterialTags", x => new { x.MaterialsId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_MaterialTags_Materials_MaterialId",
-                        column: x => x.MaterialId,
+                        name: "FK_MaterialTags_Materials_MaterialsId",
+                        column: x => x.MaterialsId,
                         principalTable: "Materials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MaterialTags_Tags_TagId",
-                        column: x => x.TagId,
+                        name: "FK_MaterialTags_Tags_TagsId",
+                        column: x => x.TagsId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -315,23 +319,21 @@ namespace ESA_Terra_Argila.Migrations
                 name: "ProductMaterials",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    MaterialId = table.Column<int>(type: "int", nullable: false)
+                    MaterialsId = table.Column<int>(type: "int", nullable: false),
+                    ProductsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductMaterials", x => x.Id);
+                    table.PrimaryKey("PK_ProductMaterials", x => new { x.MaterialsId, x.ProductsId });
                     table.ForeignKey(
-                        name: "FK_ProductMaterials_Materials_MaterialId",
-                        column: x => x.MaterialId,
+                        name: "FK_ProductMaterials_Materials_MaterialsId",
+                        column: x => x.MaterialsId,
                         principalTable: "Materials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductMaterials_Products_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_ProductMaterials_Products_ProductsId",
+                        column: x => x.ProductsId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -341,23 +343,21 @@ namespace ESA_Terra_Argila.Migrations
                 name: "ProductTags",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    TagId = table.Column<int>(type: "int", nullable: false)
+                    ProductsId = table.Column<int>(type: "int", nullable: false),
+                    TagsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductTags", x => x.Id);
+                    table.PrimaryKey("PK_ProductTags", x => new { x.ProductsId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_ProductTags_Products_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_ProductTags_Products_ProductsId",
+                        column: x => x.ProductsId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductTags_Tags_TagId",
-                        column: x => x.TagId,
+                        name: "FK_ProductTags_Tags_TagsId",
+                        column: x => x.TagsId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -413,29 +413,24 @@ namespace ESA_Terra_Argila.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Materials_MaterialId",
+                table: "Materials",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Materials_UserId",
                 table: "Materials",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MaterialTags_MaterialId",
+                name: "IX_MaterialTags_TagsId",
                 table: "MaterialTags",
-                column: "MaterialId");
+                column: "TagsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MaterialTags_TagId",
-                table: "MaterialTags",
-                column: "TagId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductMaterials_MaterialId",
+                name: "IX_ProductMaterials_ProductsId",
                 table: "ProductMaterials",
-                column: "MaterialId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductMaterials_ProductId",
-                table: "ProductMaterials",
-                column: "ProductId");
+                column: "ProductsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
@@ -448,14 +443,9 @@ namespace ESA_Terra_Argila.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTags_ProductId",
+                name: "IX_ProductTags_TagsId",
                 table: "ProductTags",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductTags_TagId",
-                table: "ProductTags",
-                column: "TagId");
+                column: "TagsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_UserId",

@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="col-md-4 form-section d-flex flex-column align-items-center justify-content-between pb-3">
-                <div action="/upload" class="dropzone mt-2" id="new-product-dropzone"></div>
+                <div action="Product/Create" class="dropzone mt-2" id="new-product-dropzone"></div>
                 <button class="add-image-button col-md-11 text-center" id="dropZone">Adicionar imagem</button>
             </div>
         </div>
@@ -114,30 +114,43 @@
         </div>
     </div>
 </form>
-
-<script>
-
-    // $(document).ready(function() {
-        // Dropzone.options.newProductDropzone = {
-        //     autoProcessQueue: false,
-        //     dictDefaultMessage: "Arraste os arquivos"
-        //     paramName: "file",
-        //     maxFilesize: 2,
-        //     clickable: "#dropZone" the ID of our parent wrapper div
-        // };
-            // Dropzone.autoDiscover = false;
-
-    // var myDropzone = new Dropzone("#new-product-dropzone", {
-    //     dictDefaultMessage: "Solte os arquivos aqui",
-    //     url: "/upload", Defina a URL do backend para upload
-    //     maxFilesize: 2, Tamanho máximo do arquivo (em MB)
-    //     acceptedFiles: "image/*" Aceita apenas imagens
-    // });
-    // });
-    // document.querySelector("#new-product-dropzone .dz-button").innerHTML = "Solte os arquivos aqui para enviar";
-    // $('.select2-single').select2();
+@section Scripts {
+    <script>
+        // $(document).ready(function() {
+            
+        //     var myDropzone = new Dropzone("#new-product-dropzone", {
+        //         autoProcessQueue: false,
+        //         paramName: "file",
+        //         maxFilesSize: 2,
+        //         clickable: "#submit-image"
+        //     });
+        // });
 
 
 
+        // $(document).ready(function() {
+            // Dropzone.options.newProductDropzone = {
+            //     autoProcessQueue: false,
+            //     dictDefaultMessage: "Arraste os arquivos"
+            //     paramName: "file",
+            //     maxFilesize: 2,
+            //     clickable: "#dropZone" the ID of our parent wrapper div
+            // };
+                // Dropzone.autoDiscover = false;
 
-</script>
+        // var myDropzone = new Dropzone("#new-product-dropzone", {
+        //     dictDefaultMessage: "Solte os arquivos aqui",
+        //     url: "/upload", Defina a URL do backend para upload
+        //     maxFilesize: 2, Tamanho máximo do arquivo (em MB)
+        //     acceptedFiles: "image/*" Aceita apenas imagens
+        // });
+        // });
+        // document.querySelector("#new-product-dropzone .dz-button").innerHTML = "Solte os arquivos aqui para enviar";
+        // $('.select2-single').select2();
+
+
+
+
+    </script>
+}
+

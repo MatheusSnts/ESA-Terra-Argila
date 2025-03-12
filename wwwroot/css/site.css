@@ -430,13 +430,13 @@ body {
         color: white;
     }
 
-.dropzone {
+/*.dropzone {
     height: 75%;
     padding: 10px;
     width: 90%;
-    background-color: #A9B388 !important;
+    background-color: #A9B388 !important;*/
     /* border:none; */
-}
+/*}*/
 
 /* span.selection { */
 /*     width: 100%; */
