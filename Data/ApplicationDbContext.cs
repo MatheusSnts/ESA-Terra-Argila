@@ -33,6 +33,23 @@ namespace ESA_Terra_Argila.Data
                 .WithMany(m => m.Products)
                 .UsingEntity(j => j.ToTable("ProductMaterials"));
 
+            modelBuilder.Entity<ProductMaterial>()
+                .HasKey(pm => new { pm.ProductId, pm.MaterialId });
+
+            modelBuilder.Entity<ProductMaterial>()
+                .Property(pm => pm.Stock)
+                .HasDefaultValue(0);
+
+            modelBuilder.Entity<ProductMaterial>()
+                .HasOne(pm => pm.Product)
+                .WithMany(p => p.ProductMaterials)
+                .HasForeignKey(pm => pm.ProductId);
+
+            modelBuilder.Entity<ProductMaterial>()
+                .HasOne(pm => pm.Material)
+                .WithMany(m => m.ProductMaterials)
+                .HasForeignKey(pm => pm.MaterialId);
+
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.Tags)
                 .WithMany(t => t.Products)

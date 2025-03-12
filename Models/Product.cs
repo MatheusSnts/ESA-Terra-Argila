@@ -61,6 +61,9 @@ namespace ESA_Terra_Argila.Models
         [JsonIgnore]
         public virtual ICollection<Material> Materials { get; set; }
 
+        [JsonIgnore]
+        public ICollection<ProductMaterial> ProductMaterials { get; set; }
+
         [Display(Name = "Tags")]
         [JsonIgnore]
         public virtual ICollection<Tag> Tags { get; set; }
