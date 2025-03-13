@@ -73,13 +73,14 @@ namespace ESA_Terra_Argila.Controllers
             
             var invitation = await _context.Invitations
                 .FirstOrDefaultAsync(i => i.Email == email && i.Token == token);
+           
 
             if (invitation == null || invitation.Used || invitation.ExpirationDate < DateTime.UtcNow)
             {
                
                 return BadRequest("Convite inválido ou expirado.");
             }
-
+            invitation.Used = true;
 
             return Redirect($"/Identity/Account/Register?email={email}&token={token}");
 
