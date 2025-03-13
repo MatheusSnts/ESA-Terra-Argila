@@ -8,9 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
-using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -29,7 +27,6 @@ namespace ESA_Terra_Argila.Controllers
             _emailSender = emailSender;
         }
 
-
         [HttpPost("SendInvitation")]
         public async Task<IActionResult> SendInvitation([FromBody] InvitationRequest request)
         {
@@ -38,11 +35,11 @@ namespace ESA_Terra_Argila.Controllers
                 return BadRequest("O e-mail não pode estar vazio.");
             }
 
-           
-            var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+          
+            var tokenBytes = RandomNumberGenerator.GetBytes(32);
+            var rawToken = Convert.ToBase64String(tokenBytes);
+            var encodedToken = WebEncoders.Base64UrlEncode(tokenBytes); 
 
-            
             var invitation = new Invitation
             {
                 Email = request.Email,
@@ -54,67 +51,43 @@ namespace ESA_Terra_Argila.Controllers
             _context.Invitations.Add(invitation);
             await _context.SaveChangesAsync();
 
-      
-            var callbackUrl = Url.Action("Register", "AdminInvite", new { token = encodedToken, email = request.Email }, protocol: Request.Scheme);
+            var callbackUrl = $"{Request.Scheme}://{Request.Host}/api/AdminInvite/Register?token={encodedToken}&email={request.Email}";
 
-
-            var subject = "Convite para Cadastro no Sistema";
+            var subject = "Convite para Registo no Sistema";
             var message = $@"
-        <p>Olá,</p>
-        <p>Você foi convidado para se cadastrar no sistema.</p>
-        <p>Clique no link abaixo para completar seu cadastro:</p>
-        <p><a href='{callbackUrl}'>Completar Cadastro</a></p>
-        <p>Este link expirará em 7 dias.</p>";
+                <p>Olá,</p>
+                <p>Você foi convidado para se Registar no sistema.</p>
+                <p>Clique no link abaixo para completar o seu Registo:</p>
+                <p><a href='{callbackUrl}'>Completar Registo</a></p>
+                <p>Este link expirará em 7 dias.</p>";
 
             await _emailSender.SendEmailAsync(request.Email, subject, message);
-            
+
             return Ok("Convite enviado com sucesso.");
         }
 
-
-        [HttpGet]
+        [HttpGet("Register")]
         public async Task<IActionResult> Register(string token, string email)
         {
+
+            
             var invitation = await _context.Invitations
                 .FirstOrDefaultAsync(i => i.Email == email && i.Token == token);
 
             if (invitation == null || invitation.Used || invitation.ExpirationDate < DateTime.UtcNow)
             {
+               
                 return BadRequest("Convite inválido ou expirado.");
             }
 
-      
-            return RedirectToPage("/Account/Register", new { email, token });
+
+            return Redirect($"/Identity/Account/Register?email={email}&token={token}");
+
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CompleteRegistration(string email, string token, string password,string fullName)
-        {
-            var invitation = await _context.Invitations
-                .FirstOrDefaultAsync(i => i.Email == email && i.Token == token);
-
-            if (invitation == null || invitation.Used || invitation.ExpirationDate < DateTime.UtcNow)
-            {
-                return BadRequest("Convite inválido ou expirado.");
-            }
-
-        
-            var user = new User { UserName = email, Email = email, EmailConfirmed = true, FullName = fullName };
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-          
-                invitation.Used = true;
-                await _context.SaveChangesAsync();
-
-                return Ok("Cadastro concluído com sucesso.");
-            }
-
-            return BadRequest("Erro ao criar conta.");
-        }
     }
 }
+
 public class InvitationRequest
 {
     public string Email { get; set; }
