@@ -81,6 +81,9 @@ namespace ESA_Terra_Argila.Controllers
                 return BadRequest("Convite inválido ou expirado.");
             }
             invitation.Used = true;
+          
+            await _context.SaveChangesAsync();
+
 
             return Redirect($"/Identity/Account/Register?email={email}&token={token}");
 
