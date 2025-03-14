@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using ESA_Terra_Argila.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -18,19 +19,20 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IEmailSender _emailSender; // Adicionado para envio de email
 
-        public ConfirmEmailChangeModel(UserManager<User> userManager, SignInManager<User> signInManager)
+        public ConfirmEmailChangeModel(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSender = emailSender; // Inicializando o serviço de e-mail
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
+
+
+
 
         public async Task<IActionResult> OnGetAsync(string userId, string email, string code)
         {
@@ -44,7 +46,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
-
+            System.Diagnostics.Debug.WriteLine("Antes de ChangeEmailAsync");
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ChangeEmailAsync(user, email, code);
             if (!result.Succeeded)
@@ -52,9 +54,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                 StatusMessage = "Error changing email.";
                 return Page();
             }
-
-            // In our UI email and user name are one and the same, so when we update the email
-            // we need to update the user name.
+            System.Diagnostics.Debug.WriteLine("Ant de ChangeEmailAsync");
             var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
             if (!setUserNameResult.Succeeded)
             {
@@ -63,7 +63,19 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Thank you for confirming your email change.";
+
+
+
+            // **Novo trecho para enviar um e-mail de confirmação**
+            var confirmationMessage = $"Your email has been successfully changed to {email}.";
+            await _emailSender.SendEmailAsync(
+                email,
+                "Email Changed Successfully",
+                confirmationMessage
+            );
+
+            StatusMessage = "Thank you for confirming your email change. A confirmation email has been sent.";
+            Console.WriteLine($"Email enviado para {email}.");
             return Page();
         }
     }

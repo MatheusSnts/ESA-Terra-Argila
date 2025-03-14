@@ -39,6 +39,7 @@ namespace ESA_Terra_Argila.Services
             }
         }
 
+
         public async Task SendConfirmationLinkAsync(User user, string confirmationLink, string token)
         {
             var subject = "Confirmação de e-mail";
@@ -62,6 +63,20 @@ namespace ESA_Terra_Argila.Services
 
             await SendEmailAsync(user.Email, subject, message);
         }
+
+        public async Task SendEmailChangeConfirmationAsync(string email, string confirmationLink)
+        {
+            var subject = "Confirmação de Alteração de E-mail";
+            var message = $@"
+        <p>Olá,</p>
+        <p>Para confirmar a alteração do seu e-mail, clique no link abaixo:</p>
+        <p><a href='{confirmationLink}'>Confirmar Alteração de E-mail</a></p>
+    ";
+            Console.WriteLine("Email de confirmação de alteração de e-mail enviado com sucesso.");
+            await SendEmailAsync(email, subject, message);
+            
+        }
+
 
         public async Task SendPasswordResetCodeAsync(User user, string resetCode, string provider)
         {

@@ -1,8 +1,35 @@
 ﻿@page
-@model ConfirmEmailChangeModel
+@model ESA_Terra_Argila.Areas.Identity.Pages.Account.ConfirmEmailChangeModel
 @{
-    ViewData["Title"] = "Confirm email change";
+    ViewData["Title"] = "Confirm Email Change";
 }
 
 <h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<h2>Email Change Confirmation</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            <div class="alert alert-info">
+                @Model.StatusMessage
+            </div>
+        }
+
+        <p>
+            Your email change request has been processed. If you did not request this change, please contact support.
+        </p>
+
+        <form method="post">
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Go to Dashboard</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
