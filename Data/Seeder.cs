@@ -39,7 +39,9 @@ namespace ESA_Terra_Argila.Data
                     UserName = email,
                     Email = email,
                     FullName = $"{roleCapitalized} User",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    AcceptedByAdmin = true
+
                 };
                 string password = $"{roleCapitalized}@123";
                 var hasher = new PasswordHasher<User>();

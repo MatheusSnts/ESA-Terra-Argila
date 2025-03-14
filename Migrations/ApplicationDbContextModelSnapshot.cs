@@ -261,6 +261,10 @@ namespace ESA_Terra_Argila.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -513,8 +517,9 @@ namespace ESA_Terra_Argila.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithMany("Materials")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 
@@ -529,8 +534,9 @@ namespace ESA_Terra_Argila.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithMany("Products")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 
@@ -542,13 +548,13 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasOne("ESA_Terra_Argila.Models.Material", "Material")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ESA_Terra_Argila.Models.Product", "Product")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Material");
@@ -661,6 +667,13 @@ namespace ESA_Terra_Argila.Migrations
             modelBuilder.Entity("ESA_Terra_Argila.Models.Product", b =>
                 {
                     b.Navigation("ProductMaterials");
+                });
+
+            modelBuilder.Entity("ESA_Terra_Argila.Models.User", b =>
+                {
+                    b.Navigation("Materials");
+
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,9 +12,13 @@ namespace ESA_Terra_Argila.Controllers
             {
                 return RedirectToRoute(new { controller = "Products", action = "Index" });
             }
-            if (User.IsInRole("Supplier"))
+            else if (User.IsInRole("Supplier"))
             {
                 return RedirectToRoute(new { controller = "Materials", action = "Index" });
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                return RedirectToRoute(new { controller = "Admin", action = "AcceptUsers" });
             }
             return RedirectToRoute(new { controller = "Home", action = "Index" });
         }

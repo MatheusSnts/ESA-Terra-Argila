@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ESA_Terra_Argila.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 namespace ESA_Terra_Argila.Models
 {
     public class User : IdentityUser
@@ -34,6 +37,27 @@ namespace ESA_Terra_Argila.Models
         public string? Description { get; set; }
 
         public bool AcceptedByAdmin { get; set; } = false;
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Display(Name = "Criado em")]
+        public DateTime CreatedAt { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Tipo")]
+        public UserRole Role { get; set; }
+
+        [Display(Name = "Produtos")]
+        [JsonIgnore]
+        public ICollection<Product> Products { get; set; }
+
+        [Display(Name = "Materiais")]
+        [JsonIgnore]
+        public ICollection<Material> Materials { get; set; }
+
+        public User()
+        {
+            CreatedAt = DateTime.UtcNow;
+        }
 
     }
 }

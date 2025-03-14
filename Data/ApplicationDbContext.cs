@@ -28,6 +28,24 @@ namespace ESA_Terra_Argila.Data
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Products)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Material>()
+                .HasOne(m => m.Category)
+                .WithMany(c => c.Materials)
+                .HasForeignKey(m => m.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Material>()
+                .HasOne(m => m.User)
+                .WithMany(u => u.Materials)
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<ProductMaterial>()
                 .HasKey(pm => new { pm.ProductId, pm.MaterialId });
 
@@ -38,12 +56,14 @@ namespace ESA_Terra_Argila.Data
             modelBuilder.Entity<ProductMaterial>()
                 .HasOne(pm => pm.Product)
                 .WithMany(p => p.ProductMaterials)
-                .HasForeignKey(pm => pm.ProductId);
+                .HasForeignKey(pm => pm.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ProductMaterial>()
                 .HasOne(pm => pm.Material)
                 .WithMany(m => m.ProductMaterials)
-                .HasForeignKey(pm => pm.MaterialId);
+                .HasForeignKey(pm => pm.MaterialId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.Tags)
@@ -51,17 +71,9 @@ namespace ESA_Terra_Argila.Data
                 .UsingEntity(j => j.ToTable("ProductTags"));
 
             modelBuilder.Entity<Material>()
-                .HasOne(m => m.Category)
-                .WithMany(c => c.Materials)
-                .HasForeignKey(m => m.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Material>()
                 .HasMany(m => m.Tags)
                 .WithMany(t => t.Materials)
                 .UsingEntity(j => j.ToTable("MaterialTags"));
-
-
         }
     }
 }

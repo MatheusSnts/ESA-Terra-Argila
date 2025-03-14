@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ESA_Terra_Argila.Models.User>
+@{
+    ViewData["Title"] = "Fornecedores";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="col-md-12 d-flex align-items-center mt-3 gap-5">
+    <h2>Fornecedores</h2>
+    <a class="add-button" asp-action="InviteSupplier">Criar convite</a>
+</div>
+<table id="datatable" class="display">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.FullName)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th class="text-start">Nº de materias</th>
+            <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+            <th>Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td class="text-start">@(user.Materials?.Count ?? 0)</td>
+                <td>@user.CreatedAt</td>
+                <td>
+                    <form asp-action="BlockUser" method="post" class="d-inline rounded-1">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@user.Id" />
+                        <button type="submit" class="text-danger text-decoration-none" title="Bloquear utilizador">
+                            <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                        </button>
+                    </form>
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@user.Id" />
+                        <button type="submit" class="text-danger text-decoration-none" title="Remover utilizador" onclick="return confirm('Tem a certeza que deseja reprovar este cadastro?');">
+                            <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </form>
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
