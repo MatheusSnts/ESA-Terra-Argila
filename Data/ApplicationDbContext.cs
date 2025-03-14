@@ -13,6 +13,8 @@ namespace ESA_Terra_Argila.Data
         public DbSet<Category> Categories { get; set; } = default!;
         public DbSet<Tag> Tags { get; set; } = default!;
         public DbSet<LogEntry> LogEntries { get; set; }
+
+        public DbSet<Invitation> Invitations { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
