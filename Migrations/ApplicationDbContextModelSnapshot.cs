@@ -54,7 +54,6 @@ namespace ESA_Terra_Argila.Migrations
                     b.ToTable("Categories");
                 });
 
-           
             modelBuilder.Entity("ESA_Terra_Argila.Models.Material", b =>
                 {
                     b.Property<int>("Id")

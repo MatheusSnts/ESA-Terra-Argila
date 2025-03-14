@@ -62,7 +62,6 @@ namespace ESA_Terra_Argila.Services
 
             await SendEmailAsync(user.Email, subject, message);
         }
-      
 
         public async Task SendPasswordResetCodeAsync(User user, string resetCode, string provider)
         {
@@ -76,9 +75,7 @@ namespace ESA_Terra_Argila.Services
             await SendEmailAsync(user.Email, subject, message);
         }
 
-       
     }
-
     public class EmailSettings
     {
         public string Host { get; set; }
