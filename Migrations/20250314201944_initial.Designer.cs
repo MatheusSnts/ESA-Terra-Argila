@@ -4,6 +4,7 @@ using ESA_Terra_Argila.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ESA_Terra_Argila.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250314201944_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -288,10 +291,6 @@ namespace ESA_Terra_Argila.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -544,9 +543,8 @@ namespace ESA_Terra_Argila.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
-                        .WithMany("Materials")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Category");
 
@@ -561,9 +559,8 @@ namespace ESA_Terra_Argila.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
-                        .WithMany("Products")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Category");
 
@@ -575,13 +572,13 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasOne("ESA_Terra_Argila.Models.Material", "Material")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ESA_Terra_Argila.Models.Product", "Product")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Material");
@@ -694,13 +691,6 @@ namespace ESA_Terra_Argila.Migrations
             modelBuilder.Entity("ESA_Terra_Argila.Models.Product", b =>
                 {
                     b.Navigation("ProductMaterials");
-                });
-
-            modelBuilder.Entity("ESA_Terra_Argila.Models.User", b =>
-                {
-                    b.Navigation("Materials");
-
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
