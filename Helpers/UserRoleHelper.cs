@@ -1,6 +1,6 @@
 ﻿using ESA_Terra_Argila.Enums;
 
-namespace ESA_Terra_Argila
+namespace ESA_Terra_Argila.Helpers
 {
     public static class UserRoleHelper
     {

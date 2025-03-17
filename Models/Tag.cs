@@ -42,6 +42,8 @@ namespace ESA_Terra_Argila.Models
         public Tag()
         {
             CreatedAt = DateTime.UtcNow;
+            Materials = new HashSet<Material>();
+            Products = new HashSet<Product>();
         }
     }
 }

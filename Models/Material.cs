@@ -63,9 +63,18 @@ namespace ESA_Terra_Argila.Models
         [JsonIgnore]
         public virtual ICollection<Tag> Tags { get; set; }
 
+        [Display(Name = "Imagens")]
+        public virtual ICollection<MaterialImage> Images { get; set; }
+
+        public ICollection<UserMaterialFavorite> FavoritedByUsers { get; set; }
+
         public Material()
         {
             CreatedAt = DateTime.UtcNow;
+            ProductMaterials = new HashSet<ProductMaterial>();
+            Tags = new HashSet<Tag>();
+            Images = new HashSet<MaterialImage>();
+            FavoritedByUsers = new HashSet<UserMaterialFavorite>();
         }
     }
 }

@@ -1,0 +1,90 @@
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@{
+    ViewData["Title"] = "Produtos";
+    var selectedVendors = ViewData["SelectedVendors"] as List<string> ?? new List<string>();
+}
+<style>
+    body {
+        background: #EBEBEB;
+    }
+</style>
+
+<div class="row col-md-12">
+    <div class="col-md-2 sidebar">
+        <form method="GET" action="@Url.Action("List")">
+            <div class="form-group">
+                <label>Ordenar por</label>
+                <select class="form-control" name="orderBy" onchange="submitFormOnChange(event)">
+                    <option value="asc" selected="@(Context.Request.Query["orderBy"] == "asc")">Preço: asc</option>
+                    <option value="desc" selected="@(Context.Request.Query["orderBy"] == "desc")">Preço: desc</option>
+                </select>
+            </div>
+            <div class="form-group mt-3">
+                <label>Preço</label>
+                <div class="d-flex gap-1">
+                    <input type="number" class="form-control" name="priceMin" placeholder="Min" value="@Context.Request.Query["priceMin"]" onchange="submitFormOnChange(event)">
+                    <input type="number" class="form-control" name="priceMax" placeholder="Max" value="@Context.Request.Query["priceMax"]" onchange="submitFormOnChange(event)">
+                </div>
+            </div>
+            <div class="form-group mt-3">
+                <label>Empresas</label>
+                <select class="select2-vendors" name="vendors" multiple="multiple" onchange="submitFormOnChange(event)">
+                    @foreach (var vendor in (SelectList)ViewData["Vendors"])
+                    {
+                        var isSelected = selectedVendors.Contains(vendor.Value);
+                        if (isSelected)
+                        {
+                            <option value="@vendor.Value" selected>@vendor.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@vendor.Value">@vendor.Text</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </form>
+    </div>
+    <div style="padding-top: 3.5rem;" class="col-md-9 d-flex gap-4 position-relative mx-auto flex-wrap">
+        <div id="pagination" style="width: 100%" class="position-absolute right-0 top-0 mt-2 d-flex gap-2 align-items-baseline">
+            <div>Páginas: </div>
+            @Html.PagedListPager((IPagedList)ViewBag.ProductsPage, page =>
+                     Url.Action("List", new
+                     {
+                         page,
+                         orderBy = Context.Request.Query["orderBy"],
+                         priceMin = Context.Request.Query["priceMin"],
+                         priceMax = Context.Request.Query["priceMax"],
+                         vendors = Context.Request.Query["vendors"]
+                     })
+                     )
+        </div>
+        @if (ViewBag.ProductsPage.Count == 0)
+        {
+            <div class="col-md-12 fw-bold text-center"> Nenhum produto encontrado</div>
+        }
+        @foreach (Product product in ViewBag.ProductsPage)
+        {
+            <div style="height: 60vh; width: 30%; background-color: white;" class="d-flex flex-column rounded border shadow">
+                <a asp-action="Details" asp-route-id="@product.Id" style="height: 45%" class="border-bottom rounded">
+                    <img id="main-image" src="@product.Images.FirstOrDefault()?.Path" alt="@product.Name" />
+                </a>
+                <div class="col-md-12 px-2 flex-grow-1 d-flex flex-column">
+                    <div style="margin-right: auto; margin-top: -0.8rem;" class="stock-badge fw-bold rounded">Em stock</div>
+                    <h4 class="mt-2">@product.User?.FullName</h4>
+                    <div style="margin-top: -0.7rem" class="text-lg">@product.Name</div>
+                    <div class="col-md-12">
+                        <div style="margin-top: 0.2rem; min-height: 1.5rem;" class="text-secondary text-decoration-line-through"></div>
+                        <h2 style="margin-top: -0.7rem" class="col-md-12">@product.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</h2>
+                    </div>
+                    <div class="col-md-12 d-flex flex-column flex-grow-1 gap-2 justify-content-end mb-2">
+                        <a class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
+                        <a class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

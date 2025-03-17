@@ -22,8 +22,8 @@
         <div class="form-group mt-2">
             <label>Visibilidade</label>
             <select asp-for="IsPublic" name="IsPublic" class="form-control">
-                <option value="1">Pública</option>
-                <option value="0">Privada</option>
+                <option value="true">Pública</option>
+                <option value="false">Privada</option>
             </select>
             <span asp-validation-for="IsPublic" class="text-danger asp-validation"></span>
         </div>

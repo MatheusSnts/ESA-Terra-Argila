@@ -12,7 +12,7 @@
 </head>
 <body>
     <header class="header">
-        <a href="#" class="logo">
+        <a asp-controller="Home" asp-action="Index" class="logo">
             <div class="logo-img">
                 <img src="~/images/logo.png"
                      alt="Terra & Argila Logo">
@@ -35,10 +35,11 @@
     </header>
 
     <nav class="nav">
-        <a asp-area="" asp-controller="Home" asp-action="Index">Nossas ofertas</a>
-        <a asp-area="" asp-controller="Home" asp-action="Index">Produtos</a>
-        <a asp-area="" asp-controller="Home" asp-action="Index">Empresas</a>
-        <a asp-area="" asp-controller="Home" asp-action="Index">Fornecedores</a>
+        <a asp-controller="Home" asp-action="Index">Nossas ofertas</a>
+        <a asp-controller="Products" asp-action="List">Produtos</a>
+        <a asp-controller="Materials" asp-action="List">Materiais</a>
+        <a asp-controller="Home" asp-action="Index">Empresas</a>
+        <a asp-controller="Home" asp-action="Index">Fornecedores</a>
     </nav>
 
     <div>
@@ -56,8 +57,8 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
+        Dropzone.autoDiscover = false;
         $(document).ready(function() {
-            Dropzone.autoDiscover = false;
             $('#datatable').DataTable({
                 "responsive": true,
                 "autoWidth": false,
@@ -92,7 +93,18 @@
             });
             $('.select2-tags').select2({
                 placeholder: "Tags",
-                allowClear: true 
+                allowClear: true,
+                width: 'resolve'
+            });
+            $('.select2-suppliers').select2({
+                placeholder: "Fornecedores",
+                allowClear: true,
+                width: 'resolve'
+            });
+            $('.select2-vendors').select2({
+                placeholder: "Empresas",
+                allowClear: true,
+                width: 'resolve'
             });
 
         });

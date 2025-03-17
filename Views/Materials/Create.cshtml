@@ -8,7 +8,7 @@
 <div class="d-flex align-items-center mt-3 gap-5">
     <h2>Novo material</h2>
 </div>
-<form asp-controller="Materials" asp-action="Create" method="post">
+<form asp-controller="Materials" asp-action="Create" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="col-md-12 d-flex gap-4">
         <div class="col-md-7 d-flex flex-column gap-4">
@@ -54,8 +54,7 @@
                     </div>
                     <div class="form-group">
                         <label>Tags</label>
-                        <select class="form-control select2-tags" asp-items="@(ViewData["Tags"] as SelectList)" name="Tags[]" multiple="multiple">
-
+                        <select class="select2-tags" asp-items="@(ViewData["Tags"] as SelectList)" name="Tags[]" multiple="multiple">
                         </select>
                     </div>
                     <input type="submit" value="Guardar" class="add-button col-md-12 mt-2 text-center">
@@ -64,35 +63,22 @@
             </div>
         </div>
         <div class="col-md-4 form-section d-flex flex-column align-items-center justify-content-between pb-3">
-            <div action="/upload" class="dropzone mt-2" id="new-product-dropzone"></div>
-            <button class="add-image-button col-md-11 text-center" id="dropZone">Adicionar imagem</button>
+            <input id="images-input" type="file" name="Images" onchange="updatePreviewImages(event)" style="display: none" accept="image/*" multiple />
+            <div class="col-md-12 px-2">
+                <div id="previews-container" class="d-flex justify-content-around col-md-12 gap-3 my-3 flex-wrap"
+                     style="max-height: 30rem; overflow-y: auto;">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                </div>
+            </div>
+            <a onclick="$('#images-input').click()" class="secondary-button col-md-11 text-center shadow-sm">Selecionar imagens</a>
         </div>
     </div>
 </form>
 
-<script>
-
-    // $(document).ready(function() {
-        // Dropzone.options.newProductDropzone = {
-        //     autoProcessQueue: false,
-        //     dictDefaultMessage: "Arraste os arquivos"
-        //     paramName: "file",
-        //     maxFilesize: 2,
-        //     clickable: "#dropZone" the ID of our parent wrapper div
-        // };
-            // Dropzone.autoDiscover = false;
-
-    // var myDropzone = new Dropzone("#new-product-dropzone", {
-    //     dictDefaultMessage: "Solte os arquivos aqui",
-    //     url: "/upload", Defina a URL do backend para upload
-    //     maxFilesize: 2, Tamanho máximo do arquivo (em MB)
-    //     acceptedFiles: "image/*" Aceita apenas imagens
-    // });
-    // });
-    // document.querySelector("#new-product-dropzone .dz-button").innerHTML = "Solte os arquivos aqui para enviar";
-    // $('.select2-single').select2();
-
-
-
-
-</script>

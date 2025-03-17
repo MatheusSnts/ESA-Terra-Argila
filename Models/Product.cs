@@ -62,12 +62,17 @@ namespace ESA_Terra_Argila.Models
         public ICollection<ProductMaterial> ProductMaterials { get; set; }
 
         [Display(Name = "Tags")]
-        [JsonIgnore]
         public virtual ICollection<Tag> Tags { get; set; }
+
+        [Display(Name = "Imagens")]
+        public virtual ICollection<ProductImage> Images { get; set; }
 
         public Product()
         {
             CreatedAt = DateTime.UtcNow;
+            ProductMaterials = new HashSet<ProductMaterial>();
+            Tags = new HashSet<Tag>();
+            Images = new HashSet<ProductImage>();
         }
     }
 }

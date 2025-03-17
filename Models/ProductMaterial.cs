@@ -7,7 +7,7 @@
 
         public int MaterialId { get; set; }
         public Material Material { get; set; }
-
+        public float Quantity { get; set; } = 0;
         public float Stock { get; set; } = 0;
     }
 }

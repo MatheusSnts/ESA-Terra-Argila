@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -15,14 +18,19 @@ namespace ESA_Terra_Argila.Controllers
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly string? userId;
+        private readonly UserManager<User> _userManager;
+        private string? userId;
 
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
-            userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+            _userManager = userManager;
+        }
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+            userId = _userManager.GetUserId(User);
         }
 
         // GET: Categories

@@ -291,6 +291,27 @@ namespace ESA_Terra_Argila.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MaterialImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaterialId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialImages_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MaterialTags",
                 columns: table => new
                 {
@@ -315,24 +336,72 @@ namespace ESA_Terra_Argila.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductMaterial",
+                name: "UserMaterialFavorites",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MaterialId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMaterialFavorites", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserMaterialFavorites_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserMaterialFavorites_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductImages_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductMaterials",
                 columns: table => new
                 {
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     MaterialId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<float>(type: "real", nullable: false),
                     Stock = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductMaterial", x => new { x.ProductId, x.MaterialId });
+                    table.PrimaryKey("PK_ProductMaterials", x => new { x.ProductId, x.MaterialId });
                     table.ForeignKey(
-                        name: "FK_ProductMaterial_Materials_MaterialId",
+                        name: "FK_ProductMaterials_Materials_MaterialId",
                         column: x => x.MaterialId,
                         principalTable: "Materials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductMaterial_Products_ProductId",
+                        name: "FK_ProductMaterials_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -408,6 +477,11 @@ namespace ESA_Terra_Argila.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MaterialImages_MaterialId",
+                table: "MaterialImages",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Materials_CategoryId",
                 table: "Materials",
                 column: "CategoryId");
@@ -423,8 +497,13 @@ namespace ESA_Terra_Argila.Migrations
                 column: "TagsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductMaterial_MaterialId",
-                table: "ProductMaterial",
+                name: "IX_ProductImages_ProductId",
+                table: "ProductImages",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductMaterials_MaterialId",
+                table: "ProductMaterials",
                 column: "MaterialId");
 
             migrationBuilder.CreateIndex(
@@ -445,6 +524,16 @@ namespace ESA_Terra_Argila.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_UserId",
                 table: "Tags",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMaterialFavorites_MaterialId",
+                table: "UserMaterialFavorites",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMaterialFavorites_UserId",
+                table: "UserMaterialFavorites",
                 column: "UserId");
         }
 
@@ -470,25 +559,34 @@ namespace ESA_Terra_Argila.Migrations
                 name: "LogEntries");
 
             migrationBuilder.DropTable(
+                name: "MaterialImages");
+
+            migrationBuilder.DropTable(
                 name: "MaterialTags");
 
             migrationBuilder.DropTable(
-                name: "ProductMaterial");
+                name: "ProductImages");
+
+            migrationBuilder.DropTable(
+                name: "ProductMaterials");
 
             migrationBuilder.DropTable(
                 name: "ProductTags");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "UserMaterialFavorites");
 
             migrationBuilder.DropTable(
-                name: "Materials");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Tags");
+
+            migrationBuilder.DropTable(
+                name: "Materials");
 
             migrationBuilder.DropTable(
                 name: "Categories");

@@ -54,9 +54,13 @@ namespace ESA_Terra_Argila.Models
         [JsonIgnore]
         public ICollection<Material> Materials { get; set; }
 
+        public ICollection<UserMaterialFavorite> FavoriteMaterials { get; set; }
+
         public User()
         {
             CreatedAt = DateTime.UtcNow;
+            Materials = new HashSet<Material>();
+            FavoriteMaterials = new HashSet<UserMaterialFavorite>();
         }
 
     }

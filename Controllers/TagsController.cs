@@ -7,18 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace ESA_Terra_Argila.Controllers
 {
     public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly string? userId;
+        private readonly UserManager<User> _userManager;
+        private string? userId;
 
-        public TagsController(ApplicationDbContext context)
+        public TagsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
-            userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            _userManager = userManager;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+            userId = _userManager.GetUserId(User);
         }
 
         // GET: Tags
@@ -59,7 +69,7 @@ namespace ESA_Terra_Argila.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Reference,UserId,Name,IsPublic,CreatedAt")] Tag tag)
+        public async Task<IActionResult> Create([Bind("Id,Reference,UserId,Name,IsPublic")] Tag tag)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +80,7 @@ namespace ESA_Terra_Argila.Controllers
                 TempData["SuccessMessage"] = "Tag adicionada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
-
+            return Json(ModelState.Values);
             TempData["ErrorMessage"] = "Erro ao adicionar tag!";
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", tag.UserId);
             return View(tag);

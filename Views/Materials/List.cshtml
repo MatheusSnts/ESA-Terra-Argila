@@ -1,0 +1,105 @@
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@{
+    ViewData["Title"] = "Materiais";
+    var selectedSuppliers = ViewData["SelectedSuppliers"] as List<string> ?? new List<string>();
+    var favoriteMaterials = ViewData["FavoriteMaterials"] as List<int> ?? new List<int>();
+}
+<style>
+    body {
+        background: #EBEBEB;
+    }
+</style>
+
+<div class="row col-md-12">
+    <div class="col-md-2 sidebar">
+        <form method="GET" action="@Url.Action("List")">
+            <div class="form-group">
+                <label>Ordenar por</label>
+                <select class="form-control" name="orderBy" onchange="submitFormOnChange(event)">
+                    <option value="asc" selected="@(Context.Request.Query["orderBy"] == "asc")">Preço: asc</option>
+                    <option value="desc" selected="@(Context.Request.Query["orderBy"] == "desc")">Preço: desc</option>
+                </select>
+            </div>
+            <div class="form-group mt-3">
+                <label>Preço</label>
+                <div class="d-flex gap-1">
+                    <input type="number" class="form-control" name="priceMin" placeholder="Min" value="@Context.Request.Query["priceMin"]" onchange="submitFormOnChange(event)">
+                    <input type="number" class="form-control" name="priceMax" placeholder="Max" value="@Context.Request.Query["priceMax"]" onchange="submitFormOnChange(event)">
+                </div>
+            </div>
+            <div class="form-group mt-3">
+                <label>Fornecedores</label>
+                <select class="select2-suppliers" name="suppliers" multiple="multiple" onchange="submitFormOnChange(event)">
+                    @foreach (var supplier in (SelectList)ViewData["Suppliers"])
+                    {
+                        var isSelected = selectedSuppliers.Contains(supplier.Value);
+                        if (isSelected)
+                        {
+                            <option value="@supplier.Value" selected>@supplier.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@supplier.Value">@supplier.Text</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </form>
+    </div>
+    <div style="padding-top: 3.5rem;" class="col-md-9 d-flex gap-4 position-relative mx-auto flex-wrap">
+        <div id="pagination" style="width: 100%" class="position-absolute right-0 top-0 mt-2 d-flex gap-2 align-items-baseline">
+            <div>Páginas: </div>
+            @Html.PagedListPager((IPagedList)ViewBag.MaterialsPage, page =>
+                     Url.Action("List", new
+                     {
+                         page,
+                         orderBy = Context.Request.Query["orderBy"],
+                         priceMin = Context.Request.Query["priceMin"],
+                         priceMax = Context.Request.Query["priceMax"],
+                         suppliers = Context.Request.Query["suppliers"]
+                     })
+                     )
+        </div>
+
+        @if (ViewBag.MaterialsPage.Count == 0)
+        {
+            <div class="col-md-12 fw-bold text-center"> Nenhum material encontrado</div>
+        }
+        @foreach (Material material in ViewBag.MaterialsPage)
+        {
+            var isFavorite = favoriteMaterials.Contains(material.Id);
+
+            <div style="height: 60vh; width: 30%; background-color: white;" class="d-flex flex-column position-relative list-card rounded border shadow">
+                @if (User.IsInRole("Vendor"))
+                {
+                    @if (isFavorite)
+                    {
+                        <img alt="Adicionar aos favoritos" src="/images/fav_on.png" style="height: 2rem; width: 2rem;" class="position-absolute top-0 end-0 m-2 fav-button cursor-pointer" onclick="setFavorite(event)" data-id="@material.Id" data-value="false" />
+                    }
+                    else
+                    {
+                        <img alt="Adicionar aos favoritos" src="/images/fav_off.png" style="height: 2rem; width: 2rem;" class="position-absolute top-0 end-0 m-2 fav-button cursor-pointer" onclick="setFavorite(event)" data-id="@material.Id" data-value="true" />
+                    }
+                }
+                <a asp-action="Details" asp-route-id="@material.Id" style="height: 45%" class="border-bottom rounded">
+                    <img id="main-image" src="@material.Images.FirstOrDefault()?.Path" alt="@material.Name" />
+                </a>
+                <div class="col-md-12 px-2 flex-grow-1 d-flex flex-column">
+                    <div style="margin-right: auto; margin-top: -0.8rem;" class="stock-badge fw-bold rounded">Em stock</div>
+                    <h4 class="mt-2">@material.User?.FullName</h4>
+                    <div style="margin-top: -0.7rem" class="text-lg">@material.Name</div>
+                    <div class="col-md-12">
+                        <div style="margin-top: 0.2rem; min-height: 1.5rem;" class="text-secondary text-decoration-line-through"></div>
+                        <h2 style="margin-top: -0.7rem" class="col-md-12">@material.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</h2>
+                    </div>
+                    <div class="col-md-12 d-flex flex-column gap-2 flex-grow-1 justify-content-end mb-2">
+                        <a class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
+                        <a class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
