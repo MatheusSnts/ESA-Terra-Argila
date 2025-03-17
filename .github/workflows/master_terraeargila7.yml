@@ -82,6 +82,9 @@ jobs:
       - name: Instalar a ferramenta dotnet-ef
         run: dotnet tool install --global dotnet-ef --version 7.*
 
+      - name: Listar arquivos
+        run: dir /s
+
       - name: Update database
         run: dotnet ef database update --project "ESA-Terra-Argila.csproj" --startup-project "ESA-Terra-Argila.csproj"
         env:
