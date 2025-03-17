@@ -78,6 +78,9 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2165AAC4657D47E3920EEEE605C5148C }}
+          
+      - name: Instalar a ferramenta dotnet-ef
+        run: dotnet tool install --global dotnet-ef --version 7.*
 
       - name: Update database
         run: dotnet ef database update
