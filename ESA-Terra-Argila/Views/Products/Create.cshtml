@@ -1,0 +1,116 @@
+﻿@model ESA_Terra_Argila.Models.Product
+
+@{
+    ViewData["Title"] = "Novo produto";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="d-flex align-items-center mt-3 gap-5">
+    <h2>Novo produto</h2>
+</div>
+<form asp-controller="Products" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-12 d-flex flex-column gap-4">
+        <div class="col-md-12 d-flex gap-4">
+            <div class="col-md-7 form-section pt-2 pb-4 px-4">
+                <h5><strong>Informações gerais</strong></h5>
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" asp-for="Name" name="Name" class="form-control" placeholder="Nome do produto...">
+                    <span asp-validation-for="Name" class="text-danger asp-validation"></span>
+                </div>
+                <div class="form-group">
+                    <label>Referência</label>
+                    <input type="text" asp-for="Reference" name="Reference" class="form-control" placeholder="Referência do produto...">
+                    <span asp-validation-for="Reference" class="text-danger asp-validation"></span>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea asp-for="Description" name="Description" class="form-control" placeholder="Descrição do produto..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger asp-validation"></span>
+                </div>
+            </div>
+            <div class="col-md-4 form-section d-flex flex-column align-items-center justify-content-end pb-3">
+                <input id="images-input" type="file" name="Images" onchange="updatePreviewImages(event)" style="display: none" accept="image/*" multiple />
+                <div class="col-md-12 px-2">
+                    <div id="previews-container" class="d-flex justify-content-around col-md-12 gap-3 mb-3 flex-wrap" style="max-height: 13rem; overflow-y: auto;">
+                        <img class="col-md-5 image-preview"></img>
+                        <img class="col-md-5 image-preview"></img>
+                        <img class="col-md-5 image-preview"></img>
+                        <img class="col-md-5 image-preview"></img>
+                    </div>
+                </div>
+                <a onclick="$('#images-input').click()" class="secondary-button col-md-11 text-center shadow-sm">Selecionar imagens</a>
+            </div>
+        </div>
+        <div class="col-md-12 d-flex gap-4">
+            <div class="col-md-7 d-flex form-section pt-2 pb-4 px-4 gap-3">
+                <div class="col-md-5">
+                    <h5><strong>Informações de venda</strong></h5>
+                    <div class="form-group">
+                        <label>Preço</label>
+                        <input type="number" asp-for="Price" name="Price" class="form-control" placeholder="Preço do produto...">
+                        <span asp-validation-for="Price" class="text-danger asp-validation"></span>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.85rem">
+                        <label>Unidade</label>
+                        <input type="text" asp-for="Unit" name="Unit" class="form-control" placeholder="Unidade do produto...">
+                        <span asp-validation-for="Unit" class="text-danger asp-validation"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5><strong>Composição sustentável</strong></h5>
+                    <div class="col-md-12 d-flex gap-2">
+                        <div class="form-group col-md-10">
+                            <label>Material</label>
+                            <select class="form-control" asp-items="@(ViewData["FavoriteMaterials"] as SelectList)" name="Materials[]">
+                                <option selected value="">Selecione o material</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Qtd.</label>
+                            <input type="number" class="form-control" name="MaterialsQty[]" placeholder="Qtd..." step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex gap-2 mt-1">
+                        <div class="form-group col-md-10">
+                            <select class="form-control" asp-items="@(ViewData["FavoriteMaterials"] as SelectList)" name="Materials[]">
+                                <option hidden disabled selected value="">Selecione o material</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <input type="number" class="form-control" name="MaterialsQty[]" placeholder="Qtd..." step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex gap-2 mt-1">
+                        <div class="form-group col-md-10">
+                            <select class="form-control" asp-items="@(ViewData["FavoriteMaterials"] as SelectList)" name="Materials[]">
+                                <option hidden disabled selected value="">Selecione o material</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <input type="number" class="form-control" name="MaterialsQty[]" placeholder="Qtd..." step="0.01" min="0">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-4 form-section pt-2 pb-3 px-4">
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select class="form-control" asp-for="CategoryId" asp-items="@(ViewData["Categories"] as SelectList)" name="CategoryId">
+                        <option hidden disabled selected>Categoria</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger asp-validation"></span>
+                </div>
+                <div class="form-group">
+                    <label>Tags</label>
+                    <select class="select2-tags" asp-items="@(ViewData["Tags"] as SelectList)" name="Tags[]" multiple="multiple">
+                    </select>
+                </div>
+                <input type="submit" value="Guardar" class="add-button col-md-12 mt-2 text-center">
+            </div>
+        </div>
+    </div>
+</form>
+

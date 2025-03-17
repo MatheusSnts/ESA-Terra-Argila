@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ESA_Terra_Argila</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css" integrity="sha512-7uSoC3grlnRktCWoO4LjHMjotq8gf9XDFQerPuaph+cqR7JC9XKGdvN+UwZMC14aAaBDItdRj3DcSDs4kMWUgg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="header">
+        <a asp-controller="Home" asp-action="Index" class="logo">
+            <div class="logo-img">
+                <img src="~/images/logo.png"
+                     alt="Terra & Argila Logo">
+            </div>
+            <h1>Terra&Argila</h1>
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar produtos ou empresas">
+            <span class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+            </span>
+        </div>
+        <div class="auth-links" style="color: white">
+            <partial name="_LoginPartial" />
+        </div>
+    </header>
+
+    <nav class="nav">
+        <a asp-controller="Home" asp-action="Index">Nossas ofertas</a>
+        <a asp-controller="Products" asp-action="List">Produtos</a>
+        <a asp-controller="Materials" asp-action="List">Materiais</a>
+        <a asp-controller="Home" asp-action="Index">Empresas</a>
+        <a asp-controller="Home" asp-action="Index">Fornecedores</a>
+    </nav>
+
+    <div>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.js" integrity="sha512-9e9rr82F9BPzG81+6UrwWLFj8ZLf59jnuIA/tIf8dEGoQVu7l5qvr02G/BiAabsFOYrIUTMslVN+iDYuszftVQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        Dropzone.autoDiscover = false;
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                "columnDefs": [
+                    { "className": "text-end", "targets": -1 } //Última coluna alinhada à direita
+                ],
+                "language": {
+                    "decimal": ",",
+                    "thousands": ".",
+                    "sEmptyTable": "Nenhum dado disponível na tabela",
+                    "sInfo": "A mostrar _START_ até _END_ de _TOTAL_ registos",
+                    "sInfoEmpty": "A mostrar 0 até 0 de 0 registos",
+                    "sInfoFiltered": "(filtrado de um total de _MAX_ registos)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "Mostrar _MENU_ registos por página",
+                    "sLoadingRecords": "A carregar...",
+                    "sProcessing": "A processar...",
+                    "sSearch": "Pesquisar:",
+                    "sZeroRecords": "Nenhum registo encontrado",
+                    "oPaginate": {
+                        "sFirst": "Primeiro",
+                        "sLast": "Último",
+                        "sNext": "Seguinte",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": ativar para ordenar a coluna de forma ascendente",
+                        "sSortDescending": ": ativar para ordenar a coluna de forma descendente"
+                    }
+                }
+            });
+            $('.select2-tags').select2({
+                placeholder: "Tags",
+                allowClear: true,
+                width: 'resolve'
+            });
+            $('.select2-suppliers').select2({
+                placeholder: "Fornecedores",
+                allowClear: true,
+                width: 'resolve'
+            });
+            $('.select2-vendors').select2({
+                placeholder: "Empresas",
+                allowClear: true,
+                width: 'resolve'
+            });
+
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,58 @@
+﻿@model ESA_Terra_Argila.Models.Product
+
+@{
+    ViewData["Title"] = $"{Model.Name}";
+    bool ownsProduct = Model.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+}
+<style>
+    body {
+    background-color: #EBEBEB;
+    }
+</style>
+<div class="col-md-10 mt-3 mx-auto">
+
+    <a class="add-button" onclick="window.history.back();">Voltar</a>
+
+    @if (ownsProduct)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-button">Editar produto</a>
+    }
+</div>
+<div style="background-color: #FFFFFF;" class="col-md-10 p-4 my-3 d-flex gap-3 mx-auto rounded shadow">
+    <div style="height: 200px" class="col-md-8 d-flex gap-2">
+        <div style="height: 30rem; overflow-y: auto;" class="d-flex flex-column gap-2 col-md-2">
+            @{
+                var count = Model.Images?.Count ?? 0;
+            }
+            @for (int i = 1; i < count; i++)
+            {
+                <div onclick="switchToImage(event)" style="height: 5rem" class="col-md-12 rounded border shadow">
+                    <img src="@Model.Images.ElementAt(i).Path" alt="@Model.Name" />
+                </div>
+            }
+        </div>
+        <div style="height: 30rem" class="d-flex flex-grow-1 rounded border shadow">
+            <img id="main-image" src="@Model.Images.FirstOrDefault()?.Path" alt="@Model.Name" />
+        </div>
+
+    </div>
+    <div style="background-color: #EBEBEB; height: 30rem" class="d-flex flex-column flex-grow-1 position-relative px-4 py-2 rounded border shadow">
+        <h2 style="min-height: 20%" class="col-md-12">@Model.Name</h2>
+        <div class="col-md-12 d-flex justify-content-between align-content-end">
+            <span class="text-secondary text-decoration-line-through"></span>
+            <span class="stock-badge fw-bold rounded">Em stock</span>
+        </div>
+        <h2 class="col-md-12">@Model.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</h2>
+        <p class="col-md-12 flex-grow-1 mt-2" style="height: 10.7rem; overflow-y: auto;">@Model.Description</p>
+        <div class="col-md-12 d-flex flex-column gap-2">
+            @if (!ownsProduct)
+            {
+                <a class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
+                <a class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+            }
+        </div>
+    </div>
+</div>
+
+

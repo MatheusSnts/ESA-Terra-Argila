@@ -1,0 +1,84 @@
+﻿@model ESA_Terra_Argila.Models.Material
+
+@{
+    ViewData["Title"] = "Novo material";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="d-flex align-items-center mt-3 gap-5">
+    <h2>Novo material</h2>
+</div>
+<form asp-controller="Materials" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-12 d-flex gap-4">
+        <div class="col-md-7 d-flex flex-column gap-4">
+            <div class="col-md-12 form-section pt-2 pb-4 px-4">
+                <h5><strong>Informações gerais</strong></h5>
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" asp-for="Name" name="Name" class="form-control" placeholder="Nome do material...">
+                    <span asp-validation-for="Name" class="text-danger asp-validation"></span>
+                </div>
+                <div class="form-group">
+                    <label>Referência</label>
+                    <input type="text" asp-for="Reference" name="Reference" class="form-control" placeholder="Referência do material...">
+                    <span asp-validation-for="Reference" class="text-danger asp-validation"></span>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea asp-for="Description" name="Description" class="form-control" placeholder="Descrição do material..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger asp-validation"></span>
+                </div>
+            </div>
+            <div class="col-md-12 d-flex justify-content-between">
+                <div style="width: 48.5%;" class="form-section pt-2 pb-3 px-4">
+                    <h5><strong>Informações de venda</strong></h5>
+                    <div class="form-group">
+                        <label>Preço</label>
+                        <input type="number" asp-for="Price" name="Price" class="form-control" placeholder="Preço do material...">
+                        <span asp-validation-for="Price" class="text-danger asp-validation"></span>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.85rem">
+                        <label>Unidade</label>
+                        <input type="text" asp-for="Unit" name="Unit" class="form-control" placeholder="Unidade do material...">
+                        <span asp-validation-for="Unit" class="text-danger asp-validation"></span>
+                    </div>
+                </div>
+                <div style="width: 48.5%;" class="form-section pt-2 pb-3 px-4">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select class="form-control" asp-for="CategoryId" asp-items="@(ViewData["Categories"] as SelectList)" name="CategoryId">
+                            <option hidden disabled selected>Categoria</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" asp-items="@(ViewData["Categories"] as SelectList)" class="text-danger asp-validation"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <select class="select2-tags" asp-items="@(ViewData["Tags"] as SelectList)" name="Tags[]" multiple="multiple">
+                        </select>
+                    </div>
+                    <input type="submit" value="Guardar" class="add-button col-md-12 mt-2 text-center">
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4 form-section d-flex flex-column align-items-center justify-content-between pb-3">
+            <input id="images-input" type="file" name="Images" onchange="updatePreviewImages(event)" style="display: none" accept="image/*" multiple />
+            <div class="col-md-12 px-2">
+                <div id="previews-container" class="d-flex justify-content-around col-md-12 gap-3 my-3 flex-wrap"
+                     style="max-height: 30rem; overflow-y: auto;">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                    <img class="col-md-5 image-preview">
+                </div>
+            </div>
+            <a onclick="$('#images-input').click()" class="secondary-button col-md-11 text-center shadow-sm">Selecionar imagens</a>
+        </div>
+    </div>
+</form>
+

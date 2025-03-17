@@ -1,0 +1,46 @@
+﻿@model IEnumerable<ESA_Terra_Argila.Models.Material>
+@{
+    ViewData["Title"] = "Materiais";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="d-flex align-items-center mt-3 gap-5">
+    <h2>Materiais</h2>
+</div>
+<table id="datatable" class="display">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Reference)</th>
+            <th>@Html.DisplayNameFor(model => model.Category)</th>
+            <th>@Html.DisplayNameFor(model => model.Price)</th>
+            <th>Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Reference</td>
+                <td>@item.Category?.Name</td>
+                <td>@item.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="text-secondary text-decoration-none">
+                        <svg class="action-icon" xmlns="http:www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </a>
+                    <a asp-action="UnsetFavorite" asp-route-id="@item.Id" class="text-danger text-decoration-none" onclick="return confirm('Tem a certeza que deseja remover este material dos favoritos?');">
+                        <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
