@@ -33,15 +33,9 @@ namespace TerraArgila.Tests.UI
         {
             // 2) Acessar a URL de login no seu Azure
             // Você mencionou: "https://terraeargila6-cabbhsb6hsfvg6at.canadacentral-01.azurewebsites.net/"
-            // E o login está em /Identity/Account/Login (por padrão do ASP.NET Identity)
+
             var loginUrl = "https://terraeargila6-cabbhsb6hsfvg6at.canadacentral-01.azurewebsites.net/Identity/Account/Login";
             _driver.Navigate().GoToUrl(loginUrl);
-
-            // 3) Localizar campos por ID ou outro seletor
-            // Pelo seu "Login.cshtml", "asp-for='Input.Email'" gera id="Input_Email"
-            // "asp-for='Input.Password'" gera id="Input_Password"
-            // "asp-for='Input.RememberMe'" gera id="Input_RememberMe"
-            // O botão está com id="login-submit"
 
             var emailField = _driver.FindElement(By.Id("Input_Email"));
             var passwordField = _driver.FindElement(By.Id("Input_Password"));

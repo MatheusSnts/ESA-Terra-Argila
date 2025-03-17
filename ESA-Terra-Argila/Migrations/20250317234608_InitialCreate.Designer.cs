@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ESA_Terra_Argila.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250316231017_Initial")]
-    partial class Initial
+    [Migration("20250317234608_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
