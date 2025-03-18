@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ESA_Terra_Argila.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250316231017_Initial")]
-    partial class Initial
+    [Migration("20250317204514_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,33 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("ESA_Terra_Argila.Models.Invitation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Invitations");
                 });
 
             modelBuilder.Entity("ESA_Terra_Argila.Models.LogEntry", b =>
