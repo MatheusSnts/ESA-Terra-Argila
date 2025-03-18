@@ -83,8 +83,7 @@
          run: dotnet tool install --global dotnet-ef --version 7.*
  
        - name: Update database
-         working-directory: ESA-Terra-Argila
-         run: dotnet ef database update
+         run: dotnet ef database update --project "ESA-Terra-Argila.csproj"
          env:
            DOTNET_ROOT: ${{env.DOTNET_ROOT}}
            ASPNETCORE_ENVIRONMENT: 'Production'
