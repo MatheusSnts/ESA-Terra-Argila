@@ -37,7 +37,7 @@ namespace TerraArgila.Tests.UI
         [Fact]
         public void Deve_RegistrarNovoUsuario()
         {
-            _driver.Navigate().GoToUrl("https://terraeargila6-cabbhsb6hsfvg6at.canadacentral-01.azurewebsites.net/Identity/Account/Register");
+            _driver.Navigate().GoToUrl("https://localhost:7197/Identity/Account/Register");
 
             _driver.FindElement(By.Id("Input_FullName")).SendKeys("Teste Selenium");
             var email = $"selenium_{Guid.NewGuid()}@test.com";

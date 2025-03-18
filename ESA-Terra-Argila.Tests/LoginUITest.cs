@@ -30,7 +30,7 @@ namespace TerraArgila.Tests.UI
         {
             // azure: "https://terraeargila6-cabbhsb6hsfvg6at.canadacentral-01.azurewebsites.net/"
 
-            var loginUrl = "https://terraeargila6-cabbhsb6hsfvg6at.canadacentral-01.azurewebsites.net/Identity/Account/Login";
+            var loginUrl = "https://localhost:7197/Identity/Account/Login";
             _driver.Navigate().GoToUrl(loginUrl);
 
             var emailField = _driver.FindElement(By.Id("Input_Email"));
