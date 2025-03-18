@@ -42,8 +42,8 @@ namespace TerraArgila.Tests.UI
             _driver.FindElement(By.Id("Input_FullName")).SendKeys("Teste Selenium");
             var email = $"selenium_{Guid.NewGuid()}@test.com";
             _driver.FindElement(By.Id("Input_Email")).SendKeys(email);
-            _driver.FindElement(By.Id("Input_Password")).SendKeys("Teste@1234");
-            _driver.FindElement(By.Id("Input_ConfirmPassword")).SendKeys("Teste@1234");
+            _driver.FindElement(By.Id("Input_Password")).SendKeys("Teste@1-.2/3.-6");
+            _driver.FindElement(By.Id("Input_ConfirmPassword")).SendKeys("Teste@1-.2/3.-6");
 
             var roleDropdown = _driver.FindElement(By.Id("Input_Role"));
             var selectRole = new SelectElement(roleDropdown);

@@ -39,7 +39,7 @@ namespace TerraArgila.Tests.UI
 
             //Email pass
             emailField.SendKeys("vendor@test.com");
-            passwordField.SendKeys("Vendor@123");
+            passwordField.SendKeys("Vendor@1-.2/3.-6");
 
             //Botão
             submitBtn.Click();

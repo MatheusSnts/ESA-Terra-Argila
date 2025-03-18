@@ -17,7 +17,7 @@ namespace ESA_Terra_Argila.Tests
 
         //Supplier
         private const string SupplierEmail = "supplier@test.com";
-        private const string SupplierPassword = "Supplier@123";
+        private const string SupplierPassword = "Supplier@1-.2/3.-6";
 
         public SupplierCreatesMaterialUITest()
         {
@@ -59,9 +59,9 @@ namespace ESA_Terra_Argila.Tests
             CreateTag(tagName, tagRef);
 
             // CRIAR MATERIAL 
-            //var materialName = "Mat Selenium " + Guid.NewGuid().ToString("N").Substring(6);
-            //var materialRef = "RefMat" + Guid.NewGuid().ToString("N").Substring(6);
-            //CreateMaterial(materialName, materialRef, categoryName, tagName);
+            var materialName = "Mat Selenium " + Guid.NewGuid().ToString("N").Substring(6);
+            var materialRef = "RefMat" + Guid.NewGuid().ToString("N").Substring(6);
+            CreateMaterial(materialName, materialRef, categoryName, tagName);
         }
 
        

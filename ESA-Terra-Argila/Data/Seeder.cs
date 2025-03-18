@@ -43,7 +43,7 @@ namespace ESA_Terra_Argila.Data
                     AcceptedByAdmin = true
 
                 };
-                string password = $"{roleCapitalized}@123";
+                string password = $"{roleCapitalized}@1-.2/3.-6";
                 var hasher = new PasswordHasher<User>();
                 user.PasswordHash = hasher.HashPassword(user, password);
 
@@ -51,7 +51,6 @@ namespace ESA_Terra_Argila.Data
                 await userManager.AddToRoleAsync(user, roleCapitalized);
             }
         }
-
         
     }
 }
