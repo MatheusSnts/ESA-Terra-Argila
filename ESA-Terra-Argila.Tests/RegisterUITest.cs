@@ -13,12 +13,12 @@ using OpenQA.Selenium.Support.UI;
 
 namespace TerraArgila.Tests.UI
 {
-    public class RegisterUITests : IDisposable
+    public class RegisterUITest : IDisposable
     {
         private readonly IWebDriver _driver;
         private readonly WebDriverWait _wait;
 
-        public RegisterUITests()
+        public RegisterUITest()
         {
             var options = new ChromeOptions();
             
@@ -50,12 +50,12 @@ namespace TerraArgila.Tests.UI
             selectRole.SelectByValue("Vendor");
 
             var registerButton = _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("registerSubmit")));
-            // Forçar scroll até o botão, se necessário
+
+            //Forçar scroll até o botão, caso seja preciso
             ((IJavaScriptExecutor)_driver).ExecuteScript("arguments[0].scrollIntoView(true);", registerButton);
 
             registerButton.Click();
 
-            // 4) Validar resultado
             Assert.Contains("/", _driver.Url);
             //Assert.Contains("RegisterConfirmation", _driver.Url);
         }
