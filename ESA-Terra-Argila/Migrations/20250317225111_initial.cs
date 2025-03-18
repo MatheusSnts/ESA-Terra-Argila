@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ESA_Terra_Argila.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -336,6 +336,34 @@ namespace ESA_Terra_Argila.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StockMovements",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaterialId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<float>(type: "real", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockMovements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockMovements_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StockMovements_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserMaterialFavorites",
                 columns: table => new
                 {
@@ -522,6 +550,16 @@ namespace ESA_Terra_Argila.Migrations
                 column: "TagsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StockMovements_MaterialId",
+                table: "StockMovements",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockMovements_UserId",
+                table: "StockMovements",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tags_UserId",
                 table: "Tags",
                 column: "UserId");
@@ -572,6 +610,9 @@ namespace ESA_Terra_Argila.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductTags");
+
+            migrationBuilder.DropTable(
+                name: "StockMovements");
 
             migrationBuilder.DropTable(
                 name: "UserMaterialFavorites");

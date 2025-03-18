@@ -1,0 +1,28 @@
+﻿@model List<ESA_Terra_Argila.Models.StockMovement>
+@{
+    var material = (ESA_Terra_Argila.Models.Material)ViewData["Material"];
+    ViewData["Title"] = "Histórico de Estoque - " + material.Name;
+}
+
+<h2>Histórico de Estoque - @material.Name</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Quantidade</th>
+            <th>Tipo</th>
+            <th>Usuário</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movement in Model)
+        {
+            <tr>
+                <td>@movement.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@movement.Quantity</td>
+                <td>@movement.Type</td>
+                <td>@(movement.User != null ? movement.User.FullName : "Desconhecido")</td>
+            </tr>
+        }
+    </tbody>
+</table>

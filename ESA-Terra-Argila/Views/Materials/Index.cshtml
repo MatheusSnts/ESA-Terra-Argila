@@ -19,6 +19,7 @@
             <th>@Html.DisplayNameFor(model => model.Category)</th>
             <th>@Html.DisplayNameFor(model => model.Price)</th>
             <th>Opções</th>
+            <th> </th>
         </tr>
     </thead>
     <tbody>
@@ -47,6 +48,16 @@
                         </svg>
                     </a>
                 </td>
+                <td>
+                    <a href="@Url.Action("StockHistory", "Materials", new { id = item.Id })" >
+                        Histórico de Movimentações
+                    </a>
+                    <a asp-action="CreateStockMovement" asp-route-id="@item.Id" >Gerir Stock </a>
+
+
+
+                </td>
+
             </tr>
         }
     </tbody>

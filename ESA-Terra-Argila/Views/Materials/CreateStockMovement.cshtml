@@ -1,0 +1,33 @@
+﻿@model ESA_Terra_Argila.Models.StockMovement
+
+@{
+    ViewData["Title"] = "Gestão de Stock";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h2>Gerir Stock</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-controller="Materials" asp-action="CreateStockMovement" method="post" enctype="application/x-www-form-urlencoded">
+    <input type="hidden" asp-for="MaterialId" />
+
+    <div class="form-group">
+        <label for="Quantity">Quantidade</label>
+        <input type="number" class="form-control" asp-for="Quantity" required min="1" />
+    </div>
+
+    <div class="form-group">
+        <label for="Type">Tipo de Movimento</label>
+        <select class="form-control" asp-for="Type" required>
+            <option value="Entrada">Entrada</option>
+            <option value="Saída">Saída</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirmar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

@@ -23,13 +23,15 @@ namespace ESA_Terra_Argila.Controllers
         private readonly ApplicationDbContext _context;
         private string? userId;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<MaterialsController> _logger;
 
 
 
-        public MaterialsController(ApplicationDbContext context, UserManager<User> userManager)
+        public MaterialsController(ApplicationDbContext context, UserManager<User> userManager, ILogger<MaterialsController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -279,6 +281,7 @@ namespace ESA_Terra_Argila.Controllers
             return View(material);
         }
 
+
         // GET: Materials/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -407,6 +410,7 @@ namespace ESA_Terra_Argila.Controllers
             return View(material);
         }
 
+
         // GET: Materials/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -458,6 +462,88 @@ namespace ESA_Terra_Argila.Controllers
         {
             return _context.Materials.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> StockHistory(int id)
+        {
+            var material = await _context.Materials
+                .Include(m => m.Category)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (material == null)
+            {
+                TempData["ErrorMessage"] = "Material não encontrado!";
+                return NotFound();
+            }
+
+            var movements = await _context.StockMovements
+                .Where(m => m.MaterialId == id)
+                .OrderByDescending(m => m.Date)
+                .Include(m => m.User)
+                .ToListAsync();
+
+            ViewData["Material"] = material;
+            return View(movements);
+        }
+
+        public IActionResult CreateStockMovement(int id)
+        {
+            var material = _context.Materials.Find(id);
+            if (material == null)
+            {
+                TempData["ErrorMessage"] = "Material não encontrado!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var movement = new StockMovement
+            {
+                MaterialId = material.Id
+            };
+
+            return View(movement);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateStockMovement([Bind("MaterialId,Quantity,Type")] StockMovement movement)
+        {
+            _logger.LogInformation("Entrou no método CreateStockMovement");
+
+            var material = await _context.Materials.FindAsync(movement.MaterialId);
+            if (material == null)
+            {
+                TempData["ErrorMessage"] = "Material não encontrado!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Atualizar o stock
+            if (movement.Type == "Entrada")
+            {
+                material.Stock += movement.Quantity;
+            }
+            else if (movement.Type == "Saída")
+            {
+                if (material.Stock < movement.Quantity)
+                {
+                    TempData["ErrorMessage"] = "Estoque insuficiente!";
+                    return View(movement);
+                }
+                material.Stock -= movement.Quantity;
+            }
+
+            // Guardar a movimentação no histórico
+            movement.Date = DateTime.UtcNow;
+            _context.StockMovements.Add(movement);
+            await _context.SaveChangesAsync();
+
+            // Registrar log do movimento
+            _logger.LogInformation($"Movimento registrado: {movement.Type} de {movement.Quantity} para o material {material.Name}.");
+
+            TempData["SuccessMessage"] = "Movimentação de estoque registrada!";
+            return RedirectToAction("Index", "Materials");
+        }
+
+
+
     }
 
     public class FavoriteRequestModel
