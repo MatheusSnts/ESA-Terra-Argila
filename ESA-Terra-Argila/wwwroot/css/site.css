@@ -391,7 +391,25 @@ body {
 .action-icon {
     width: 24px;
     height: 24px;
+
 }
+
+
+.cancel-button {
+    background-color: darkgrey;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 8px 40px;
+    cursor: pointer;
+    margin-left:2px;
+}
+
+    .cancel-button:hover {
+        background-color: #783D19;
+        color: white;
+    }
 
 .add-button {
     background-color: #5F6F52;
