@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using X.PagedList.Extensions;
 using Microsoft.AspNetCore.Identity;
+using ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -23,13 +24,16 @@ namespace ESA_Terra_Argila.Controllers
         private readonly ApplicationDbContext _context;
         private string? userId;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<MateriaisController>? _logger;
+        private readonly EmailModel _emailModel;
 
 
 
-        public MaterialsController(ApplicationDbContext context, UserManager<User> userManager)
+        public MaterialsController(ApplicationDbContext context, UserManager<User> userManager,EmailModel emailModel )
         {
             _context = context;
             _userManager = userManager;
+            _emailModel= emailModel;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -458,8 +462,30 @@ namespace ESA_Terra_Argila.Controllers
         {
             return _context.Materials.Any(e => e.Id == id);
         }
-    }
+    
 
+      public async Task<IActionResult> AtualizarStock(int id, int novoStock)
+        {
+            var material = await _context.Materials.FindAsync(id);
+            if (material == null)
+            {
+                return NotFound();
+            }
+
+            material.Stock = novoStock;
+            _context.Update(material);
+            await _context.SaveChangesAsync();
+
+            // Chama o método de envio de e-mail se o stock for 0
+            if (material.Stock == 0)
+            {
+                _logger.LogInformation($"Stock de {material.Name} está a 0. Enviando e-mail...");
+                await _emailModel.SendStockAlertEmailAsync(material.Name);
+            }
+
+            return Ok(new { message = "Stock atualizado." });
+        }
+    }
     public class FavoriteRequestModel
     {
         public int Id { get; set; }

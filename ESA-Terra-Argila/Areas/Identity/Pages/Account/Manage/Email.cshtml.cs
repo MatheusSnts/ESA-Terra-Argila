@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
 {
@@ -134,7 +135,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
                 await _emailSender.SendEmailAsync(
                     email,
                     "Verificação de email",
-                    $"Por favor, zika verifique o email da sua conta ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>carregar aqui</a>.");
+                    $"Por favor, verifique o email da sua conta ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>carregar aqui</a>.");
                 _logger.LogInformation("Debug 5");
                 StatusMessage = "Email de verificação enviado.";
                 return RedirectToPage();
@@ -142,6 +143,27 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
 
             StatusMessage = "Seu email não foi alterado.";
             return RedirectToPage();
+        }
+
+        public async Task SendStockAlertEmailAsync(string materialName)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var email = await _userManager.GetEmailAsync(user);
+            try
+            {
+                string subject = "Alerta de Stock: Material Esgotado";
+                string body = $"O material '{materialName}' está com stock a 0. É necessário repor .";
+
+                await _emailSender.SendEmailAsync(
+                    email,
+                    subject,
+                    body
+                );
+            }       
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao enviar o e-mail de alerta de stock: {ex.Message}");
+            }
         }
 
         public async Task<IActionResult> OnPostSendVerificationEmailAsync()
