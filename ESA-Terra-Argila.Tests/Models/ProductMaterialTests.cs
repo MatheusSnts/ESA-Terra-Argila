@@ -162,21 +162,18 @@ namespace ESA_Terra_Argila.Tests.Models
             _productMaterials = new List<ProductMaterial>
             {
                 new ProductMaterial {
-                    Id = 1,
                     ProductId = 1,
                     MaterialId = 1,
                     Product = _products.First(p => p.Id == 1),
                     Material = _materials.First(m => m.Id == 1)
                 },
                 new ProductMaterial {
-                    Id = 2,
                     ProductId = 1,
                     MaterialId = 2,
                     Product = _products.First(p => p.Id == 1),
                     Material = _materials.First(m => m.Id == 2)
                 },
                 new ProductMaterial {
-                    Id = 3,
                     ProductId = 2,
                     MaterialId = 2,
                     Product = _products.First(p => p.Id == 2),
@@ -240,7 +237,6 @@ namespace ESA_Terra_Argila.Tests.Models
             // Arrange
             var novoProdutoMaterial = new ProductMaterial
             {
-                Id = 4,
                 ProductId = 2,
                 MaterialId = 3,
                 Product = _products.First(p => p.Id == 2),

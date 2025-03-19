@@ -14,6 +14,10 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace ESA_Terra_Argila.Tests.Controllers
 {
@@ -24,15 +28,31 @@ namespace ESA_Terra_Argila.Tests.Controllers
         private readonly List<Product> _products;
         private readonly Category _category;
         private readonly string _userId = "test-user-id";
+        private readonly Mock<UserManager<User>> _mockUserManager;
 
         public ProductInventoryTests()
         {
-            // Configurar o banco de dados em memória
+            // Configurar o banco de dados em memória com um nome único para cada teste
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("TestProductInventoryDb_" + Guid.NewGuid().ToString())
                 .Options;
 
             _context = new ApplicationDbContext(options);
+
+            // Configurar o UserManager Mock
+            var userStore = new Mock<IUserStore<User>>();
+            _mockUserManager = new Mock<UserManager<User>>(
+                userStore.Object, null, null, null, null, null, null, null, null);
+            
+            // Configurar o comportamento do UserManager
+            _mockUserManager.Setup(x => x.GetUserIdAsync(It.IsAny<User>()))
+                .ReturnsAsync(_userId);
+            _mockUserManager.Setup(x => x.GetUserId(It.IsAny<ClaimsPrincipal>()))
+                .Returns(_userId);
+            _mockUserManager.Setup(x => x.FindByIdAsync(_userId))
+                .ReturnsAsync(new User { Id = _userId, FullName = "Test User" });
+            _mockUserManager.Setup(x => x.GetRolesAsync(It.IsAny<User>()))
+                .ReturnsAsync(new List<string> { "Supplier" });
 
             // Criar e adicionar uma categoria para os produtos
             _category = new Category
@@ -67,7 +87,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     Name = "Produto 2",
                     Reference = "P002",
                     Description = "Descrição do Produto 2",
-                    Price = 200.0f,
+                    Price = 150.0f,
                     Unit = "kg",
                     CreatedAt = DateTime.Now.AddDays(-5),
                     UserId = _userId,
@@ -87,7 +107,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             }, "mock"));
 
             // Configurar o controller com o context real e o usuario
-            _controller = new ProductsController(_context)
+            _controller = new ProductsController(_context, _mockUserManager.Object)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -98,11 +118,15 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     Mock.Of<ITempDataProvider>())
             };
             
-            // Importante: Como o userId é definido no construtor do controlador, mas nosso mock do usuário
-            // não é usado no construtor, precisamos definir o campo userId usando reflection
-            typeof(ProductsController)
-                .GetField("userId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.SetValue(_controller, _userId);
+            // Acionar explicitamente o OnActionExecuting para definir o userId
+            _controller.OnActionExecuting(new ActionExecutingContext(
+                new ActionContext(
+                    _controller.ControllerContext.HttpContext,
+                    new RouteData(),
+                    new ActionDescriptor()),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                null));
         }
 
         public void Dispose()
@@ -135,7 +159,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 new Claim(ClaimTypes.NameIdentifier, _userId),
             }, "mock"));
 
-            var controller = new ProductsController(_context)
+            var controller = new ProductsController(_context, _mockUserManager.Object)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -145,11 +169,21 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     new DefaultHttpContext(),
                     Mock.Of<ITempDataProvider>())
             };
-
-            // Importante: Definir o userId diretamente via reflection
-            typeof(ProductsController)
-                .GetField("userId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.SetValue(controller, _userId);
+            
+            // Chamar explicitamente o OnActionExecuting para definir o userId
+            controller.OnActionExecuting(new ActionExecutingContext(
+                new ActionContext(
+                    controller.ControllerContext.HttpContext,
+                    new RouteData(),
+                    new ActionDescriptor()),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                null));
+            
+            // Configurar o mock do UserManager para retornar um usuário específico
+            _mockUserManager
+                .Setup(x => x.GetUserId(It.IsAny<ClaimsPrincipal>()))
+                .Returns(_userId);
 
             // Act
             var result = await controller.Index();
@@ -169,13 +203,13 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 Name = "Novo Produto",
                 Reference = "NP001",
                 Description = "Descrição do Novo Produto",
-                Price = 300.0f,
+                Price = 200.0f,
                 Unit = "un",
                 CategoryId = _category.Id
             };
 
             // Act
-            var result = await _controller.Create(novoProduto);
+            var result = await _controller.Create(novoProduto, new List<IFormFile>(), new List<int>(), new List<int>(), new List<float?>());
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -207,12 +241,12 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 Name = "Produto Atualizado",
                 Reference = "P001-UPDATED",
                 Description = "Descrição atualizada",
-                Price = 150.0f,
+                Price = 120.0f,
                 Unit = "un"
             };
 
             // Act
-            var result = await _controller.Edit(produtoId, produtoAtualizado);
+            var result = await _controller.Edit(produtoId, produtoAtualizado, new List<IFormFile>(), new List<int>(), new List<int>(), new List<float?>());
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);

@@ -11,21 +11,37 @@ using ESA_Terra_Argila.Areas.Identity.Pages.Account;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using System.Threading.Tasks;
+using ESA_Terra_Argila.Data;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using System;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Reflection;
+using System.Text.Json;
 
 namespace ESA_Terra_Argila.Tests.Controllers
 {
-    public class LoginModelTests
+    public class LoginModelTests : IDisposable
     {
         private readonly Mock<SignInManager<User>> _signInManagerMock;
         private readonly Mock<ILogger<LoginModel>> _loggerMock;
         private readonly LoginModel _pageModel;
         private readonly Mock<UserManager<User>> _userManagerMock;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly Mock<HttpContext> _httpContextMock;
 
         public LoginModelTests()
         {
+            // Configurar o banco de dados em memória com um nome único para cada teste
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase("TestLoginModelDb_" + Guid.NewGuid().ToString())
+                .Options;
+
+            _dbContext = new ApplicationDbContext(options);
+
             // Configuração do UserManager (necessário para o SignInManager)
             var userStoreMock = new Mock<IUserStore<User>>();
-            var optionsAccessorMock = new Mock<Microsoft.Extensions.Options.IOptions<IdentityOptions>>();
+            var optionsAccessorMock = new Mock<IOptions<IdentityOptions>>();
             optionsAccessorMock.Setup(o => o.Value).Returns(new IdentityOptions());
             var passwordHasherMock = new Mock<IPasswordHasher<User>>();
             var userValidatorMock = new[] { new Mock<IUserValidator<User>>().Object };
@@ -51,9 +67,9 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var contextAccessor = new Mock<IHttpContextAccessor>();
             var userPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
             var logger = new Mock<ILogger<SignInManager<User>>>();
-            var optionsAccessorMock2 = new Mock<Microsoft.Extensions.Options.IOptions<IdentityOptions>>();
+            var optionsAccessorMock2 = new Mock<IOptions<IdentityOptions>>();
             optionsAccessorMock2.Setup(o => o.Value).Returns(new IdentityOptions());
-            var authSchemeProviderMock = new Mock<Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider>();
+            var authSchemeProviderMock = new Mock<IAuthenticationSchemeProvider>();
             var userConfirmationMock = new Mock<IUserConfirmation<User>>();
 
             _signInManagerMock = new Mock<SignInManager<User>>(
@@ -68,20 +84,16 @@ namespace ESA_Terra_Argila.Tests.Controllers
 
             _loggerMock = new Mock<ILogger<LoginModel>>();
 
-            // Configuração do HttpContext e PageContext
-            var httpContext = new DefaultHttpContext();
-            var modelState = new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary();
-            var actionContext = new ActionContext(
-                httpContext,
-                new RouteData(),
-                new PageActionDescriptor(),
-                modelState
-            );
+            // Configurar o HttpContext para incluir um RequestServices válido
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton(_dbContext);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var httpContext = new DefaultHttpContext { RequestServices = serviceProvider };
 
-            // Instancia o LoginModel
+            // Instancia o LoginModel com o HttpContext configurado
             _pageModel = new LoginModel(_signInManagerMock.Object, _loggerMock.Object)
             {
-                PageContext = new PageContext(actionContext)
+                PageContext = new PageContext(new ActionContext(httpContext, new RouteData(), new PageActionDescriptor()))
             };
         }
 
@@ -226,6 +238,13 @@ namespace ESA_Terra_Argila.Tests.Controllers
             // Assert
             var pageResult = Assert.IsType<PageResult>(result);
             Assert.False(_pageModel.ModelState.IsValid);
+        }
+
+        public void Dispose()
+        {
+            // Limpar o banco de dados após cada teste
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
         }
     }
 }

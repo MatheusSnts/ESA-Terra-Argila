@@ -21,24 +21,24 @@ namespace ESA_Terra_Argila.Tests.Controllers
 {
     public class TestUrlHelper : IUrlHelper
     {
-        public ActionContext ActionContext { get; set; }
+        public ActionContext ActionContext { get; set; } = default!;
 
         public string Action(UrlActionContext actionContext)
         {
             return "/action-url";
         }
 
-        public string Content(string contentPath)
+        public string? Content(string? contentPath)
         {
             return contentPath;
         }
 
-        public bool IsLocalUrl(string url)
+        public bool IsLocalUrl(string? url)
         {
             return true;
         }
 
-        public string Link(string routeName, object values)
+        public string? Link(string? routeName, object? values)
         {
             return "/link-url";
         }
