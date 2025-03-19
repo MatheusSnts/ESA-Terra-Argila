@@ -114,7 +114,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             _mockEmailModel = new Mock<EmailModel>(_mockUserManager.Object, Mock.Of<SignInManager<User>>(), Mock.Of<IEmailSender>(), Mock.Of<ILogger<ExternalLoginModel>>());
 
             // Configurar o controller com o context real e o usuario
-            _controller = new MaterialsController(_context, _mockUserManager.Object, _mockEmailModel.Object)
+            _controller = new MaterialsController(_context, _mockUserManager.Object)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -166,7 +166,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 new Claim(ClaimTypes.NameIdentifier, _userId),
             }, "mock"));
 
-            var controller = new MaterialsController(_context, _mockUserManager.Object, _mockEmailModel.Object)
+            var controller = new MaterialsController(_context, _mockUserManager.Object)
             {
                 ControllerContext = new ControllerContext
                 {
