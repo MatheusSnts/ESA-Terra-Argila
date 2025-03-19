@@ -24,16 +24,15 @@ namespace ESA_Terra_Argila.Controllers
         private readonly ApplicationDbContext _context;
         private string? userId;
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<MateriaisController>? _logger;
-        private readonly EmailModel _emailModel;
+        private readonly EmailModel? _emailModel;
 
 
 
-        public MaterialsController(ApplicationDbContext context, UserManager<User> userManager,EmailModel emailModel )
+        public MaterialsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _emailModel= emailModel;
+            
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -479,7 +478,6 @@ namespace ESA_Terra_Argila.Controllers
             // Chama o método de envio de e-mail se o stock for 0
             if (material.Stock == 0)
             {
-                _logger.LogInformation($"Stock de {material.Name} está a 0. Enviando e-mail...");
                 await _emailModel.SendStockAlertEmailAsync(material.Name);
             }
 

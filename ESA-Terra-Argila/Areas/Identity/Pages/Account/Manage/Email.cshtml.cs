@@ -160,7 +160,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage
                     body
                 );
             }       
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 _logger.LogError($"Erro ao enviar o e-mail de alerta de stock: {ex.Message}");
             }
