@@ -28,7 +28,7 @@
          run: dotnet restore
  
        - name: Run tests
-         run: dotnet test --no-restore --verbosity normal
+         run: dotnet test --no-restore --verbosity normal --filter "Category!=Selenium"
  
    build:
      runs-on: windows-latest

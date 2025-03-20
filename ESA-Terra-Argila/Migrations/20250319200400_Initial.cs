@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ESA_Terra_Argila.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -238,6 +238,32 @@ namespace ESA_Terra_Argila.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserActivities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ActivityType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    UserAgent = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false),
+                    AdditionalInfo = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserActivities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserActivities_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -543,6 +569,11 @@ namespace ESA_Terra_Argila.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserActivities_UserId",
+                table: "UserActivities",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserMaterialFavorites_MaterialId",
                 table: "UserMaterialFavorites",
                 column: "MaterialId");
@@ -591,6 +622,9 @@ namespace ESA_Terra_Argila.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductTags");
+
+            migrationBuilder.DropTable(
+                name: "UserActivities");
 
             migrationBuilder.DropTable(
                 name: "UserMaterialFavorites");

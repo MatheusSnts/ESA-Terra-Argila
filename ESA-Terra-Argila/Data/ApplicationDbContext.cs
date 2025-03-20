@@ -19,6 +19,8 @@ namespace ESA_Terra_Argila.Data
         public DbSet<Tag> Tags { get; set; } = default!;
         public DbSet<LogEntry> LogEntries { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; } = default!;
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -103,6 +105,12 @@ namespace ESA_Terra_Argila.Data
                 .HasOne(i => i.Material)
                 .WithMany(m => m.Images)
                 .HasForeignKey(i => i.MaterialId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserActivity>()
+                .HasOne(ua => ua.User)
+                .WithMany()
+                .HasForeignKey(ua => ua.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
