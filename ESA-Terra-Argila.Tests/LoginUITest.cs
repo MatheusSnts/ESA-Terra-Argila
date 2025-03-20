@@ -25,7 +25,7 @@ namespace TerraArgila.Tests.UI
             _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
         }
 
-        [Fact]
+        [Fact(Skip = "Selenium Tests")]
         public void Deve_FazerLogin_UsuarioVendor()
         {
             // azure: "https://terraeargila6-cabbhsb6hsfvg6at.canadacentral-01.azurewebsites.net/"

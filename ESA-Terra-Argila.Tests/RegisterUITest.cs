@@ -34,7 +34,7 @@ namespace TerraArgila.Tests.UI
             _driver.Manage().Window.Maximize();
         }
 
-        [Fact]
+        [Fact(Skip = "Selenium Tests")]
         public void Deve_RegistrarNovoUsuario()
         {
             _driver.Navigate().GoToUrl("https://localhost:7197/Identity/Account/Register");

@@ -33,7 +33,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
         private readonly Category _category;
         private readonly string _userId = "test-user-id";
         private readonly Mock<UserManager<User>> _mockUserManager;
-        private readonly Mock<EmailModel> _mockEmailModel;
+        //private readonly Mock<EmailModel> _mockEmailModel;
 
         public MaterialInventoryTests()
         {
@@ -111,7 +111,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 new Claim(ClaimTypes.NameIdentifier, _userId),
             }, "mock"));
 
-            _mockEmailModel = new Mock<EmailModel>(_mockUserManager.Object, Mock.Of<SignInManager<User>>(), Mock.Of<IEmailSender>(), Mock.Of<ILogger<ExternalLoginModel>>());
+            //_mockEmailModel = new Mock<EmailModel>(_mockUserManager.Object, Mock.Of<SignInManager<User>>(), Mock.Of<IEmailSender>(), Mock.Of<ILogger<ExternalLoginModel>>());
 
             // Configurar o controller com o context real e o usuario
             _controller = new MaterialsController(_context, _mockUserManager.Object)

@@ -42,7 +42,7 @@ namespace ESA_Terra_Argila.Tests
             _driver.Manage().Window.Maximize();
         }
 
-        [Fact]
+        [Fact(Skip = "Selenium Tests")]
         public void Everything()
         {
             // LOGIN
