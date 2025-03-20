@@ -28,7 +28,6 @@ namespace ESA_Terra_Argila.Tests.Controllers
         private readonly LoginModel _pageModel;
         private readonly Mock<UserManager<User>> _userManagerMock;
         private readonly ApplicationDbContext _dbContext;
-        private readonly Mock<HttpContext> _httpContextMock;
 
         public LoginModelTests()
         {

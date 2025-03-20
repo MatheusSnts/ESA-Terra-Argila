@@ -202,6 +202,7 @@ namespace ESA_Terra_Argila.Controllers
                 TempData["SuccessMessage"] = "Produto adicionado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
+            return Json(ModelState.Values);
             TempData["ErrorMessage"] = "Erro ao adicionar produto!";
             return View(product);
         }
