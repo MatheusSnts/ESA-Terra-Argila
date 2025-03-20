@@ -42,7 +42,8 @@ namespace ESA_Terra_Argila.Tests
             _driver.Manage().Window.Maximize();
         }
 
-        [Fact(Skip = "Selenium Tests")]
+        [Fact]
+        [Trait("Category", "Selenium")]
         public void Everything()
         {
             // LOGIN

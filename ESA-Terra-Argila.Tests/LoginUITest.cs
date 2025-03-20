@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,8 @@ namespace TerraArgila.Tests.UI
             _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
         }
 
-        [Fact(Skip = "Selenium Tests")]
+        [Fact]
+        [Trait("Category", "Selenium")]
         public void Deve_FazerLogin_UsuarioVendor()
         {
             // azure: "https://terraeargila6-cabbhsb6hsfvg6at.canadacentral-01.azurewebsites.net/"

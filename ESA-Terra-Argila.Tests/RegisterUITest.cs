@@ -9,6 +9,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using SeleniumExtras.WaitHelpers;
 using OpenQA.Selenium.Support.UI;
+using System.ComponentModel;
 
 
 namespace TerraArgila.Tests.UI
@@ -34,7 +35,8 @@ namespace TerraArgila.Tests.UI
             _driver.Manage().Window.Maximize();
         }
 
-        [Fact(Skip = "Selenium Tests")]
+        [Fact]
+        [Trait("Category", "Selenium")]
         public void Deve_RegistrarNovoUsuario()
         {
             _driver.Navigate().GoToUrl("https://localhost:7197/Identity/Account/Register");
