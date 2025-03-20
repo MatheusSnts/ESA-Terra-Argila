@@ -1,15 +1,11 @@
-<<<<<<< Updated upstream
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-=======
-using System;
->>>>>>> Stashed changes
+
 
 namespace ESA_Terra_Argila.Models
 {
     public class UserActivity
     {
-<<<<<<< Updated upstream
         [Key]
         public int Id { get; set; }
 
@@ -40,12 +36,6 @@ namespace ESA_Terra_Argila.Models
 
         [StringLength(500)]
         public string? AdditionalInfo { get; set; }
-=======
-        public int Id { get; set; }
-        public string UserId { get; set; }
-        public string ActivityType { get; set; }
-        public DateTime Timestamp { get; set; }
-        public string Description { get; set; }
->>>>>>> Stashed changes
+
     }
 } 
