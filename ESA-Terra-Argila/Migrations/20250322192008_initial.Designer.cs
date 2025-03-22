@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ESA_Terra_Argila.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250319200400_Initial")]
-    partial class Initial
+    [Migration("20250322192008_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -291,6 +291,39 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasIndex("MaterialId");
 
                     b.ToTable("ProductMaterials");
+                });
+
+            modelBuilder.Entity("ESA_Terra_Argila.Models.StockMovement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StockMovements");
                 });
 
             modelBuilder.Entity("ESA_Terra_Argila.Models.Tag", b =>
@@ -736,6 +769,23 @@ namespace ESA_Terra_Argila.Migrations
                     b.Navigation("Material");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ESA_Terra_Argila.Models.StockMovement", b =>
+                {
+                    b.HasOne("ESA_Terra_Argila.Models.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ESA_Terra_Argila.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Material");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ESA_Terra_Argila.Models.Tag", b =>
