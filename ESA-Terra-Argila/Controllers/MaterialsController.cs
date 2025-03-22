@@ -518,11 +518,7 @@ namespace ESA_Terra_Argila.Controllers
             // Atualizar o stock
             if (movement.Type == "Entrada")
             {
-                if (movement.Quantity < 0) { TempData["ErrorMessage"] = "Numero invalido"; }
-                else
-                {
-                    material.Stock += movement.Quantity;
-                }
+                material.Stock += movement.Quantity;
             }
             else if (movement.Type == "Saída")
             {
