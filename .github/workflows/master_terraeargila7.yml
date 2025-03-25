@@ -33,6 +33,7 @@
    build:
      runs-on: windows-latest
      needs: test
+     if: github.ref == 'refs/heads/master' # Garante que o build só roda na master
      permissions:
        contents: read
  
