@@ -482,6 +482,12 @@ img {
     color: white;
     font-size: 12px;
 }
+.no-stock-badge {
+    padding: 0.25rem;
+    background-color: darkred;
+    color: white;
+    font-size: 12px;
+}
 
 .cursor-pointer{
     cursor: pointer;
