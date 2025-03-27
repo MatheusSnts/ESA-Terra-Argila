@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ESA_Terra_Argila.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250322192008_initial")]
-    partial class initial
+    [Migration("20250327125615_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -189,6 +189,62 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasIndex("MaterialId");
 
                     b.ToTable("MaterialImages");
+                });
+
+            modelBuilder.Entity("ESA_Terra_Argila.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("ESA_Terra_Argila.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("MaterialId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("ESA_Terra_Argila.Models.Product", b =>
@@ -708,7 +764,7 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
                         .WithMany("Materials")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
 
@@ -725,6 +781,40 @@ namespace ESA_Terra_Argila.Migrations
                     b.Navigation("Material");
                 });
 
+            modelBuilder.Entity("ESA_Terra_Argila.Models.Order", b =>
+                {
+                    b.HasOne("ESA_Terra_Argila.Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ESA_Terra_Argila.Models.OrderItem", b =>
+                {
+                    b.HasOne("ESA_Terra_Argila.Models.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ESA_Terra_Argila.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ESA_Terra_Argila.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Material");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ESA_Terra_Argila.Models.Product", b =>
                 {
                     b.HasOne("ESA_Terra_Argila.Models.Category", "Category")
@@ -735,7 +825,7 @@ namespace ESA_Terra_Argila.Migrations
                     b.HasOne("ESA_Terra_Argila.Models.User", "User")
                         .WithMany("Products")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
 
@@ -924,6 +1014,11 @@ namespace ESA_Terra_Argila.Migrations
                     b.Navigation("ProductMaterials");
                 });
 
+            modelBuilder.Entity("ESA_Terra_Argila.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
             modelBuilder.Entity("ESA_Terra_Argila.Models.Product", b =>
                 {
                     b.Navigation("Images");
@@ -936,6 +1031,8 @@ namespace ESA_Terra_Argila.Migrations
                     b.Navigation("FavoriteMaterials");
 
                     b.Navigation("Materials");
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Products");
                 });

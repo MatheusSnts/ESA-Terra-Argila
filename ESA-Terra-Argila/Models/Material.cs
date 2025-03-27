@@ -47,7 +47,6 @@ namespace ESA_Terra_Argila.Models
         [Display(Name = "Criado em")]
         public DateTime CreatedAt { get; set; }
 
-        // Relacionamentos
         [ForeignKey("CategoryId")]
         [Display(Name = "Categoria")]
         public virtual Category? Category { get; set; }

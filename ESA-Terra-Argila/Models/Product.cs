@@ -67,6 +67,7 @@ namespace ESA_Terra_Argila.Models
         [Display(Name = "Imagens")]
         public virtual ICollection<ProductImage> Images { get; set; }
 
+
         public Product()
         {
             CreatedAt = DateTime.UtcNow;
