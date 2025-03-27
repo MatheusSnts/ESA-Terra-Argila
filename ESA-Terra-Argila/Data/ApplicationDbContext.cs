@@ -20,6 +20,7 @@ namespace ESA_Terra_Argila.Data
         public DbSet<LogEntry> LogEntries { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; } = default!;
+        public DbSet<StockMovement> StockMovements { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
