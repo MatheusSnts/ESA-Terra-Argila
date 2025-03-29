@@ -7,8 +7,7 @@ using System.Globalization;
 using ESA_Terra_Argila.Resources.ErrorDescribers;
 using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
-
-
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,28 +19,30 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-
 builder.Services.AddIdentity<User, IdentityRole>(options =>
-    {
-        options.SignIn.RequireConfirmedAccount = false;
-    })
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders()
     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
     .AddDefaultUI();
 
-
 builder.Services.Configure<IdentityOptions>(options =>
 {
-// Configurações de Lockout
+    // Configurações de Lockout
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 3;
     options.Lockout.AllowedForNewUsers = true;
 });
 
+// Configuração da API Stripe
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddRazorPages();
 
+
 var app = builder.Build();
+
 
 using (var scope = app.Services.CreateScope())
 {
@@ -57,6 +58,8 @@ using (var scope = app.Services.CreateScope())
     await Seeder.SeedUsersAsync(userManager);
 }
 
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -69,14 +72,17 @@ else
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
+
 
 app.UseRouting();
 
+
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapRazorPages();
 
@@ -85,5 +91,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 await app.RunAsync();
-
-

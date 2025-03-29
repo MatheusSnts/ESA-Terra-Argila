@@ -21,6 +21,7 @@ namespace ESA_Terra_Argila.Data
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<Order> Orders { get; set; } = default!;
         public DbSet<OrderItem> OrderItems { get; set; } = default!;
+        public DbSet<Payment> Payments { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
