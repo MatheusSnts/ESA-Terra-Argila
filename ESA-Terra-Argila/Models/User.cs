@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using static NuGet.Packaging.PackagingConstants;
 namespace ESA_Terra_Argila.Models
 {
     public class User : IdentityUser
@@ -55,12 +56,14 @@ namespace ESA_Terra_Argila.Models
         public ICollection<Material> Materials { get; set; }
 
         public ICollection<UserMaterialFavorite> FavoriteMaterials { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
 
         public User()
         {
             CreatedAt = DateTime.UtcNow;
             Materials = new HashSet<Material>();
             FavoriteMaterials = new HashSet<UserMaterialFavorite>();
+            Orders = new HashSet<Order>();
         }
 
     }

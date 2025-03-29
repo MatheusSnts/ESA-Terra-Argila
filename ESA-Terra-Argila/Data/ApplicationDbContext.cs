@@ -9,10 +9,8 @@ namespace ESA_Terra_Argila.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public DbSet<Product> Products { get; set; } = default!;
-        public DbSet<Material> Materials { get; set; } = default!;
-        public DbSet<ProductImage> ProductImages { get; set; } = default!;
-        public DbSet<MaterialImage> MaterialImages { get; set; } = default!;
+        public DbSet<Item> Items { get; set; } = default!;
+        public DbSet<ItemImage> ItemImages { get; set; } = default!;
         public DbSet<ProductMaterial> ProductMaterials { get; set; } = default!;
         public DbSet<UserMaterialFavorite> UserMaterialFavorites { get; set; } = default!;
         public DbSet<Category> Categories { get; set; } = default!;
@@ -21,6 +19,9 @@ namespace ESA_Terra_Argila.Data
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; } = default!;
         public DbSet<StockMovement> StockMovements { get; set; }
+        public DbSet<Order> Orders { get; set; } = default!;
+        public DbSet<OrderItem> OrderItems { get; set; } = default!;
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -41,7 +42,7 @@ namespace ESA_Terra_Argila.Data
                 .HasOne(p => p.User)
                 .WithMany(u => u.Products)
                 .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Material>()
                 .HasOne(m => m.Category)
@@ -53,7 +54,7 @@ namespace ESA_Terra_Argila.Data
                 .HasOne(m => m.User)
                 .WithMany(u => u.Materials)
                 .HasForeignKey(m => m.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<UserMaterialFavorite>()
                 .HasOne(umf => umf.User)
@@ -65,7 +66,7 @@ namespace ESA_Terra_Argila.Data
                 .HasOne(umf => umf.Material)
                 .WithMany(m => m.FavoritedByUsers)
                 .HasForeignKey(umf => umf.MaterialId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ProductMaterial>()
                 .HasKey(pm => new { pm.ProductId, pm.MaterialId });
@@ -96,16 +97,10 @@ namespace ESA_Terra_Argila.Data
                 .WithMany(t => t.Materials)
                 .UsingEntity(j => j.ToTable("MaterialTags"));
 
-            modelBuilder.Entity<ProductImage>()
-                .HasOne(i => i.Product)
-                .WithMany(p => p.Images)
-                .HasForeignKey(i => i.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<MaterialImage>()
-                .HasOne(i => i.Material)
-                .WithMany(m => m.Images)
-                .HasForeignKey(i => i.MaterialId)
+            modelBuilder.Entity<ItemImage>()
+                .HasOne(ii => ii.Item)
+                .WithMany(i => i.Images)
+                .HasForeignKey(i => i.ItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserActivity>()
@@ -113,6 +108,24 @@ namespace ESA_Terra_Argila.Data
                 .WithMany()
                 .HasForeignKey(ua => ua.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.OrderItems)
+                .WithOne(oi => oi.Order)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Item)
+                .WithMany()
+                .HasForeignKey(oi => oi.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

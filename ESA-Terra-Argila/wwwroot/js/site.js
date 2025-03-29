@@ -59,3 +59,53 @@ function setFavorite(event)
     });
     
 }
+function addCartItemQuantity(event)
+{
+    ajaxAddCartItemQuantity($(event.target).closest(".cart-item").data("id"), 1, event);
+}
+
+function removeCartItemQuantity(event)
+{
+    ajaxAddCartItemQuantity($(event.target).closest(".cart-item").data("id"), -1, event);
+}
+
+
+function ajaxAddCartItemQuantity(id, value, event)
+{
+    $.ajax({
+        url: "/Orders/AddQuantity",
+        type: "POST",
+        data: JSON.stringify({ id, value }),
+        contentType: "application/json",
+        success: function (response) {
+            if (!response.success) return;
+            let cartItem = $(event.target).closest(".cart-item");
+            cartItem.find(".quantity").text(response.quantity);
+            cartItem.find(".partial").text(response.partial);
+            $(".total").text(response.total);
+        },
+        error: function (xhr) {
+            console.error("Erro ao atualizar quantidade:", xhr.responseText);
+        }
+    });
+}
+
+function updateCartItemCount()
+{
+    console.log("Atualizando quantidade!")
+    $.ajax({
+        url: "/Orders/GetCartItemCount",
+        type: "GET",
+        success: function (response) {
+            console.log(response)
+            if (!response.success || !response.count) return;
+            let cartCount = $(".cart-item-count");
+            cartCount.text(response.count);
+            cartCount.removeClass('hidden');
+        },
+        error: function (xhr) {
+            console.error("Erro ao atualizar quantidade:", xhr.responseText);
+        }
+    });
+
+}
