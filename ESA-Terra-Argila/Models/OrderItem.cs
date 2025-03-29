@@ -22,6 +22,18 @@ namespace ESA_Terra_Argila.Models
         [ForeignKey("MaterialId")]
         public virtual Material? Material { get; set; }
 
+        public float GetTotal()
+        {
+            float unitPrice = 0;
+
+            if (Product != null)
+                unitPrice = Product.Price;
+            else if (Material != null)
+                unitPrice = Material.Price;
+
+            return unitPrice * Quantity;
+        }
+
 
     }
 }

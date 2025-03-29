@@ -80,8 +80,8 @@
                         <h2 style="margin-top: -0.7rem" class="col-md-12">@product.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</h2>
                     </div>
                     <div class="col-md-12 d-flex flex-column flex-grow-1 gap-2 justify-content-end mb-2">
-                        <a class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
-                        <a class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+                        <a asp-action="BuyNow" asp-route-id="@product.Id" class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
+                        <a asp-action="AddToCart" asp-route-id="@product.Id" class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
                     </div>
                 </div>
             </div>

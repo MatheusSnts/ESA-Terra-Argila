@@ -27,5 +27,10 @@ namespace ESA_Terra_Argila.Models
             CreatedAt = DateTime.UtcNow;
             OrderItems = new HashSet<OrderItem>();
         }
+
+        public float GetTotal()
+        {
+            return OrderItems.Sum(item => item.GetTotal());
+        }
     }
 }

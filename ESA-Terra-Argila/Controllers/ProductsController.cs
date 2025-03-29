@@ -15,6 +15,7 @@ using ESA_Terra_Argila.Helpers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Identity;
 using X.PagedList.Extensions;
+using ESA_Terra_Argila.Enums;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -409,5 +410,55 @@ namespace ESA_Terra_Argila.Controllers
         {
             return _context.Products.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> AddToCart(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
+
+            if (order == null)
+            {
+                order = new Order
+                {
+                    UserId = userId,
+                    Status = OrderStatus.Draft
+                };
+                _context.Orders.Add(order);
+            }
+
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+                return NotFound("Produto não encontrado");
+            var existingItem = order.OrderItems.FirstOrDefault(oi => oi.ProductId == id);
+            if (existingItem != null)
+            {
+                existingItem.Quantity += 1;
+            }
+            else
+            {
+                var orderItem = new OrderItem
+                {
+                    ProductId = id,
+                    Quantity = 1
+                };
+                order.OrderItems.Add(orderItem);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var referer = Request.Headers.Referer.ToString();
+            if (!string.IsNullOrEmpty(referer))
+            {
+                return Redirect(referer);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+        public async Task<IActionResult> BuyNow(int id)
+        {
+            return Ok();
+        }
     }
 }
+
