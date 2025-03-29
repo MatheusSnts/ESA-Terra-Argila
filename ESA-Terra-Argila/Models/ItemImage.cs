@@ -4,21 +4,20 @@ using System.Text.Json.Serialization;
 
 namespace ESA_Terra_Argila.Models
 {
-    public class MaterialImage
+    public class ItemImage
     {
         [Key]
         public int Id { get; set; }
 
-
-        public int? MaterialId { get; set; }
+        public int? ItemId { get; set; }
 
         public string Name { get; set; } = default!;
 
         public string Path { get; set; } = default!;
 
-        [ForeignKey("MaterialId")]
+        [ForeignKey("ItemId")]
         [JsonIgnore]
-        public virtual Material? Material { get; set; }
+        public virtual Item? Item { get; set; }
 
     }
 }

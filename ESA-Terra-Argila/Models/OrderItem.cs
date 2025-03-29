@@ -14,24 +14,14 @@ namespace ESA_Terra_Argila.Models
         [ForeignKey("OrderId")]
         public virtual Order? Order { get; set; }
 
-        public int? ProductId { get; set; }
-        [ForeignKey("ProductId")]
-        public virtual Product? Product { get; set; }
-
-        public int? MaterialId { get; set; }
-        [ForeignKey("MaterialId")]
-        public virtual Material? Material { get; set; }
+        public int? ItemId { get; set; }
+        [ForeignKey("ItemId")]
+        public virtual Item Item { get; set; }
 
         public float GetTotal()
         {
-            float unitPrice = 0;
 
-            if (Product != null)
-                unitPrice = Product.Price;
-            else if (Material != null)
-                unitPrice = Material.Price;
-
-            return unitPrice * Quantity;
+            return Item.Price * Quantity;
         }
 
 

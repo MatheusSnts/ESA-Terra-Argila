@@ -48,8 +48,8 @@
         <div class="col-md-12 d-flex flex-column gap-2">
             @if (!ownsProduct)
             {
-                <a asp-action="BuyNow" asp-route-id="@Model.Id" class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
-                <a asp-action="AddToCart" asp-route-id="@Model.Id" class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+                <a asp-controller="Orders" asp-action="BuyNow" asp-route-id="@Model.Id" class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
+                <a asp-controller="Orders" asp-action="AddToCart" asp-route-id="@Model.Id" class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
             }
         </div>
     </div>

@@ -154,8 +154,8 @@ namespace ESA_Terra_Argila.Tests.Models
             };
 
             // Adicionar produtos e materiais ao contexto
-            _context.Products.AddRange(_products);
-            _context.Materials.AddRange(_materials);
+            _context.Items.AddRange(_products);
+            _context.Items.AddRange(_materials);
             _context.SaveChanges();
 
             // Dados de exemplo para a relação produto-material

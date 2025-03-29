@@ -41,14 +41,19 @@ namespace ESA_Terra_Argila.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Products.Where(p => p.UserId == userId).Include(p => p.Category).Include(p => p.User);
+            var applicationDbContext = _context.Items
+                    .OfType<Product>()
+                    .Where(p => p.UserId == userId)
+                    .Include(p => p.Category)
+                    .Include(p => p.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
         [AllowAnonymous]
         public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? vendors)
         {
-            var query = _context.Products
+            var query = _context.Items
+                .OfType<Product>()
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .Include(m => m.Images)
@@ -107,7 +112,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .Include(p => p.Images)
@@ -182,7 +188,7 @@ namespace ESA_Terra_Argila.Controllers
 
                 if (Images != null && Images.Count > 0)
                 {
-                    var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ProductImagesFolder}{product.Id}");
+                    var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ItemImagesFolder}{product.Id}");
 
                     if (!Directory.Exists(imagesFolder))
                         Directory.CreateDirectory(imagesFolder);
@@ -191,9 +197,9 @@ namespace ESA_Terra_Argila.Controllers
                     {
                         if (file.Length > 0)
                         {
-                            ProductImage productImage = await ImageHelper.SaveProductImage(file, product.Id, imagesFolder);
+                            ItemImage productImage = await ImageHelper.SaveItemImage(file, product.Id, imagesFolder);
 
-                            _context.ProductImages.Add(productImage);
+                            _context.ItemImages.Add(productImage);
                         }
                     }
 
@@ -203,7 +209,6 @@ namespace ESA_Terra_Argila.Controllers
                 TempData["SuccessMessage"] = "Produto adicionado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
-            return Json(ModelState.Values);
             TempData["ErrorMessage"] = "Erro ao adicionar produto!";
             return View(product);
         }
@@ -216,7 +221,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Tags)
                 .Include(p => p.Images)
                 .Include(p => p.ProductMaterials)
@@ -273,7 +279,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var foundProduct = await _context.Products
+            var foundProduct = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Tags)
                 .Include(p => p.Images)
                 .Include(p => p.ProductMaterials)
@@ -324,7 +331,7 @@ namespace ESA_Terra_Argila.Controllers
 
                     if (Images != null && Images.Count > 0)
                     {
-                        var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ProductImagesFolder}{foundProduct.Id}");
+                        var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ItemImagesFolder}{foundProduct.Id}");
 
                         foreach (var oldImage in foundProduct.Images.ToList())
                         {
@@ -333,7 +340,7 @@ namespace ESA_Terra_Argila.Controllers
                             {
                                 System.IO.File.Delete(oldImagePath);
                             }
-                            _context.ProductImages.Remove(oldImage);
+                            _context.ItemImages.Remove(oldImage);
                         }
 
                         await _context.SaveChangesAsync();
@@ -345,8 +352,8 @@ namespace ESA_Terra_Argila.Controllers
                         {
                             if (file.Length > 0)
                             {
-                                var productImage = await ImageHelper.SaveProductImage(file, foundProduct.Id, imagesFolder);
-                                _context.ProductImages.Add(productImage);
+                                var productImage = await ImageHelper.SaveItemImage(file, foundProduct.Id, imagesFolder);
+                                _context.ItemImages.Add(productImage);
                             }
                         }
                     }
@@ -374,7 +381,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -383,7 +391,7 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
+            _context.Items.Remove(product);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Produto removido com sucesso!";
             return RedirectToAction("Index");
@@ -396,10 +404,10 @@ namespace ESA_Terra_Argila.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Items.FindAsync(id);
             if (product != null)
             {
-                _context.Products.Remove(product);
+                _context.Items.Remove(product);
             }
 
             await _context.SaveChangesAsync();
@@ -408,57 +416,9 @@ namespace ESA_Terra_Argila.Controllers
 
         private bool ProductExists(int id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return _context.Items.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> AddToCart(int id)
-        {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
-
-            if (order == null)
-            {
-                order = new Order
-                {
-                    UserId = userId,
-                    Status = OrderStatus.Draft
-                };
-                _context.Orders.Add(order);
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return NotFound("Produto não encontrado");
-            var existingItem = order.OrderItems.FirstOrDefault(oi => oi.ProductId == id);
-            if (existingItem != null)
-            {
-                existingItem.Quantity += 1;
-            }
-            else
-            {
-                var orderItem = new OrderItem
-                {
-                    ProductId = id,
-                    Quantity = 1
-                };
-                order.OrderItems.Add(orderItem);
-            }
-
-            await _context.SaveChangesAsync();
-
-            var referer = Request.Headers.Referer.ToString();
-            if (!string.IsNullOrEmpty(referer))
-            {
-                return Redirect(referer);
-            }
-
-            return RedirectToAction("Index", "Home");
-        }
-        public async Task<IActionResult> BuyNow(int id)
-        {
-            return Ok();
-        }
     }
 }
 

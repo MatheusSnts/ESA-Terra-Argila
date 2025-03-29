@@ -97,7 +97,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             };
 
             // Adicionar produtos ao contexto
-            _context.Products.AddRange(_products);
+            _context.Items.AddRange(_products);
             _context.SaveChanges();
 
             // Configurar o usuario para o controller
@@ -147,7 +147,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
             await _context.SaveChangesAsync();
             
             // Verificar se os produtos estão realmente no banco com o UserId correto
-            var produtosNoBanco = await _context.Products
+            var produtosNoBanco = await _context.Items
+                .OfType<Product>()
                 .Where(p => p.UserId == _userId)
                 .ToListAsync();
             Assert.Equal(2, produtosNoBanco.Count);
@@ -215,7 +216,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectResult.ActionName);
             
-            var produtoCriado = await _context.Products.FirstOrDefaultAsync(p => 
+            var produtoCriado = await _context.Items.OfType<Product>().FirstOrDefaultAsync(p => 
                 p.Name == novoProduto.Name && p.Reference == novoProduto.Reference);
             Assert.NotNull(produtoCriado);
             Assert.Equal(_userId, produtoCriado.UserId);
@@ -252,7 +253,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectResult.ActionName);
             
-            var produtoEditado = await _context.Products.FindAsync(produtoId);
+            var produtoEditado = await _context.Items.FindAsync(produtoId);
             Assert.NotNull(produtoEditado);
             Assert.Equal("Produto Atualizado", produtoEditado.Name);
             Assert.Equal("P001-UPDATED", produtoEditado.Reference);
@@ -265,7 +266,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
             int produtoId = 1;
             
             // Verificar se o produto existe antes de tentar excluir
-            var produtoExistente = await _context.Products
+            var produtoExistente = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(p => p.Id == produtoId);
@@ -282,7 +284,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var redirectResult = Assert.IsType<RedirectToActionResult>(confirmResult);
             Assert.Equal("Index", redirectResult.ActionName);
             
-            var produtoRemovido = await _context.Products.FindAsync(produtoId);
+            var produtoRemovido = await _context.Items.FindAsync(produtoId);
             Assert.Null(produtoRemovido);
         }
 

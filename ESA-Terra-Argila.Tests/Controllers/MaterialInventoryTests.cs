@@ -103,7 +103,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             };
 
             // Adicionar materiais ao contexto
-            _context.Materials.AddRange(_materials);
+            _context.Items.AddRange(_materials);
             _context.SaveChanges();
 
             // Configurar o usuario para o controller
@@ -155,7 +155,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             await _context.SaveChangesAsync();
 
             // Verificar se os materiais estão realmente no banco com o UserId correto
-            var materiaisNoBanco = await _context.Materials
+            var materiaisNoBanco = await _context.Items
                 .Where(m => m.UserId == _userId)
                 .ToListAsync();
             Assert.Equal(2, materiaisNoBanco.Count);
@@ -228,7 +228,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectResult.ActionName);
             
-            var materialCriado = await _context.Materials.FirstOrDefaultAsync(m => 
+            var materialCriado = await _context.Items.OfType<Material>().FirstOrDefaultAsync(m => 
                 m.Name == novoMaterial.Name && m.Reference == novoMaterial.Reference);
             Assert.NotNull(materialCriado);
             Assert.Equal(_userId, materialCriado.UserId);
@@ -265,7 +265,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectResult.ActionName);
             
-            var materialEditado = await _context.Materials.FindAsync(materialId);
+            var materialEditado = await _context.Items.FindAsync(materialId);
             Assert.NotNull(materialEditado);
             Assert.Equal("Material Atualizado", materialEditado.Name);
             Assert.Equal("M001-UPDATED", materialEditado.Reference);
@@ -278,7 +278,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
             int materialId = 1;
             
             // Verificar se o material existe antes de tentar excluir
-            var materialExistente = await _context.Materials
+            var materialExistente = await _context.Items
+                .OfType<Material>()
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(m => m.Id == materialId);
@@ -295,7 +296,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var redirectResult = Assert.IsType<RedirectToActionResult>(confirmResult);
             Assert.Equal("Index", redirectResult.ActionName);
             
-            var materialRemovido = await _context.Materials.FindAsync(materialId);
+            var materialRemovido = await _context.Items.FindAsync(materialId);
             Assert.Null(materialRemovido);
         }
 

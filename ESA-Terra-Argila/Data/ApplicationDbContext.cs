@@ -9,10 +9,8 @@ namespace ESA_Terra_Argila.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public DbSet<Product> Products { get; set; } = default!;
-        public DbSet<Material> Materials { get; set; } = default!;
-        public DbSet<ProductImage> ProductImages { get; set; } = default!;
-        public DbSet<MaterialImage> MaterialImages { get; set; } = default!;
+        public DbSet<Item> Items { get; set; } = default!;
+        public DbSet<ItemImage> ItemImages { get; set; } = default!;
         public DbSet<ProductMaterial> ProductMaterials { get; set; } = default!;
         public DbSet<UserMaterialFavorite> UserMaterialFavorites { get; set; } = default!;
         public DbSet<Category> Categories { get; set; } = default!;
@@ -99,16 +97,10 @@ namespace ESA_Terra_Argila.Data
                 .WithMany(t => t.Materials)
                 .UsingEntity(j => j.ToTable("MaterialTags"));
 
-            modelBuilder.Entity<ProductImage>()
-                .HasOne(i => i.Product)
-                .WithMany(p => p.Images)
-                .HasForeignKey(i => i.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<MaterialImage>()
-                .HasOne(i => i.Material)
-                .WithMany(m => m.Images)
-                .HasForeignKey(i => i.MaterialId)
+            modelBuilder.Entity<ItemImage>()
+                .HasOne(ii => ii.Item)
+                .WithMany(i => i.Images)
+                .HasForeignKey(i => i.ItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserActivity>()
@@ -124,15 +116,9 @@ namespace ESA_Terra_Argila.Data
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Product)
+                .HasOne(oi => oi.Item)
                 .WithMany()
-                .HasForeignKey(oi => oi.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Material)
-                .WithMany()
-                .HasForeignKey(oi => oi.MaterialId)
+                .HasForeignKey(oi => oi.ItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Order>()

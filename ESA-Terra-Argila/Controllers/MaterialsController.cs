@@ -66,7 +66,8 @@ namespace ESA_Terra_Argila.Controllers
             }
             else
             {
-                materials = _context.Materials
+                materials = _context.Items
+                    .OfType<Material>()
                     .Where(m => m.UserId == userId)
                     .Include(m => m.Category)
                     .Include(m => m.User);
@@ -78,7 +79,8 @@ namespace ESA_Terra_Argila.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? suppliers)
         {
-            var query = _context.Materials
+            var query = _context.Items
+                .OfType<Material>()
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .Include(m => m.Images)
@@ -209,7 +211,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var material = await _context.Materials
+            var material = await _context.Items
+                .OfType<Material>()
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .Include(m => m.Images)
@@ -259,7 +262,7 @@ namespace ESA_Terra_Argila.Controllers
 
                 if (Images != null && Images.Count > 0)
                 {
-                    var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.MaterialImagesFolder}{material.Id}");
+                    var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ItemImagesFolder}{material.Id}");
 
                     if (!Directory.Exists(imagesFolder))
                         Directory.CreateDirectory(imagesFolder);
@@ -268,9 +271,9 @@ namespace ESA_Terra_Argila.Controllers
                     {
                         if (file.Length > 0)
                         {
-                            MaterialImage productImage = await ImageHelper.SaveMaterialImage(file, material.Id, imagesFolder);
+                            ItemImage productImage = await ImageHelper.SaveItemImage(file, material.Id, imagesFolder);
 
-                            _context.MaterialImages.Add(productImage);
+                            _context.ItemImages.Add(productImage);
                         }
                     }
 
@@ -294,7 +297,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var material = await _context.Materials
+            var material = await _context.Items
+                .OfType<Material>()
                 .Include(m => m.Tags)
                 .Include(m => m.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -321,7 +325,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var foundMaterial = await _context.Materials
+            var foundMaterial = await _context.Items
+                .OfType<Material>()
                 .Include(m => m.Tags)
                 .Include(m => m.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -346,7 +351,7 @@ namespace ESA_Terra_Argila.Controllers
 
                     if (Images != null && Images.Count > 0)
                     {
-                        var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.MaterialImagesFolder}{foundMaterial.Id}");
+                        var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ItemImagesFolder}{foundMaterial.Id}");
 
                         foreach (var oldImage in foundMaterial.Images.ToList())
                         {
@@ -368,7 +373,7 @@ namespace ESA_Terra_Argila.Controllers
                                 return Json($"Arquivo não encontrado: {oldImagePath}");
                             }
 
-                            _context.MaterialImages.Remove(oldImage);
+                            _context.ItemImages.Remove(oldImage);
                         }
 
                         await _context.SaveChangesAsync();
@@ -381,9 +386,9 @@ namespace ESA_Terra_Argila.Controllers
                         {
                             if (file.Length > 0)
                             {
-                                var materialImage = await ImageHelper.SaveMaterialImage(file, foundMaterial.Id, imagesFolder);
+                                var materialImage = await ImageHelper.SaveItemImage(file, foundMaterial.Id, imagesFolder);
 
-                                _context.MaterialImages.Add(materialImage);
+                                _context.ItemImages.Add(materialImage);
                             }
                         }
                     }
@@ -422,7 +427,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var material = await _context.Materials
+            var material = await _context.Items
+                .OfType<Material>()
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -432,7 +438,7 @@ namespace ESA_Terra_Argila.Controllers
                 TempData["ErrorMessage"] = "Material não encontrado!";
                 return NotFound();
             }
-            _context.Materials.Remove(material);
+            _context.Items.Remove(material);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Material removido com sucesso!";
             return RedirectToAction("Index");
@@ -445,10 +451,10 @@ namespace ESA_Terra_Argila.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var material = await _context.Materials.FindAsync(id);
+            var material = await _context.Items.FindAsync(id);
             if (material != null)
             {
-                _context.Materials.Remove(material);
+                _context.Items.Remove(material);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Material removido com sucesso!";
             }
@@ -462,11 +468,12 @@ namespace ESA_Terra_Argila.Controllers
 
         private bool MaterialExists(int id)
         {
-            return _context.Materials.Any(e => e.Id == id);
+            return _context.Items.Any(e => e.Id == id);
         }
         public async Task<IActionResult> StockHistory(int id)
         {
-            var material = await _context.Materials
+            var material = await _context.Items
+                .OfType<Material>()
                 .Include(m => m.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -488,7 +495,7 @@ namespace ESA_Terra_Argila.Controllers
 
         public IActionResult CreateStockMovement(int id)
         {
-            var material = _context.Materials.Find(id);
+            var material = _context.Items.Find(id);
             if (material == null)
             {
                 TempData["ErrorMessage"] = "Material não encontrado!";
@@ -509,7 +516,7 @@ namespace ESA_Terra_Argila.Controllers
         {
             _logger.LogInformation("Entrou no método CreateStockMovement");
 
-            var material = await _context.Materials.FindAsync(movement.MaterialId);
+            var material = await _context.Items.FindAsync(movement.MaterialId);
             if (material == null)
             {
                 TempData["ErrorMessage"] = "Material não encontrado!";
@@ -546,7 +553,7 @@ namespace ESA_Terra_Argila.Controllers
 
         public async Task<IActionResult> AtualizarStock(int id, int novoStock)
         {
-            var material = await _context.Materials.FindAsync(id);
+            var material = await _context.Items.FindAsync(id);
             if (material == null)
             {
                 return NotFound();
@@ -565,54 +572,7 @@ namespace ESA_Terra_Argila.Controllers
             return Ok(new { message = "Stock atualizado." });
         }
 
-        public async Task<IActionResult> AddToCart(int id)
-        {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
-
-            if (order == null)
-            {
-                order = new Order
-                {
-                    UserId = userId,
-                    Status = OrderStatus.Draft
-                };
-                _context.Orders.Add(order);
-            }
-
-            var material = await _context.Materials.FindAsync(id);
-            if (material == null)
-                return NotFound("Produto não encontrado");
-            var existingItem = order.OrderItems.FirstOrDefault(oi => oi.MaterialId == id);
-            if (existingItem != null)
-            {
-                existingItem.Quantity += 1;
-            }
-            else
-            {
-                var orderItem = new OrderItem
-                {
-                    MaterialId = id,
-                    Quantity = 1
-                };
-                order.OrderItems.Add(orderItem);
-            }
-
-            await _context.SaveChangesAsync();
-
-            var referer = Request.Headers.Referer.ToString();
-            if (!string.IsNullOrEmpty(referer))
-            {
-                return Redirect(referer);
-            }
-
-            return RedirectToAction("Index", "Home");
-        }
-        public async Task<IActionResult> BuyNow(int id)
-        {
-            return Ok();
-        }
+        
 
     }
 
