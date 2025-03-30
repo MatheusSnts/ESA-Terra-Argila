@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using ESA_Terra_Argila.Enums;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -34,9 +35,9 @@ namespace ESA_Terra_Argila.Models
         [Range(0, double.MaxValue)]
         public float Stock { get; set; } = 0;
 
-        [Required]
-        [StringLength(20)]
-        public string Unit { get; set; } = default!;
+        [Required(ErrorMessage = "Escolha uma unidade.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Escolha uma unidade válida.")]
+        public UnitType Unit { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedAt { get; set; }

@@ -2,6 +2,7 @@ using Xunit;
 using ESA_Terra_Argila.Models;
 using ESA_Terra_Argila.Data;
 using Microsoft.EntityFrameworkCore;
+using ESA_Terra_Argila.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,7 +82,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     Reference = "M001",
                     Description = "Descrição do Material 1",
                     Price = 50.0f,
-                    Unit = "kg",
+                    Unit = UnitType.Piece,
                     CreatedAt = DateTime.Now.AddDays(-10),
                     UserId = _userId,
                     CategoryId = _category.Id,
@@ -94,7 +95,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     Reference = "M002",
                     Description = "Descrição do Material 2",
                     Price = 75.0f,
-                    Unit = "l",
+                    Unit = UnitType.Gram,
                     CreatedAt = DateTime.Now.AddDays(-5),
                     UserId = _userId,
                     CategoryId = _category.Id,
@@ -217,7 +218,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 Reference = "NM001",
                 Description = "Descrição do Novo Material",
                 Price = 120.0f,
-                Unit = "kg",
+                Unit = UnitType.Kilogram,
                 CategoryId = _category.Id
             };
 
@@ -255,7 +256,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 Reference = "M001-UPDATED",
                 Description = "Descrição atualizada",
                 Price = 60.0f,
-                Unit = "kg"
+                Unit = UnitType.Gram
             };
 
             // Act

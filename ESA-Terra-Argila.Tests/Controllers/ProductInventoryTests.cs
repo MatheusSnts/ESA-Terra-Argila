@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ESA_Terra_Argila.Controllers;
 using Microsoft.AspNetCore.Http;
+using ESA_Terra_Argila.Enums;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -75,7 +76,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     Reference = "P001",
                     Description = "Descrição do Produto 1",
                     Price = 100.0f,
-                    Unit = "un",
+                    Unit = UnitType.Kilogram,
                     CreatedAt = DateTime.Now.AddDays(-10),
                     UserId = _userId,
                     CategoryId = _category.Id,
@@ -88,7 +89,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     Reference = "P002",
                     Description = "Descrição do Produto 2",
                     Price = 150.0f,
-                    Unit = "kg",
+                    Unit = UnitType.Piece,
                     CreatedAt = DateTime.Now.AddDays(-5),
                     UserId = _userId,
                     CategoryId = _category.Id,
@@ -205,7 +206,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 Reference = "NP001",
                 Description = "Descrição do Novo Produto",
                 Price = 200.0f,
-                Unit = "un",
+                Unit = UnitType.Liter,
                 CategoryId = _category.Id
             };
 
@@ -243,7 +244,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 Reference = "P001-UPDATED",
                 Description = "Descrição atualizada",
                 Price = 120.0f,
-                Unit = "un"
+                Unit = UnitType.Ton
             };
 
             // Act

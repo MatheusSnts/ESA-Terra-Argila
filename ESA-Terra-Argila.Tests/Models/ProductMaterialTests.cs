@@ -1,6 +1,7 @@
 using Xunit;
 using ESA_Terra_Argila.Models;
 using ESA_Terra_Argila.Data;
+using ESA_Terra_Argila.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -94,7 +95,7 @@ namespace ESA_Terra_Argila.Tests.Models
                     Reference = "P001",
                     Description = "Descrição do Produto 1",
                     Price = 100.0f,
-                    Unit = "un",
+                    Unit = UnitType.Ton,
                     CreatedAt = DateTime.Now.AddDays(-10)
                 },
                 new Product { 
@@ -105,7 +106,7 @@ namespace ESA_Terra_Argila.Tests.Models
                     Reference = "P002",
                     Description = "Descrição do Produto 2",
                     Price = 200.0f,
-                    Unit = "kg",
+                    Unit = UnitType.Meter,
                     CreatedAt = DateTime.Now.AddDays(-5)
                 }
             };
@@ -121,7 +122,7 @@ namespace ESA_Terra_Argila.Tests.Models
                     Reference = "M001",
                     Description = "Descrição do Material 1",
                     Price = 50.0f,
-                    Unit = "kg",
+                    Unit = UnitType.Kilogram,
                     CreatedAt = DateTime.Now.AddDays(-10)
                 },
                 new Material { 
@@ -132,7 +133,7 @@ namespace ESA_Terra_Argila.Tests.Models
                     Reference = "M002",
                     Description = "Descrição do Material 2",
                     Price = 75.0f,
-                    Unit = "l",
+                    Unit = UnitType.Liter,
                     CreatedAt = DateTime.Now.AddDays(-5)
                 },
                 new Material { 
@@ -143,7 +144,7 @@ namespace ESA_Terra_Argila.Tests.Models
                     Reference = "M003",
                     Description = "Descrição do Material 3",
                     Price = 120.0f,
-                    Unit = "g",
+                    Unit = UnitType.Gram,
                     CreatedAt = DateTime.Now.AddDays(-2)
                 }
             };

@@ -1,4 +1,5 @@
 ﻿@model ESA_Terra_Argila.Models.Product
+@using ESA_Terra_Argila.Enums
 
 @{
     ViewData["Title"] = "Novo produto";
@@ -64,7 +65,9 @@
                     </div>
                     <div class="form-group" style="margin-top: 0.85rem">
                         <label>Unidade</label>
-                        <input type="text" asp-for="Unit" name="Unit" class="form-control" placeholder="Unidade do produto...">
+                        <select asp-for="Unit" asp-items="Html.GetEnumSelectList<UnitType>()" class="form-control">
+                            <option value="0" hidden disabled selected>Unidade</option>
+                        </select>
                         <span asp-validation-for="Unit" class="text-danger asp-validation"></span>
                     </div>
                 </div>
