@@ -20,17 +20,13 @@ namespace ESA_Terra_Argila.Controllers
         }
 
         [HttpPost("checkout/{productId}")]
-        public async Task<IActionResult> CriarSessaoPagamento(int productId)
+        public IActionResult CriarSessaoPagamento(int productId)
         {
-          
-            var product = await _context.Items
-                .OfType<Product>() 
-                .FirstOrDefaultAsync(p => p.Id == productId);
-
+            var product = _context.Items.OfType<Product>().FirstOrDefault(p => p.Id == productId);
 
             if (product == null)
             {
-                return NotFound(new { message = "Produto não encontrado" });
+                return NotFound(new { message = "Produto não encontrado." });
             }
 
             var domain = "https://localhost:7197";
@@ -39,24 +35,24 @@ namespace ESA_Terra_Argila.Controllers
             {
                 PaymentMethodTypes = new List<string> { "card" },
                 LineItems = new List<SessionLineItemOptions>
+        {
+            new()
+            {
+                PriceData = new SessionLineItemPriceDataOptions
                 {
-                    new()
+                    Currency = "eur",
+                    UnitAmount = (long)(product.Price * 100), // Stripe usa centavos
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            Currency = "eur",
-                            UnitAmount = (int)(product.Price * 100), 
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = product.Name
-                            }
-                        },
-                        Quantity = 1
+                        Name = product.Name
                     }
                 },
+                Quantity = 1
+            }
+        },
                 Mode = "payment",
-                SuccessUrl = $"{domain}/PaymentSuccess",
-                CancelUrl = $"{domain}/PaymentCanceled"
+                SuccessUrl = $"{domain}/sucesso",
+                CancelUrl = $"{domain}/cancelado"
             };
 
             var service = new SessionService();
@@ -64,5 +60,6 @@ namespace ESA_Terra_Argila.Controllers
 
             return Ok(new { sessionId = session.Id, url = session.Url });
         }
+
     }
 }
