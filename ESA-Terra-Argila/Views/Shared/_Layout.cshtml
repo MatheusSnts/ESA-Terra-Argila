@@ -20,27 +20,34 @@
             </div>
             <h1>Terra&Argila</h1>
         </a>
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar produtos ou empresas">
-            <span class="search-icon">
+        <form method="get" asp-controller="Products" asp-action="List" class="search-bar" style="display: flex; align-items: center;">
+            <input type="text"
+                   name="search"
+                   value="@ViewData["Search"]"
+                   placeholder="Buscar produtos"
+                   class="form-input" />
+
+            <button type="submit" class="search-icon" style="background: none; border: none; cursor: pointer;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
                           d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
-            </span>
-        </div>
+            </button>
+        </form>
         <div class="auth-links" style="color: white">
             <partial name="_LoginPartial" />
         </div>
     </header>
 
     <nav class="nav">
-        <a asp-controller="Home" asp-action="Index">Nossas ofertas</a>
+        <a asp-controller="Home" asp-action="Index">Em destaque</a>
         <a asp-controller="Products" asp-action="List">Produtos</a>
-        <a asp-controller="Materials" asp-action="List">Materiais</a>
-        <a asp-controller="Home" asp-action="Index">Empresas</a>
-        <a asp-controller="Home" asp-action="Index">Fornecedores</a>
+        @if (User.IsInRole("Vendor"))
+        {
+            <a asp-controller="Materials" asp-action="List">Materiais</a>
+        }
+        <a asp-controller="Home" asp-action="Privacy">Sobre nós</a>
     </nav>
 
     <div>

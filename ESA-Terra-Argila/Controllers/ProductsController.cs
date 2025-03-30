@@ -50,7 +50,7 @@ namespace ESA_Terra_Argila.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? vendors)
+        public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? vendors, string? search)
         {
             var query = _context.Items
                 .OfType<Product>()
@@ -58,7 +58,10 @@ namespace ESA_Terra_Argila.Controllers
                 .Include(m => m.User)
                 .Include(m => m.Images)
                 .AsQueryable();
-
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(p => p.Name.Contains(search));
+            }
             if (priceMin.HasValue)
             {
                 query = query.Where(p => p.Price >= priceMin.Value);
@@ -101,6 +104,7 @@ namespace ESA_Terra_Argila.Controllers
 
             ViewData["Vendors"] = new SelectList(vendorsList, "Id", "FullName", vendors);
             ViewData["SelectedVendors"] = vendors;
+            ViewData["Search"] = search;
             return View();
         }
 

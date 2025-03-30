@@ -1,49 +1,51 @@
-﻿@{
+﻿@model IEnumerable<ESA_Terra_Argila.Models.Product>
+@{
     ViewData["Title"] = "Terra&Argila";
 }
 
 
 <div style="height: 20rem" class="col-md-8 mt-2 mx-auto">
     <img src="~/images/MerchCarousel1.png" alt="" />
-    <div class="col-md-12 my-3 d-flex justify-content-between">
-        @* var isFavorite = favoriteMaterials.Contains(material.Id); *@
-        @for (int i = 0; i < 4; i++)
-        {
-            <div style="height: 60vh; width: 23%; background-color: white;" class="d-flex flex-column position-relative list-card rounded border shadow">
-                @if (User.IsInRole("Vendor"))
-                {
-                    @* @if (isFavorite) *@
-                    @* { *@
-                    @*     <img alt="Adicionar aos favoritos" src="/images/fav_on.png" style="height: 2rem; width: 2rem;" class="position-absolute top-0 end-0 m-2 fav-button cursor-pointer" onclick="setFavorite(event)" data-id="@material.Id" data-value="false" /> *@
-                    @* } *@
-                    @* else *@
-                    @* { *@
-                    <img alt="Adicionar aos favoritos" src="/images/fav_off.png" style="height: 2rem; width: 2rem;" class="position-absolute top-0 end-0 m-2 fav-button cursor-pointer" onclick="setFavorite(event)" data-id="" data-value="true" />
-                    @* } *@
-                }
-                <a asp-action="Details" asp-route-id="" style="height: 45%" class="border-bottom rounded">
-                    <img id="main-image" src="~/images/logo.png" />
-                </a>
-                <div class="col-md-12 px-2 flex-grow-1 d-flex flex-column">
-                    <div style="margin-right: auto; margin-top: -0.8rem;" class="fw-bold stock-badge rounded">
-                        @* @(material.Stock > 0 ? "Em stock" : "Sem stock") *@
-                        Em stock
-                    </div>
-                    <h4 class="mt-2">Produto teste</h4>
-                    <div style="margin-top: -0.7rem" class="text-lg">Teste</div>
-                    <div class="col-md-12">
-                        <div style="margin-top: 0.2rem; min-height: 1.5rem;" class="text-secondary text-decoration-line-through"></div>
-                        <h2 style="margin-top: -0.7rem" class="col-md-12">12,00€</h2>
-                    </div>
-                    <div style="font-size: 12px;" class="col-md-12 d-flex flex-column gap-2 flex-grow-1 justify-content-end mb-2">
-                        <a asp-controller="Orders" asp-action="BuyNow" asp-route-id="" class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
-                        <a asp-controller="Orders" asp-action="AddToCart" asp-route-id="" class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+    @if (Model != null && Model.Any())
+    {
+        <div style="color: black; font-size: 16px;" class="col-md-12 d-flex justify-content-center">
+            <span class="fw-bold">Produtos em destaque</span>
+        </div>
+        <div class="col-md-12 my-3 d-flex gap-4">
+            @foreach (var product in Model)
+            {
+                <div style="height: 60vh; width: 23%; background-color: white;" class="d-flex flex-column position-relative list-card rounded border shadow">
+                    <a asp-action="Details" asp-route-id="" style="height: 45%" class="border-bottom rounded">
+                        <img id="main-image" src="@product.Images.First().Path" />
+                    </a>
+                    <div class="col-md-12 px-2 flex-grow-1 d-flex flex-column">
+                        <div style="margin-right: auto; margin-top: -0.8rem;" class="fw-bold @(product.Stock > 0 ? "stock-badge" : "no-stock-badge") rounded">
+                            @(product.Stock > 0 ? "Em stock" : "Sem stock")
+                        </div>
+                        <h4 class="mt-2">@product.User?.FullName</h4>
+                        <div style="margin-top: -0.7rem" class="text-lg">@product.Name</div>
+                        <div class="col-md-12">
+                            <div style="margin-top: 0.2rem; min-height: 1.5rem;" class="text-secondary text-decoration-line-through"></div>
+                            <h2 style="margin-top: -0.7rem" class="col-md-12">@product.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</h2>
+                        </div>
+                        <div style="font-size: 12px;" class="col-md-12 d-flex flex-column gap-2 flex-grow-1 justify-content-end mb-2">
+                            <a asp-controller="Orders" asp-action="BuyNow" asp-route-id="@product.Id" class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
+                            <a asp-controller="Orders" asp-action="AddToCart" asp-route-id="@product.Id" class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
 
-    </div>
+    }
+    else
+    {
+        <a asp-controller="Products" asp-action="List" style="color: black; font-size: 16px;" class="col-md-12 d-flex flex-column align-items-center text-decoration-none">
+            <span class="fw-bold">Não existem produtos em destaque</span>
+            <span>Carrega aqui para conferir todos os produtos</span>
+        </a>
+    }
+
 </div>
 @* <div class="owl-carousel"> *@
 @*     <div> Your Content </div> *@
