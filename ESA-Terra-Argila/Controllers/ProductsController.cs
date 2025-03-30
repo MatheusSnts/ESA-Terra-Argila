@@ -138,6 +138,7 @@ namespace ESA_Terra_Argila.Controllers
             ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
             ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
             ViewData["FavoriteMaterials"] = new SelectList(favoriteMaterials, "Id", "Name");
+            ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
             return View();
         }
 
@@ -256,6 +257,7 @@ namespace ESA_Terra_Argila.Controllers
             ViewData["ProductMaterials"] = product.ProductMaterials
                 .Select(pm => new { MaterialId = pm.MaterialId, Quantity = pm.Stock }) // Garantir que Stock é usado corretamente
                 .ToList();
+            ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
 
             return View(product);
         }

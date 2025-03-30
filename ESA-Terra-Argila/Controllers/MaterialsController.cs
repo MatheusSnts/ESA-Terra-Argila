@@ -239,6 +239,7 @@ namespace ESA_Terra_Argila.Controllers
         {
             ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
             ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
+            ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
             return View();
         }
 
@@ -312,6 +313,7 @@ namespace ESA_Terra_Argila.Controllers
             var selectedTagIds = material.Tags.Select(t => t.Id).ToList();
             ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
             ViewData["Tags"] = new SelectList(allTags, "Id", "Name", selectedTagIds);
+            ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
             return View(material);
         }
 
