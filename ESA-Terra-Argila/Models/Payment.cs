@@ -19,7 +19,7 @@ namespace ESA_Terra_Argila.Models
         public virtual User User { get; set; } = null!;
 
         [Required]
-        public decimal Amount { get; set; }
+        public float Amount { get; set; }
 
         [Required]
         public string Currency { get; set; } = "EUR";

@@ -39,16 +39,17 @@
                         <a asp-controller="Orders" asp-action="BuyNow" asp-route-id="" class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
                         <a asp-controller="Orders" asp-action="AddToCart" asp-route-id="" class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
                     </div>
+                   
                     <button id="payButton">Pagar</button>
 
-                    <script src="https://js.stripe.com/v3/"></script>
-                    <script>
-                        document.getElementById("payButton").addEventListener("click", async () => {
-                          const response = await fetch("/api/pagamento/checkout", { method: "POST" });
-                          const data = await response.json();
-                          window.location.href = data.url;
-                        });
-                    </script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  document.getElementById("payButton").addEventListener("click", async () => {
+    const response = await fetch("/api/pagamento/checkout", { method: "POST" });
+    const data = await response.json();
+    window.location.href = data.url;
+  });
+</script>
 
                 </div>
             </div>
