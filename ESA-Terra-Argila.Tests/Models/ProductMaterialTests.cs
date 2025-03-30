@@ -91,7 +91,6 @@ namespace ESA_Terra_Argila.Tests.Models
                     Name = "Produto 1", 
                     UserId = _userId,
                     CategoryId = _category.Id,
-                    Category = _category,
                     Reference = "P001",
                     Description = "Descrição do Produto 1",
                     Price = 100.0f,
@@ -103,7 +102,6 @@ namespace ESA_Terra_Argila.Tests.Models
                     Name = "Produto 2", 
                     UserId = _userId,
                     CategoryId = _category.Id,
-                    Category = _category,
                     Reference = "P002",
                     Description = "Descrição do Produto 2",
                     Price = 200.0f,
@@ -116,11 +114,10 @@ namespace ESA_Terra_Argila.Tests.Models
             _materials = new List<Material>
             {
                 new Material { 
-                    Id = 1, 
+                    Id = 3, 
                     Name = "Material 1", 
                     UserId = _userId,
                     CategoryId = _category.Id,
-                    Category = _category,
                     Reference = "M001",
                     Description = "Descrição do Material 1",
                     Price = 50.0f,
@@ -128,11 +125,10 @@ namespace ESA_Terra_Argila.Tests.Models
                     CreatedAt = DateTime.Now.AddDays(-10)
                 },
                 new Material { 
-                    Id = 2, 
+                    Id = 4, 
                     Name = "Material 2", 
                     UserId = _userId,
                     CategoryId = _category.Id,
-                    Category = _category,
                     Reference = "M002",
                     Description = "Descrição do Material 2",
                     Price = 75.0f,
@@ -140,11 +136,10 @@ namespace ESA_Terra_Argila.Tests.Models
                     CreatedAt = DateTime.Now.AddDays(-5)
                 },
                 new Material { 
-                    Id = 3, 
+                    Id = 5, 
                     Name = "Material 3", 
                     UserId = _userId,
                     CategoryId = _category.Id,
-                    Category = _category,
                     Reference = "M003",
                     Description = "Descrição do Material 3",
                     Price = 120.0f,
@@ -154,8 +149,8 @@ namespace ESA_Terra_Argila.Tests.Models
             };
 
             // Adicionar produtos e materiais ao contexto
-            _context.Products.AddRange(_products);
-            _context.Materials.AddRange(_materials);
+            _context.Items.AddRange(_products);
+            _context.Items.AddRange(_materials);
             _context.SaveChanges();
 
             // Dados de exemplo para a relação produto-material
@@ -163,21 +158,15 @@ namespace ESA_Terra_Argila.Tests.Models
             {
                 new ProductMaterial {
                     ProductId = 1,
-                    MaterialId = 1,
-                    Product = _products.First(p => p.Id == 1),
-                    Material = _materials.First(m => m.Id == 1)
+                    MaterialId = 3,
                 },
                 new ProductMaterial {
                     ProductId = 1,
-                    MaterialId = 2,
-                    Product = _products.First(p => p.Id == 1),
-                    Material = _materials.First(m => m.Id == 2)
+                    MaterialId = 4,
                 },
                 new ProductMaterial {
                     ProductId = 2,
-                    MaterialId = 2,
-                    Product = _products.First(p => p.Id == 2),
-                    Material = _materials.First(m => m.Id == 2)
+                    MaterialId = 5,
                 }
             };
 
@@ -208,15 +197,15 @@ namespace ESA_Terra_Argila.Tests.Models
 
             // Assert
             Assert.Equal(2, materiais.Count);
-            Assert.Contains(materiais, m => m.Id == 1);
-            Assert.Contains(materiais, m => m.Id == 2);
+            Assert.Contains(materiais, m => m.Id == 3);
+            Assert.Contains(materiais, m => m.Id == 4);
         }
 
         [Fact]
         public async Task ObterProdutosComMaterial_DeveRetornarProdutosCorretos()
         {
             // Arrange
-            int materialId = 2;
+            int materialId = 3;
 
             // Act
             var produtos = await _context.ProductMaterials
@@ -226,9 +215,8 @@ namespace ESA_Terra_Argila.Tests.Models
                 .ToListAsync();
 
             // Assert
-            Assert.Equal(2, produtos.Count);
+            Assert.Equal(1, produtos.Count);
             Assert.Contains(produtos, p => p.Id == 1);
-            Assert.Contains(produtos, p => p.Id == 2);
         }
 
         [Fact]
@@ -239,8 +227,6 @@ namespace ESA_Terra_Argila.Tests.Models
             {
                 ProductId = 2,
                 MaterialId = 3,
-                Product = _products.First(p => p.Id == 2),
-                Material = _materials.First(m => m.Id == 3)
             };
 
             // Act
@@ -258,7 +244,7 @@ namespace ESA_Terra_Argila.Tests.Models
         {
             // Arrange
             var productMaterialParaRemover = await _context.ProductMaterials
-                .FirstOrDefaultAsync(pm => pm.ProductId == 1 && pm.MaterialId == 1);
+                .FirstOrDefaultAsync(pm => pm.ProductId == 1 && pm.MaterialId == 3);
         
             Assert.NotNull(productMaterialParaRemover); // Garantir que o item existe antes de remover
 
@@ -268,7 +254,7 @@ namespace ESA_Terra_Argila.Tests.Models
 
             // Assert
             var produtoMaterial = await _context.ProductMaterials
-                .FirstOrDefaultAsync(pm => pm.ProductId == 1 && pm.MaterialId == 1);
+                .FirstOrDefaultAsync(pm => pm.ProductId == 1 && pm.MaterialId == 3);
             Assert.Null(produtoMaterial);
         }
     }

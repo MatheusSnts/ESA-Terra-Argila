@@ -15,6 +15,7 @@ using ESA_Terra_Argila.Helpers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Identity;
 using X.PagedList.Extensions;
+using ESA_Terra_Argila.Enums;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -40,19 +41,27 @@ namespace ESA_Terra_Argila.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Products.Where(p => p.UserId == userId).Include(p => p.Category).Include(p => p.User);
+            var applicationDbContext = _context.Items
+                    .OfType<Product>()
+                    .Where(p => p.UserId == userId)
+                    .Include(p => p.Category)
+                    .Include(p => p.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? vendors)
+        public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? vendors, string? search)
         {
-            var query = _context.Products
+            var query = _context.Items
+                .OfType<Product>()
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .Include(m => m.Images)
                 .AsQueryable();
-
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(p => p.Name.Contains(search));
+            }
             if (priceMin.HasValue)
             {
                 query = query.Where(p => p.Price >= priceMin.Value);
@@ -95,6 +104,7 @@ namespace ESA_Terra_Argila.Controllers
 
             ViewData["Vendors"] = new SelectList(vendorsList, "Id", "FullName", vendors);
             ViewData["SelectedVendors"] = vendors;
+            ViewData["Search"] = search;
             return View();
         }
 
@@ -106,7 +116,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .Include(p => p.Images)
@@ -131,6 +142,7 @@ namespace ESA_Terra_Argila.Controllers
             ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
             ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
             ViewData["FavoriteMaterials"] = new SelectList(favoriteMaterials, "Id", "Name");
+            ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
             return View();
         }
 
@@ -181,7 +193,7 @@ namespace ESA_Terra_Argila.Controllers
 
                 if (Images != null && Images.Count > 0)
                 {
-                    var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ProductImagesFolder}{product.Id}");
+                    var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ItemImagesFolder}{product.Id}");
 
                     if (!Directory.Exists(imagesFolder))
                         Directory.CreateDirectory(imagesFolder);
@@ -190,9 +202,9 @@ namespace ESA_Terra_Argila.Controllers
                     {
                         if (file.Length > 0)
                         {
-                            ProductImage productImage = await ImageHelper.SaveProductImage(file, product.Id, imagesFolder);
+                            ItemImage productImage = await ImageHelper.SaveItemImage(file, product.Id, imagesFolder);
 
-                            _context.ProductImages.Add(productImage);
+                            _context.ItemImages.Add(productImage);
                         }
                     }
 
@@ -202,7 +214,6 @@ namespace ESA_Terra_Argila.Controllers
                 TempData["SuccessMessage"] = "Produto adicionado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
-            return Json(ModelState.Values);
             TempData["ErrorMessage"] = "Erro ao adicionar produto!";
             return View(product);
         }
@@ -215,7 +226,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Tags)
                 .Include(p => p.Images)
                 .Include(p => p.ProductMaterials)
@@ -249,6 +261,7 @@ namespace ESA_Terra_Argila.Controllers
             ViewData["ProductMaterials"] = product.ProductMaterials
                 .Select(pm => new { MaterialId = pm.MaterialId, Quantity = pm.Stock }) // Garantir que Stock é usado corretamente
                 .ToList();
+            ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
 
             return View(product);
         }
@@ -272,7 +285,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var foundProduct = await _context.Products
+            var foundProduct = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Tags)
                 .Include(p => p.Images)
                 .Include(p => p.ProductMaterials)
@@ -323,7 +337,7 @@ namespace ESA_Terra_Argila.Controllers
 
                     if (Images != null && Images.Count > 0)
                     {
-                        var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ProductImagesFolder}{foundProduct.Id}");
+                        var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{ImageHelper.ItemImagesFolder}{foundProduct.Id}");
 
                         foreach (var oldImage in foundProduct.Images.ToList())
                         {
@@ -332,7 +346,7 @@ namespace ESA_Terra_Argila.Controllers
                             {
                                 System.IO.File.Delete(oldImagePath);
                             }
-                            _context.ProductImages.Remove(oldImage);
+                            _context.ItemImages.Remove(oldImage);
                         }
 
                         await _context.SaveChangesAsync();
@@ -344,8 +358,8 @@ namespace ESA_Terra_Argila.Controllers
                         {
                             if (file.Length > 0)
                             {
-                                var productImage = await ImageHelper.SaveProductImage(file, foundProduct.Id, imagesFolder);
-                                _context.ProductImages.Add(productImage);
+                                var productImage = await ImageHelper.SaveItemImage(file, foundProduct.Id, imagesFolder);
+                                _context.ItemImages.Add(productImage);
                             }
                         }
                     }
@@ -373,7 +387,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await _context.Items
+                .OfType<Product>()
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -382,7 +397,7 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
+            _context.Items.Remove(product);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Produto removido com sucesso!";
             return RedirectToAction("Index");
@@ -395,10 +410,10 @@ namespace ESA_Terra_Argila.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Items.FindAsync(id);
             if (product != null)
             {
-                _context.Products.Remove(product);
+                _context.Items.Remove(product);
             }
 
             await _context.SaveChangesAsync();
@@ -407,7 +422,9 @@ namespace ESA_Terra_Argila.Controllers
 
         private bool ProductExists(int id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return _context.Items.Any(e => e.Id == id);
         }
+
     }
 }
+

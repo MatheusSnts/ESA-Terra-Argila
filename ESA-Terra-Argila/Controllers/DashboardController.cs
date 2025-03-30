@@ -6,7 +6,7 @@ namespace ESA_Terra_Argila.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Item()
         {
             if (User.IsInRole("Vendor"))
             {
@@ -21,6 +21,11 @@ namespace ESA_Terra_Argila.Controllers
                 return RedirectToRoute(new { controller = "Admin", action = "AcceptUsers" });
             }
             return RedirectToRoute(new { controller = "Home", action = "Index" });
+        }
+
+        public IActionResult Index()
+        {
+            return View();
         }
     }
 }

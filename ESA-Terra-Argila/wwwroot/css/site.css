@@ -531,3 +531,6 @@ img {
 .select2-vendors, .select2-suppliers, .select2-tags{
     width: 100%;
 }
+.hidden {
+    display: none;
+}

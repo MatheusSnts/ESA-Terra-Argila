@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .chart-container {
+        background-color: #A9B388;
+        padding: 2rem;
+    }
+    .chart {
+        background-color: white;
+    }
+</style>
+<div class="d-flex align-items-center mt-3 gap-5">
+    <h2>Dashboard</h2>
+</div>
+<div class="row d-flex gap-2">
+    <div style="height: 100%" class="col-md-7 chart-container rounded shadow">
+        <canvas class="chart rounded" id="myChart"></canvas>
+    </div>
+    <div class="col-md-4 chart-container d-flex flex-column gap-2 rounded shadow">
+        <canvas class="chart rounded" id="myChart2"></canvas>
+        <canvas class="chart rounded" id="myChart3"></canvas>
+    </div>
+</div>
+
+
+<script>
+    const ctx = document.getElementById('myChart');
+    const ctx2 = document.getElementById('myChart2');
+    const ctx3 = document.getElementById('myChart3');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Janeiro', 'Fevere', 'Yellow', 'Green', 'Purple', 'Orange', 'Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          label: 'Vendas',
+          data: [12, 19, 3, 5, 2, 3, 12, 19, 3, 5, 2, 3],
+          borderWidth: 1
+        }]
+      },
+    });
+
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1
+        }]
+      },
+      
+    });
+
+    new Chart(ctx3, {
+        type: 'doughnut',
+            data: {
+      labels: [
+        'Red',
+        'Blue',
+        'Yellow'
+      ],
+      datasets: [{
+        label: 'My First Dataset',
+        data: [300, 50, 100],
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)'
+        ],
+        hoverOffset: 4
+      }]
+    }
+    });
+</script>
+
