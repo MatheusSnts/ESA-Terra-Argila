@@ -45,7 +45,7 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script>
   document.getElementById("payButton").addEventListener("click", async () => {
-    const response = await fetch("/api/pagamento/checkout", { method: "POST" });
+    const response = await fetch("/api/pagamento/0/checkout", { method: "POST" });
     const data = await response.json();
     window.location.href = data.url;
   });
