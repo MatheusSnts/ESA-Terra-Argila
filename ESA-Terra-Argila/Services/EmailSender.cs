@@ -2,28 +2,35 @@
 using System.Net.Mail;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using ESA_Terra_Argila.Models;
-
+using Microsoft.Extensions.Options;
 
 namespace ESA_Terra_Argila.Services
 {
     public class EmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
+        private readonly EmailConfiguration _emailConfig;
 
-        public EmailSender(IConfiguration configuration)
+        public EmailSender(IConfiguration configuration, IOptions<EmailConfiguration> emailConfig)
         {
             _configuration = configuration;
+            _emailConfig = emailConfig.Value ?? throw new ArgumentNullException(nameof(emailConfig));
         }
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
             // Lê configurações do appsettings.json
             var emailSettings = _configuration.GetSection("EmailSettings").Get<EmailSettings>();
 
             using (var client = new SmtpClient(emailSettings.Host, emailSettings.Port))
             {
                 client.Credentials = new NetworkCredential(emailSettings.UserName, emailSettings.Password);
-                client.EnableSsl = emailSettings.EnableSSL;
+                client.EnableSsl = emailSettings.EnableSsl;
 
                 var mailMessage = new MailMessage
                 {
@@ -93,10 +100,10 @@ namespace ESA_Terra_Argila.Services
 
     public class EmailSettings
     {
-        public string Host { get; set; }
+        public string Host { get; set; } = default!;
         public int Port { get; set; }
-        public bool EnableSSL { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
+        public string UserName { get; set; } = default!;
+        public string Password { get; set; } = default!;
+        public bool EnableSsl { get; set; }
     }
 }

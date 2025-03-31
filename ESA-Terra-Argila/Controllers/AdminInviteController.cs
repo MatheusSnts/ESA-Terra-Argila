@@ -10,6 +10,7 @@ using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.ComponentModel.DataAnnotations;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -29,7 +30,7 @@ namespace ESA_Terra_Argila.Controllers
         }
 
         [HttpPost("SendInvitation")]
-        public async Task<IActionResult> SendInvitation([FromBody] InvitationRequest request)
+        public async Task<IActionResult> SendInvitation([FromBody] EnviarConviteModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Email))
             {
@@ -93,7 +94,10 @@ namespace ESA_Terra_Argila.Controllers
     }
 }
 
-public class InvitationRequest
+public class EnviarConviteModel
 {
-    public string Email { get; set; }
+    [Required]
+    [EmailAddress]
+    [Display(Name = "Email")]
+    public string Email { get; set; } = default!;
 }

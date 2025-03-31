@@ -56,7 +56,7 @@ namespace ESA_Terra_Argila.Models
 
         public float GetTotal()
         {
-            return Item.Price * Quantity;
+            return Item?.Price * Quantity ?? 0;
         }
     }
 }

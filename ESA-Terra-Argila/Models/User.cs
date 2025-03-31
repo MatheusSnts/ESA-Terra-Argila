@@ -82,11 +82,11 @@ namespace ESA_Terra_Argila.Models
         public UserRole Role { get; set; }
 
         /// <summary>
-        /// Coleção de produtos associados ao usuário
+        /// Lista de produtos criados pelo usuário
         /// </summary>
         [Display(Name = "Produtos")]
         [JsonIgnore]
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; } = new List<Product>();
 
         /// <summary>
         /// Coleção de materiais associados ao usuário
