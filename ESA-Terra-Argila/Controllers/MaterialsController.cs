@@ -30,7 +30,7 @@ namespace ESA_Terra_Argila.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ILogger<MaterialsController> _logger;
         private readonly EmailModel _emailModel;
-        private string _userId;
+        private string? _userId;
 
         /// <summary>
         /// Inicializa uma nova instância do controlador de materiais.
