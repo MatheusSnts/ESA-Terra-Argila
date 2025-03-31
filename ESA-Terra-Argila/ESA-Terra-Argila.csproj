@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-ESA_Terra_Argila-6f7e0bd2-fc84-4cb1-90fa-d639032dbb0d</UserSecretsId>
     <RootNamespace>ESA_Terra_Argila</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

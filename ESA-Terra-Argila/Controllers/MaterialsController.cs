@@ -19,62 +19,69 @@ using ESA_Terra_Argila.Enums;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerenciar as operações relacionadas a materiais no sistema.
+    /// Permite criar, editar, excluir e visualizar materiais, além de gerenciar seu estoque.
+    /// </summary>
     [Authorize]
     public class MaterialsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private string? userId;
         private readonly UserManager<User> _userManager;
-        private readonly EmailModel? _emailModel;
         private readonly ILogger<MaterialsController> _logger;
+        private readonly EmailModel _emailModel;
+        private string _userId;
 
-
-
-        public MaterialsController(ApplicationDbContext context, UserManager<User> userManager, ILogger<MaterialsController> logger)
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de materiais.
+        /// </summary>
+        /// <param name="context">O contexto do banco de dados da aplicação.</param>
+        /// <param name="userManager">O gerenciador de usuários do Identity.</param>
+        /// <param name="logger">O logger para registrar eventos do controlador.</param>
+        public MaterialsController(
+            ApplicationDbContext context,
+            UserManager<User> userManager,
+            ILogger<MaterialsController> logger)
         {
             _context = context;
             _userManager = userManager;
             _logger = logger;
-
+            _emailModel = new EmailModel(userManager, null, null, null);
         }
 
+        /// <summary>
+        /// Executa antes de cada ação do controlador para definir o ID do usuário atual.
+        /// </summary>
+        /// <param name="context">O contexto da execução da ação.</param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
-            userId = _userManager.GetUserId(User);
+            _userId = _userManager.GetUserId(User);
         }
 
-        // GET: Materials
+        /// <summary>
+        /// Exibe a lista de materiais do usuário atual.
+        /// </summary>
+        /// <returns>Uma view contendo a lista de materiais.</returns>
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            var userRoles = await _userManager.GetRolesAsync(user);
-            bool isVendor = userRoles.Contains("Vendor");
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
+            var isVendor = roles.Contains("Vendor");
 
-            IQueryable<Material> materials;
+            var query = _context.Items
+                .Include(m => m.Category)
+                .Include(m => m.User)
+                .AsQueryable();
 
             if (isVendor)
             {
-                // Se for "Vendor", busca apenas materiais FAVORITOS do usuário
-                materials = _context.UserMaterialFavorites
-                    .Where(umf => umf.UserId == userId)
-                    .Include(m => m.Material.Category)
-                    .Include(m => m.User)
-                    .Select(umf => umf.Material);
+                query = query.Where(m => m.UserId == _userId);
+            }
 
-                return View("VendorIndex", await materials.ToListAsync());
-            }
-            else
-            {
-                materials = _context.Items
-                    .OfType<Material>()
-                    .Where(m => m.UserId == userId)
-                    .Include(m => m.Category)
-                    .Include(m => m.User);
-                return View(await materials.ToListAsync());
-            }
+            var materials = await query.ToListAsync();
+            return View(materials);
         }
-
 
         [AllowAnonymous]
         public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? suppliers)
@@ -112,12 +119,12 @@ namespace ESA_Terra_Argila.Controllers
             var pageNumber = page ?? 1;
             var materialsPage = query.ToPagedList(pageNumber, 30);
 
-            if (userId != null)
+            if (_userId != null)
             {
                 var idsOnPage = materialsPage.Select(m => m.Id).ToList();
 
                 var favoriteMaterialIds = await _context.UserMaterialFavorites
-                    .Where(f => f.UserId == userId && idsOnPage.Contains(f.MaterialId))
+                    .Where(f => f.UserId == _userId && idsOnPage.Contains(f.MaterialId))
                     .Select(f => f.MaterialId)
                     .ToListAsync();
 
@@ -157,7 +164,7 @@ namespace ESA_Terra_Argila.Controllers
             }
 
             var existingFavorite = await _context.UserMaterialFavorites
-                .FirstOrDefaultAsync(f => f.UserId == userId && f.MaterialId == request.Id);
+                .FirstOrDefaultAsync(f => f.UserId == _userId && f.MaterialId == request.Id);
 
             if (request.IsFavorite)
             {
@@ -165,7 +172,7 @@ namespace ESA_Terra_Argila.Controllers
                 {
                     var favorite = new UserMaterialFavorite
                     {
-                        UserId = userId,
+                        UserId = _userId,
                         MaterialId = request.Id
                     };
                     _context.UserMaterialFavorites.Add(favorite);
@@ -190,7 +197,7 @@ namespace ESA_Terra_Argila.Controllers
         {
 
             var favorite = await _context.UserMaterialFavorites
-                .FirstOrDefaultAsync(f => f.UserId == userId && f.MaterialId == id);
+                .FirstOrDefaultAsync(f => f.UserId == _userId && f.MaterialId == id);
 
             if (favorite != null)
             {
@@ -234,23 +241,32 @@ namespace ESA_Terra_Argila.Controllers
             return View(material);
         }
 
-        // GET: Materials/Create
+        /// <summary>
+        /// Exibe o formulário para criar um novo material.
+        /// </summary>
+        /// <returns>Uma view com o formulário de criação.</returns>
         public IActionResult Create()
         {
-            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
-            ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == userId), "Id", "Name");
+            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == _userId), "Id", "Name");
+            ViewData["Tags"] = new SelectList(_context.Tags.Where(t => t.UserId == _userId), "Id", "Name");
             ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
             return View();
         }
 
-        // POST: Materials/Create
+        /// <summary>
+        /// Processa a criação de um novo material.
+        /// </summary>
+        /// <param name="material">O material a ser criado.</param>
+        /// <param name="images">Lista de imagens anexadas ao material.</param>
+        /// <param name="selectedCategories">IDs das categorias selecionadas.</param>
+        /// <returns>Redireciona para a lista de materiais em caso de sucesso.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,Name,Reference,Description,Price,Unit")] Material material, List<IFormFile> Images, List<int> Tags)
         {
             if (ModelState.IsValid)
             {
-                material.UserId = userId;
+                material.UserId = _userId;
                 material.CreatedAt = DateTime.UtcNow;
                 if (Tags != null && Tags.Any())
                 {
@@ -285,7 +301,7 @@ namespace ESA_Terra_Argila.Controllers
             }
 
             TempData["ErrorMessage"] = "Erro ao adicionar material! Verifique os campos.";
-            ViewData["CategoryId"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Id", material.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories.Where(c => c.UserId == _userId), "Id", "Id", material.CategoryId);
             return View(material);
         }
 
@@ -309,9 +325,9 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            var allTags = _context.Tags.Where(t => t.UserId == userId);
+            var allTags = _context.Tags.Where(t => t.UserId == _userId);
             var selectedTagIds = material.Tags.Select(t => t.Id).ToList();
-            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
+            ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == _userId), "Id", "Name");
             ViewData["Tags"] = new SelectList(allTags, "Id", "Name", selectedTagIds);
             ViewData["Units"] = UnitsHelper.GetUnitsSelectList();
             return View(material);

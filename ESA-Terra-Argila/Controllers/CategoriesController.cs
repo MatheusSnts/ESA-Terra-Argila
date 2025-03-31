@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerenciar as categorias no sistema.
+    /// Permite criar, editar, excluir e visualizar categorias que são usadas para classificar materiais e produtos.
+    /// </summary>
     [Authorize] // Exige autenticação para todas as ações
     public class CategoriesController : Controller
     {
@@ -21,26 +25,42 @@ namespace ESA_Terra_Argila.Controllers
         private readonly UserManager<User> _userManager;
         private string? userId;
 
-
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de categorias.
+        /// </summary>
+        /// <param name="context">O contexto do banco de dados da aplicação.</param>
+        /// <param name="userManager">O gerenciador de usuários do Identity.</param>
         public CategoriesController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
+
+        /// <summary>
+        /// Executa antes de cada ação do controlador para definir o ID do usuário atual.
+        /// </summary>
+        /// <param name="context">O contexto da execução da ação.</param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
             userId = _userManager.GetUserId(User);
         }
 
-        // GET: Categories
+        /// <summary>
+        /// Exibe a lista de categorias do usuário atual.
+        /// </summary>
+        /// <returns>Uma view contendo a lista de categorias.</returns>
         public async Task<IActionResult> Index()
         {
             var categories = _context.Categories.Where(c => c.UserId == userId).Include(c => c.User);
             return View(await categories.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        /// <summary>
+        /// Exibe os detalhes de uma categoria específica.
+        /// </summary>
+        /// <param name="id">O ID da categoria a ser exibida.</param>
+        /// <returns>A view com os detalhes da categoria ou NotFound se não encontrada.</returns>
         [AllowAnonymous] // Permite que qualquer pessoa veja detalhes da categoria
         public async Task<IActionResult> Details(int? id)
         {
@@ -63,13 +83,20 @@ namespace ESA_Terra_Argila.Controllers
             return View(category);
         }
 
-        // GET: Categories/Create
+        /// <summary>
+        /// Exibe o formulário para criar uma nova categoria.
+        /// </summary>
+        /// <returns>A view do formulário de criação.</returns>
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        /// <summary>
+        /// Cria uma nova categoria no sistema.
+        /// </summary>
+        /// <param name="category">Os dados da categoria a ser criada.</param>
+        /// <returns>Redireciona para a lista de categorias se bem-sucedido, ou retorna a view com erros se falhar.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Reference,Name")] Category category)
@@ -88,7 +115,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(category);
         }
 
-        // GET: Categories/Edit/5
+        /// <summary>
+        /// Exibe o formulário para editar uma categoria existente.
+        /// </summary>
+        /// <param name="id">O ID da categoria a ser editada.</param>
+        /// <returns>A view do formulário de edição ou NotFound se não encontrada.</returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -107,7 +138,12 @@ namespace ESA_Terra_Argila.Controllers
             return View(category);
         }
 
-        // POST: Categories/Edit/5
+        /// <summary>
+        /// Atualiza uma categoria existente no sistema.
+        /// </summary>
+        /// <param name="id">O ID da categoria a ser atualizada.</param>
+        /// <param name="category">Os novos dados da categoria.</param>
+        /// <returns>Redireciona para a lista de categorias se bem-sucedido, ou retorna a view com erros se falhar.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Reference,Name")] Category category)
@@ -150,7 +186,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(category);
         }
 
-        // GET: Categories/Delete/5
+        /// <summary>
+        /// Remove uma categoria do sistema.
+        /// </summary>
+        /// <param name="id">O ID da categoria a ser removida.</param>
+        /// <returns>Redireciona para a lista de categorias após a remoção.</returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -173,11 +213,13 @@ namespace ESA_Terra_Argila.Controllers
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Categoria removida com sucesso!";
             return RedirectToAction("Index");
-
-            //return View(category);
         }
 
-        // POST: Categories/Delete/5
+        /// <summary>
+        /// Confirma a remoção de uma categoria do sistema.
+        /// </summary>
+        /// <param name="id">O ID da categoria a ser removida.</param>
+        /// <returns>Redireciona para a lista de categorias após a remoção.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -197,6 +239,11 @@ namespace ESA_Terra_Argila.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Verifica se uma categoria existe no sistema.
+        /// </summary>
+        /// <param name="id">O ID da categoria a ser verificada.</param>
+        /// <returns>True se a categoria existe, false caso contrário.</returns>
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(e => e.Id == id);

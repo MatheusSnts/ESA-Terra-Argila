@@ -19,6 +19,10 @@ using ESA_Terra_Argila.Enums;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerenciar os produtos no sistema.
+    /// Permite criar, editar, excluir e visualizar produtos, além de gerenciar sua composição com materiais.
+    /// </summary>
     [Authorize]
     public class ProductsController : Controller
     {
@@ -26,19 +30,31 @@ namespace ESA_Terra_Argila.Controllers
         private string? userId;
         private readonly UserManager<User> _userManager;
 
-
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de produtos.
+        /// </summary>
+        /// <param name="context">O contexto do banco de dados da aplicação.</param>
+        /// <param name="userManager">O gerenciador de usuários do Identity.</param>
         public ProductsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
+
+        /// <summary>
+        /// Executa antes de cada ação do controlador para definir o ID do usuário atual.
+        /// </summary>
+        /// <param name="context">O contexto da execução da ação.</param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
             userId = _userManager.GetUserId(User);
         }
 
-        // GET: Products
+        /// <summary>
+        /// Exibe a lista de produtos do usuário atual.
+        /// </summary>
+        /// <returns>Uma view contendo a lista de produtos.</returns>
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Items
@@ -49,6 +65,16 @@ namespace ESA_Terra_Argila.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        /// <summary>
+        /// Exibe uma lista paginada de produtos disponíveis para compra.
+        /// </summary>
+        /// <param name="page">Número da página a ser exibida.</param>
+        /// <param name="orderBy">Ordem de classificação dos produtos (asc/desc).</param>
+        /// <param name="priceMin">Preço mínimo para filtrar produtos.</param>
+        /// <param name="priceMax">Preço máximo para filtrar produtos.</param>
+        /// <param name="vendors">Lista de IDs dos vendedores para filtrar produtos.</param>
+        /// <param name="search">Termo de busca para filtrar produtos por nome.</param>
+        /// <returns>Uma view contendo a lista filtrada e paginada de produtos.</returns>
         [AllowAnonymous]
         public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? vendors, string? search)
         {
@@ -58,6 +84,7 @@ namespace ESA_Terra_Argila.Controllers
                 .Include(m => m.User)
                 .Include(m => m.Images)
                 .AsQueryable();
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(p => p.Name.Contains(search));
@@ -108,7 +135,11 @@ namespace ESA_Terra_Argila.Controllers
             return View();
         }
 
-        // GET: Products/Details/5
+        /// <summary>
+        /// Exibe os detalhes de um produto específico.
+        /// </summary>
+        /// <param name="id">O ID do produto a ser exibido.</param>
+        /// <returns>A view com os detalhes do produto ou NotFound se não encontrado.</returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -131,7 +162,10 @@ namespace ESA_Terra_Argila.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+        /// <summary>
+        /// Exibe o formulário para criar um novo produto.
+        /// </summary>
+        /// <returns>A view do formulário de criação com as listas de categorias, tags e materiais favoritos.</returns>
         public IActionResult Create()
         {
             var favoriteMaterials = _context.UserMaterialFavorites
@@ -146,9 +180,15 @@ namespace ESA_Terra_Argila.Controllers
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Cria um novo produto no sistema.
+        /// </summary>
+        /// <param name="product">Os dados do produto a ser criado.</param>
+        /// <param name="Images">Lista de imagens do produto.</param>
+        /// <param name="Tags">Lista de IDs das tags do produto.</param>
+        /// <param name="Materials">Lista de IDs dos materiais usados no produto.</param>
+        /// <param name="MaterialsQty">Lista de quantidades dos materiais usados.</param>
+        /// <returns>Redireciona para a lista de produtos se bem-sucedido, ou retorna a view com erros se falhar.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -218,7 +258,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(product);
         }
 
-        // GET: Products/Edit/5
+        /// <summary>
+        /// Exibe o formulário para editar um produto existente.
+        /// </summary>
+        /// <param name="id">O ID do produto a ser editado.</param>
+        /// <returns>A view do formulário de edição ou NotFound se não encontrado.</returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -266,9 +310,16 @@ namespace ESA_Terra_Argila.Controllers
             return View(product);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Atualiza um produto existente no sistema.
+        /// </summary>
+        /// <param name="id">O ID do produto a ser atualizado.</param>
+        /// <param name="product">Os novos dados do produto.</param>
+        /// <param name="Images">Lista de novas imagens do produto.</param>
+        /// <param name="Tags">Lista de IDs das novas tags do produto.</param>
+        /// <param name="Materials">Lista de IDs dos novos materiais usados no produto.</param>
+        /// <param name="MaterialsQty">Lista de quantidades dos novos materiais usados.</param>
+        /// <returns>Redireciona para a lista de produtos se bem-sucedido, ou retorna a view com erros se falhar.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
@@ -379,7 +430,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(product);
         }
 
-        // GET: Products/Delete/5
+        /// <summary>
+        /// Remove um produto do sistema.
+        /// </summary>
+        /// <param name="id">O ID do produto a ser removido.</param>
+        /// <returns>Redireciona para a lista de produtos após a remoção.</returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -405,21 +460,11 @@ namespace ESA_Terra_Argila.Controllers
             //return View(product);
         }
 
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var product = await _context.Items.FindAsync(id);
-            if (product != null)
-            {
-                _context.Items.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
+        /// <summary>
+        /// Verifica se um produto existe no sistema.
+        /// </summary>
+        /// <param name="id">O ID do produto a ser verificado.</param>
+        /// <returns>True se o produto existe, false caso contrário.</returns>
         private bool ProductExists(int id)
         {
             return _context.Items.Any(e => e.Id == id);

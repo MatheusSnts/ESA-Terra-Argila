@@ -215,7 +215,7 @@ namespace ESA_Terra_Argila.Tests.Models
                 .ToListAsync();
 
             // Assert
-            Assert.Equal(1, produtos.Count);
+            Assert.Single(produtos);
             Assert.Contains(produtos, p => p.Id == 1);
         }
 

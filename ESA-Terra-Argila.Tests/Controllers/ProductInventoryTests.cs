@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ESA_Terra_Argila.Tests.Controllers
 {
@@ -42,7 +44,15 @@ namespace ESA_Terra_Argila.Tests.Controllers
             // Configurar o UserManager Mock
             var userStore = new Mock<IUserStore<User>>();
             _mockUserManager = new Mock<UserManager<User>>(
-                userStore.Object, null, null, null, null, null, null, null, null);
+                userStore.Object,
+                Mock.Of<IOptions<IdentityOptions>>(),
+                Mock.Of<IPasswordHasher<User>>(),
+                new[] { Mock.Of<IUserValidator<User>>() },
+                new[] { Mock.Of<IPasswordValidator<User>>() },
+                Mock.Of<ILookupNormalizer>(),
+                Mock.Of<IdentityErrorDescriber>(),
+                Mock.Of<IServiceProvider>(),
+                Mock.Of<ILogger<UserManager<User>>>());
             
             // Configurar o comportamento do UserManager
             _mockUserManager.Setup(x => x.GetUserIdAsync(It.IsAny<User>()))
@@ -125,8 +135,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     new RouteData(),
                     new ActionDescriptor()),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                null));
+                new Dictionary<string, object?>(),
+                _controller));
         }
 
         public void Dispose()
@@ -178,8 +188,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     new RouteData(),
                     new ActionDescriptor()),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                null));
+                new Dictionary<string, object?>(),
+                controller));
             
             // Configurar o mock do UserManager para retornar um usuário específico
             _mockUserManager

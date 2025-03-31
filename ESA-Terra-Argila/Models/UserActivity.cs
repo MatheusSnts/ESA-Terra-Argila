@@ -10,21 +10,17 @@ namespace ESA_Terra_Argila.Models
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = default!;
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public User User { get; set; } = default!;
 
         [Required]
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamp { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ActivityType { get; set; }
-
-        [Required]
-        [StringLength(255)]
-        public string Description { get; set; }
+        public string ActivityType { get; set; } = default!;
 
         [StringLength(50)]
         public string? IpAddress { get; set; }
@@ -37,5 +33,10 @@ namespace ESA_Terra_Argila.Models
         [StringLength(500)]
         public string? AdditionalInfo { get; set; }
 
+        public int? EntityId { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string Description { get; set; } = default!;
     }
 } 

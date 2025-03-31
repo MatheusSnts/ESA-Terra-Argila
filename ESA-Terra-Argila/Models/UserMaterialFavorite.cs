@@ -8,12 +8,14 @@ namespace ESA_Terra_Argila.Models
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; }
-        public User User { get; set; }
+        public string UserId { get; set; } = default!;
+        public User User { get; set; } = default!;
 
         [Required]
         public int MaterialId { get; set; }
-        public Material Material { get; set; }
+        public Material Material { get; set; } = default!;
+
+        public DateTime CreatedAt { get; set; }
     }
 
 }

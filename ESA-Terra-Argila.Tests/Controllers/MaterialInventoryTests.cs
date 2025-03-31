@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ESA_Terra_Argila.Areas.Identity.Pages.Account.Manage;
 using Castle.Core.Smtp;
 using ESA_Terra_Argila.Areas.Identity.Pages.Account;
@@ -33,7 +34,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
         private readonly Category _category;
         private readonly string _userId = "test-user-id";
         private readonly Mock<UserManager<User>> _mockUserManager;
-        private readonly ILogger<MaterialsController> _logger;
+        private readonly Mock<ILogger<MaterialsController>> _logger;
         //private readonly Mock<EmailModel> _mockEmailModel;
 
         public MaterialInventoryTests()
@@ -44,11 +45,20 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 .Options;
 
             _context = new ApplicationDbContext(options);
+            _logger = new Mock<ILogger<MaterialsController>>();
 
             // Configurar o UserManager Mock
             var userStore = new Mock<IUserStore<User>>();
             _mockUserManager = new Mock<UserManager<User>>(
-                userStore.Object, null, null, null, null, null, null, null, null);
+                userStore.Object,
+                Mock.Of<IOptions<IdentityOptions>>(),
+                Mock.Of<IPasswordHasher<User>>(),
+                new[] { Mock.Of<IUserValidator<User>>() },
+                new[] { Mock.Of<IPasswordValidator<User>>() },
+                Mock.Of<ILookupNormalizer>(),
+                Mock.Of<IdentityErrorDescriber>(),
+                Mock.Of<IServiceProvider>(),
+                Mock.Of<ILogger<UserManager<User>>>());
             
             // Configurar o comportamento do UserManager
             _mockUserManager.Setup(x => x.GetUserIdAsync(It.IsAny<User>()))
@@ -115,7 +125,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             //_mockEmailModel = new Mock<EmailModel>(_mockUserManager.Object, Mock.Of<SignInManager<User>>(), Mock.Of<IEmailSender>(), Mock.Of<ILogger<ExternalLoginModel>>());
 
             // Configurar o controller com o context real e o usuario
-            _controller = new MaterialsController(_context, _mockUserManager.Object,_logger)
+            _controller = new MaterialsController(_context, _mockUserManager.Object, _logger.Object)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -133,8 +143,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     new RouteData(),
                     new ActionDescriptor()),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                null));
+                new Dictionary<string, object?>(),
+                _controller));
         }
 
         public void Dispose()
@@ -167,7 +177,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 new Claim(ClaimTypes.NameIdentifier, _userId),
             }, "mock"));
 
-            var controller = new MaterialsController(_context, _mockUserManager.Object,_logger)
+            var controller = new MaterialsController(_context, _mockUserManager.Object, _logger.Object)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -185,8 +195,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     new RouteData(),
                     new ActionDescriptor()),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                null));
+                new Dictionary<string, object?>(),
+                controller));
             
             // Configurar o mock do UserManager para retornar um usuário específico
             _mockUserManager

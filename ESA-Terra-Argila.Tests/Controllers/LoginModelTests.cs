@@ -18,6 +18,7 @@ using System;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace ESA_Terra_Argila.Tests.Controllers
 {
@@ -92,7 +93,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
             // Instancia o LoginModel com o HttpContext configurado
             _pageModel = new LoginModel(_signInManagerMock.Object, _loggerMock.Object)
             {
-                PageContext = new PageContext(new ActionContext(httpContext, new RouteData(), new PageActionDescriptor()))
+                PageContext = new PageContext(new ActionContext(httpContext, new RouteData(), new PageActionDescriptor())),
+                TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>())
             };
         }
 
@@ -158,9 +160,10 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var pageResult = Assert.IsType<PageResult>(result);
             Assert.False(_pageModel.ModelState.IsValid);
             Assert.Contains(_pageModel.ModelState.Keys, k => k == string.Empty);
-            Assert.Contains(
-                _pageModel.ModelState[string.Empty].Errors,
-                e => e.ErrorMessage == "Tentativa de login inválida.");
+            var errors = _pageModel.ModelState[string.Empty]?.Errors;
+            Assert.NotNull(errors);
+            Assert.Single(errors);
+            Assert.Contains(errors, e => e.ErrorMessage == "Tentativa de login inválida.");
         }
 
         [Fact]

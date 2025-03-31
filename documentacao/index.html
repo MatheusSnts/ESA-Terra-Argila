@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação do Projeto ESA Terra Argila</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 20px;
+        }
+        .nav {
+            background-color: #3498db;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+        .nav a:hover {
+            background-color: #2980b9;
+        }
+        .class-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .property {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        .method {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .method-name {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .parameter {
+            color: #27ae60;
+        }
+        .return {
+            color: #8e44ad;
+        }
+        .description {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Documentação do Projeto ESA Terra Argila</h1>
+        
+        <div class="nav">
+            <a href="#modelos">Modelos</a>
+            <a href="#controladores">Controladores</a>
+        </div>
+
+        <section id="modelos">
+            <h2>Modelos</h2>
+            
+            <div class="class-section">
+                <h3>Item</h3>
+                <p class="description">Classe base para materiais e produtos no sistema.</p>
+                <div class="property">
+                    <strong>Id</strong> (int) - Identificador único do item
+                </div>
+                <div class="property">
+                    <strong>UserId</strong> (string) - ID do usuário que criou o item
+                </div>
+                <div class="property">
+                    <strong>CategoryId</strong> (int) - ID da categoria do item
+                </div>
+                <div class="property">
+                    <strong>Name</strong> (string) - Nome do item
+                </div>
+                <div class="property">
+                    <strong>Reference</strong> (string) - Referência única do item
+                </div>
+                <div class="property">
+                    <strong>Description</strong> (string) - Descrição detalhada do item
+                </div>
+                <div class="property">
+                    <strong>Price</strong> (float) - Preço do item
+                </div>
+                <div class="property">
+                    <strong>Unit</strong> (string) - Unidade de medida do item
+                </div>
+                <div class="property">
+                    <strong>CreatedAt</strong> (DateTime) - Data de criação do item
+                </div>
+                <div class="property">
+                    <strong>Category</strong> (Category) - Categoria do item
+                </div>
+                <div class="property">
+                    <strong>User</strong> (User) - Usuário que criou o item
+                </div>
+                <div class="property">
+                    <strong>Images</strong> (ICollection<Image>) - Imagens do item
+                </div>
+                <div class="property">
+                    <strong>Tags</strong> (ICollection<Tag>) - Tags associadas ao item
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>Material</h3>
+                <p class="description">Representa um material disponível para compra no sistema.</p>
+                <div class="property">
+                    <strong>ProductMaterials</strong> (ICollection<ProductMaterial>) - Relacionamentos com produtos que usam este material
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>Product</h3>
+                <p class="description">Representa um produto que pode ser comprado, composto por materiais.</p>
+                <div class="property">
+                    <strong>ProductMaterials</strong> (ICollection<ProductMaterial>) - Materiais usados na composição do produto
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>User</h3>
+                <p class="description">Representa um usuário no sistema, com diferentes funções (Admin, Vendor, Supplier, Customer).</p>
+                <div class="property">
+                    <strong>FullName</strong> (string) - Nome completo do usuário
+                </div>
+                <div class="property">
+                    <strong>Role</strong> (UserRole) - Função do usuário no sistema
+                </div>
+                <div class="property">
+                    <strong>AcceptedByAdmin</strong> (bool) - Indica se o usuário foi aprovado pelo administrador
+                </div>
+                <div class="property">
+                    <strong>Items</strong> (ICollection<Item>) - Itens criados pelo usuário
+                </div>
+                <div class="property">
+                    <strong>Categories</strong> (ICollection<Category>) - Categorias criadas pelo usuário
+                </div>
+                <div class="property">
+                    <strong>Tags</strong> (ICollection<Tag>) - Tags criadas pelo usuário
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>Category</h3>
+                <p class="description">Representa uma categoria para classificar materiais e produtos.</p>
+                <div class="property">
+                    <strong>Items</strong> (ICollection<Item>) - Itens pertencentes a esta categoria
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>Tag</h3>
+                <p class="description">Representa uma tag para classificar materiais e produtos.</p>
+                <div class="property">
+                    <strong>IsPublic</strong> (bool) - Indica se a tag é pública
+                </div>
+                <div class="property">
+                    <strong>Materials</strong> (ICollection<Item>) - Materiais com esta tag
+                </div>
+                <div class="property">
+                    <strong>Products</strong> (ICollection<Item>) - Produtos com esta tag
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>Order</h3>
+                <p class="description">Representa um pedido no sistema, contendo múltiplos itens.</p>
+                <div class="property">
+                    <strong>CompletedAt</strong> (DateTime?) - Data de conclusão do pedido
+                </div>
+                <div class="property">
+                    <strong>Status</strong> (OrderStatus) - Status atual do pedido
+                </div>
+                <div class="property">
+                    <strong>Notes</strong> (string) - Observações sobre o pedido
+                </div>
+                <div class="property">
+                    <strong>Items</strong> (ICollection<OrderItem>) - Itens do pedido
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>OrderItem</h3>
+                <p class="description">Representa um item específico em um pedido.</p>
+                <div class="property">
+                    <strong>OrderId</strong> (int) - ID do pedido
+                </div>
+                <div class="property">
+                    <strong>ItemId</strong> (int) - ID do item
+                </div>
+                <div class="property">
+                    <strong>Quantity</strong> (int) - Quantidade do item
+                </div>
+                <div class="property">
+                    <strong>UnitPrice</strong> (float) - Preço unitário do item
+                </div>
+                <div class="property">
+                    <strong>Order</strong> (Order) - Pedido ao qual este item pertence
+                </div>
+                <div class="property">
+                    <strong>Item</strong> (Item) - Item do pedido
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>ItemImage</h3>
+                <p class="description">Representa uma imagem associada a um item no sistema.</p>
+                <div class="property">
+                    <strong>Id</strong> (int) - Identificador único da imagem
+                </div>
+                <div class="property">
+                    <strong>ItemId</strong> (int?) - ID do item ao qual a imagem pertence
+                </div>
+                <div class="property">
+                    <strong>Name</strong> (string) - Nome do arquivo da imagem
+                </div>
+                <div class="property">
+                    <strong>Path</strong> (string) - Caminho do arquivo da imagem no sistema
+                </div>
+                <div class="property">
+                    <strong>Item</strong> (Item) - Referência ao item ao qual a imagem pertence
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>UserMaterialFavorite</h3>
+                <p class="description">Representa a relação entre um usuário e seus materiais favoritos.</p>
+                <div class="property">
+                    <strong>Id</strong> (int) - Identificador único do favorito
+                </div>
+                <div class="property">
+                    <strong>UserId</strong> (string) - ID do usuário que favoritou o material
+                </div>
+                <div class="property">
+                    <strong>MaterialId</strong> (int) - ID do material favoritado
+                </div>
+                <div class="property">
+                    <strong>User</strong> (User) - Referência ao usuário
+                </div>
+                <div class="property">
+                    <strong>Material</strong> (Material) - Referência ao material favoritado
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>Invitation</h3>
+                <p class="description">Representa um convite para novos usuários se registrarem no sistema.</p>
+                <div class="property">
+                    <strong>Id</strong> (int) - Identificador único do convite
+                </div>
+                <div class="property">
+                    <strong>Email</strong> (string) - Email do usuário convidado
+                </div>
+                <div class="property">
+                    <strong>Token</strong> (string) - Token único para validação do convite
+                </div>
+                <div class="property">
+                    <strong>ExpirationDate</strong> (DateTime) - Data de expiração do convite
+                </div>
+                <div class="property">
+                    <strong>Used</strong> (bool) - Indica se o convite já foi utilizado
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>LogEntry</h3>
+                <p class="description">Representa um registro de log de ações no sistema.</p>
+                <div class="property">
+                    <strong>Id</strong> (int) - Identificador único do log
+                </div>
+                <div class="property">
+                    <strong>UserEmail</strong> (string) - Email do usuário que realizou a ação
+                </div>
+                <div class="property">
+                    <strong>Action</strong> (string) - Descrição da ação realizada
+                </div>
+                <div class="property">
+                    <strong>Timestamp</strong> (DateTime) - Data e hora da ação
+                </div>
+                <div class="property">
+                    <strong>Ip</strong> (string) - Endereço IP do usuário
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>UserActivity</h3>
+                <p class="description">Representa uma atividade realizada por um usuário no sistema.</p>
+                <div class="property">
+                    <strong>Id</strong> (int) - Identificador único da atividade
+                </div>
+                <div class="property">
+                    <strong>UserId</strong> (string) - ID do usuário que realizou a atividade
+                </div>
+                <div class="property">
+                    <strong>User</strong> (User) - Referência ao usuário
+                </div>
+                <div class="property">
+                    <strong>Timestamp</strong> (DateTime) - Data e hora da atividade
+                </div>
+                <div class="property">
+                    <strong>ActivityType</strong> (string) - Tipo da atividade realizada
+                </div>
+                <div class="property">
+                    <strong>Description</strong> (string) - Descrição detalhada da atividade
+                </div>
+                <div class="property">
+                    <strong>IpAddress</strong> (string?) - Endereço IP do usuário
+                </div>
+                <div class="property">
+                    <strong>UserAgent</strong> (string?) - Informações do navegador do usuário
+                </div>
+                <div class="property">
+                    <strong>IsSuccess</strong> (bool) - Indica se a atividade foi bem-sucedida
+                </div>
+                <div class="property">
+                    <strong>AdditionalInfo</strong> (string?) - Informações adicionais sobre a atividade
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>StockMovement</h3>
+                <p class="description">Representa um movimento de estoque de um material.</p>
+                <div class="property">
+                    <strong>Id</strong> (int) - Identificador único do movimento
+                </div>
+                <div class="property">
+                    <strong>MaterialId</strong> (int) - ID do material
+                </div>
+                <div class="property">
+                    <strong>Material</strong> (Material) - Referência ao material
+                </div>
+                <div class="property">
+                    <strong>Quantity</strong> (float) - Quantidade movimentada
+                </div>
+                <div class="property">
+                    <strong>Type</strong> (string) - Tipo do movimento (Entrada ou Saída)
+                </div>
+                <div class="property">
+                    <strong>Date</strong> (DateTime) - Data do movimento
+                </div>
+                <div class="property">
+                    <strong>UserId</strong> (string?) - ID do usuário que realizou o movimento
+                </div>
+                <div class="property">
+                    <strong>User</strong> (User?) - Referência ao usuário
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>ErrorViewModel</h3>
+                <p class="description">Modelo para exibição de erros no sistema.</p>
+                <div class="property">
+                    <strong>RequestId</strong> (string?) - ID da requisição que gerou o erro
+                </div>
+                <div class="property">
+                    <strong>ShowRequestId</strong> (bool) - Indica se o ID da requisição deve ser exibido
+                </div>
+            </div>
+        </section>
+
+        <section id="controladores">
+            <h2>Controladores</h2>
+
+            <div class="class-section">
+                <h3>HomeController</h3>
+                <p class="description">Controlador responsável pela página inicial e funcionalidades gerais do site.</p>
+                <div class="method">
+                    <span class="method-name">Index()</span>
+                    <p class="description">Exibe a página inicial do site com os produtos mais vendidos.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Privacy()</span>
+                    <p class="description">Exibe a página de política de privacidade.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Error()</span>
+                    <p class="description">Exibe a página de erro quando ocorre uma exceção não tratada.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>MaterialsController</h3>
+                <p class="description">Controlador responsável por gerenciar as operações relacionadas a materiais no sistema.</p>
+                <div class="method">
+                    <span class="method-name">Index()</span>
+                    <p class="description">Exibe a lista de materiais do usuário atual.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">List()</span>
+                    <p class="description">Exibe uma lista paginada de materiais disponíveis para compra.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Details(int? id)</span>
+                    <p class="description">Exibe os detalhes de um material específico.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Create()</span>
+                    <p class="description">Exibe o formulário para criar um novo material.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Edit(int? id)</span>
+                    <p class="description">Exibe o formulário para editar um material existente.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Delete(int? id)</span>
+                    <p class="description">Remove um material do sistema.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>CategoriesController</h3>
+                <p class="description">Controlador responsável por gerenciar as categorias no sistema.</p>
+                <div class="method">
+                    <span class="method-name">Index()</span>
+                    <p class="description">Exibe a lista de categorias do usuário atual.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Details(int? id)</span>
+                    <p class="description">Exibe os detalhes de uma categoria específica.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Create()</span>
+                    <p class="description">Exibe o formulário para criar uma nova categoria.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Edit(int? id)</span>
+                    <p class="description">Exibe o formulário para editar uma categoria existente.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Delete(int? id)</span>
+                    <p class="description">Remove uma categoria do sistema.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>ProductsController</h3>
+                <p class="description">Controlador responsável por gerenciar os produtos no sistema.</p>
+                <div class="method">
+                    <span class="method-name">Index()</span>
+                    <p class="description">Exibe a lista de produtos do usuário atual.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">List()</span>
+                    <p class="description">Exibe uma lista paginada de produtos disponíveis para compra.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Details(int? id)</span>
+                    <p class="description">Exibe os detalhes de um produto específico.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Create()</span>
+                    <p class="description">Exibe o formulário para criar um novo produto.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Edit(int? id)</span>
+                    <p class="description">Exibe o formulário para editar um produto existente.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Delete(int? id)</span>
+                    <p class="description">Remove um produto do sistema.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>OrdersController</h3>
+                <p class="description">Controlador responsável por gerenciar os pedidos no sistema.</p>
+                <div class="method">
+                    <span class="method-name">Cart()</span>
+                    <p class="description">Exibe o carrinho de compras do usuário atual.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">AddToCart(int id)</span>
+                    <p class="description">Adiciona um item ao carrinho de compras.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">RemoveFromCart(int id)</span>
+                    <p class="description">Remove um item do carrinho de compras.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">AddQuantity(int id, int value)</span>
+                    <p class="description">Atualiza a quantidade de um item no carrinho.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>AdminController</h3>
+                <p class="description">Controlador responsável por gerenciar as operações administrativas do sistema.</p>
+                <div class="method">
+                    <span class="method-name">AcceptUsers()</span>
+                    <p class="description">Exibe a lista de usuários pendentes de aprovação.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Vendors()</span>
+                    <p class="description">Exibe a lista de vendedores aprovados.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Suppliers()</span>
+                    <p class="description">Exibe a lista de fornecedores aprovados.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Customers()</span>
+                    <p class="description">Exibe a lista de clientes aprovados.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">AcceptUser(string id)</span>
+                    <p class="description">Aprova um usuário no sistema.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Delete(string id)</span>
+                    <p class="description">Remove um usuário do sistema.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">BlockUser(string id)</span>
+                    <p class="description">Bloqueia um usuário no sistema.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>TagsController</h3>
+                <p class="description">Controlador responsável por gerenciar as tags no sistema.</p>
+                <div class="method">
+                    <span class="method-name">Index()</span>
+                    <p class="description">Exibe a lista de tags do usuário atual.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Details(int? id)</span>
+                    <p class="description">Exibe os detalhes de uma tag específica.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Create()</span>
+                    <p class="description">Exibe o formulário para criar uma nova tag.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Edit(int? id)</span>
+                    <p class="description">Exibe o formulário para editar uma tag existente.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Delete(int? id)</span>
+                    <p class="description">Remove uma tag do sistema.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>DashboardController</h3>
+                <p class="description">Controlador responsável por gerenciar o painel de controle do sistema.</p>
+                <div class="method">
+                    <span class="method-name">Item()</span>
+                    <p class="description">Redireciona o usuário para a área apropriada baseado em sua função.</p>
+                </div>
+                <div class="method">
+                    <span class="method-name">Index()</span>
+                    <p class="description">Exibe a página principal do dashboard.</p>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>AdminInviteController</h3>
+                <p class="description">Controlador responsável por gerenciar convites para novos usuários no sistema.</p>
+                <div class="method">
+                    <strong>SendInvitation</strong> (POST /api/AdminInvite/SendInvitation)
+                    <p>Envia um convite por email para um novo usuário se registrar no sistema.</p>
+                    <div class="parameter">
+                        <strong>request</strong> (InvitationRequest) - Dados do convite contendo o email do usuário
+                    </div>
+                    <div class="return">
+                        Retorna uma mensagem de sucesso ou erro
+                    </div>
+                </div>
+                <div class="method">
+                    <strong>Register</strong> (GET /api/AdminInvite/Register)
+                    <p>Processa o registro de um novo usuário através de um convite.</p>
+                    <div class="parameter">
+                        <strong>token</strong> (string) - Token de validação do convite
+                    </div>
+                    <div class="parameter">
+                        <strong>email</strong> (string) - Email do usuário convidado
+                    </div>
+                    <div class="return">
+                        Redireciona para a página de registro ou retorna erro se o convite for inválido
+                    </div>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h3>InvitationRequest</h3>
+                <p class="description">Modelo de requisição para envio de convites.</p>
+                <div class="property">
+                    <strong>Email</strong> (string) - Email do usuário a ser convidado
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html> 

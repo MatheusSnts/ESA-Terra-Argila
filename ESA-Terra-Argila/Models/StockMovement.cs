@@ -13,13 +13,13 @@ namespace ESA_Terra_Argila.Models
         public int MaterialId { get; set; }
 
         [ForeignKey("MaterialId")]
-        public virtual Material Material { get; set; }
+        public Material Material { get; set; } = default!;
 
         [Required]
         public float Quantity { get; set; }
 
         [Required]
-        public string Type { get; set; } // Entrada ou Saída
+        public string Type { get; set; } = default!; // Entrada ou Saída
 
         [Required]
         public DateTime Date { get; set; }
@@ -28,5 +28,7 @@ namespace ESA_Terra_Argila.Models
 
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
+
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }
