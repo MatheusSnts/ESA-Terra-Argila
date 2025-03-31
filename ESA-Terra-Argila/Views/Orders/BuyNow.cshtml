@@ -1,0 +1,53 @@
+﻿@model ESA_Terra_Argila.Models.Order
+
+@{
+    ViewData["Title"] = "Comprar Agora";
+}
+
+<style>
+    .product-image {
+        width: 10rem;
+        height: 10rem;
+    }
+</style>
+
+<div class="container">
+    <div class="col-md-12 my-3">
+        <h2>Comprar Agora</h2>
+    </div>
+    <div class="d-flex gap-4">
+        <div class="col-md-7 d-flex flex-column justify-content-between">
+            <div class="col-md-12 border p-4 rounded shadow">
+                @if (Model.OrderItems != null && Model.OrderItems.Count > 0)
+                {
+                    var item = Model.OrderItems.First();
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="product-image">
+                            <img src="@item.Item.Images.FirstOrDefault()?.Path" alt="Produto" class="img-fluid">
+                        </div>
+                        <div>
+                            <h4 class="fw-bold">@item.Item.Name</h4>
+                            <p class="mb-0">@item.Item.Category?.Name</p>
+                            <p class="fw-bold text-primary">@item.Item.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex align-items-center gap-3">
+                        <label for="quantity" class="fw-bold">Quantidade:</label>
+                        <input type="number" id="quantity" class="form-control" value="@item.Quantity" min="1" style="width: 70px;">
+                    </div>
+                    <div class="mt-4">
+                        <form method="post" action="/api/pagamento/checkout/@Model.Id">
+                            <button type="submit" class="btn btn-success">Comprar Agora</button>
+                        </form>
+                    </div>
+
+
+                }
+                else
+                {
+                    <p>O pedido não contém itens.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

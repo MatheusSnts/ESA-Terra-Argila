@@ -4,6 +4,7 @@ using Stripe.Checkout;
 using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ESA_Terra_Argila.Controllers
@@ -19,47 +20,54 @@ namespace ESA_Terra_Argila.Controllers
             _context = context;
         }
 
-        [HttpPost("checkout/{productId}")]
-        public IActionResult CriarSessaoPagamento(int productId)
+        [HttpPost("checkout/{orderId}")]
+        public async Task<IActionResult> CriarSessaoPagamento(int orderId)
         {
-            var product = _context.Items.OfType<Product>().FirstOrDefault(p => p.Id == productId);
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
 
-            if (product == null)
+            if (order == null || !order.OrderItems.Any())
             {
-                return NotFound(new { message = "Produto não encontrado." });
+                return NotFound(new { message = "Pedido não encontrado ou sem itens." });
             }
 
-            var domain = "https://localhost:7197";
-
-            var options = new SessionCreateOptions
+            try
             {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
-        {
-            new()
-            {
-                PriceData = new SessionLineItemPriceDataOptions
+                var domain = "https://localhost:7197";
+                var lineItems = order.OrderItems.Select(oi => new SessionLineItemOptions
                 {
-                    Currency = "eur",
-                    UnitAmount = (long)(product.Price * 100), // Stripe usa centavos
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    PriceData = new SessionLineItemPriceDataOptions
                     {
-                        Name = product.Name
-                    }
-                },
-                Quantity = 1
+                        Currency = "eur",
+                        UnitAmount = (long)(oi.Item.Price * 100),
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = oi.Item.Name
+                        }
+                    },
+                    Quantity = (long)oi.Quantity
+                }).ToList();
+
+                var options = new SessionCreateOptions
+                {
+                    PaymentMethodTypes = new List<string> { "card" },
+                    LineItems = lineItems,
+                    Mode = "payment",
+                    SuccessUrl = $"{domain}/PaymentSuccess",
+                    CancelUrl = $"{domain}/PaymentCanceled"
+                };
+
+                var service = new SessionService();
+                var session = service.Create(options);
+
+                return Redirect(session.Url);
             }
-        },
-                Mode = "payment",
-                SuccessUrl = $"{domain}/sucesso",
-                CancelUrl = $"{domain}/cancelado"
-            };
-
-            var service = new SessionService();
-            var session = service.Create(options);
-
-            return Ok(new { sessionId = session.Id, url = session.Url });
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { message = "Erro ao criar sessão de pagamento.", error = ex.Message });
+            }
         }
-
     }
 }

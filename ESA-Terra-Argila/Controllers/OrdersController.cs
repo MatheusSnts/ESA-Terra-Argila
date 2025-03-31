@@ -11,7 +11,6 @@ namespace ESA_Terra_Argila.Controllers
 {
     public class OrdersController : Controller
     {
-
         private readonly ApplicationDbContext _context;
         private string? userId;
         private readonly UserManager<User> _userManager;
@@ -87,10 +86,28 @@ namespace ESA_Terra_Argila.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
         public async Task<IActionResult> BuyNow(int id)
         {
-            return Ok();
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Item)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+
+            if (order == null || !order.OrderItems.Any())
+            {
+                return NotFound("Pedido não encontrado ou sem itens.");
+            }
+
+            foreach (var oi in order.OrderItems)
+            {
+                await _context.Entry(oi.Item).Reference(i => i.Category).LoadAsync();
+                await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
+            }
+
+            return View("BuyNow", order);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddQuantity([FromBody] AddQuantityRequestModel request)
@@ -119,7 +136,6 @@ namespace ESA_Terra_Argila.Controllers
 
             await _context.SaveChangesAsync();
 
-
             return Ok(new
             {
                 success = true,
@@ -132,7 +148,7 @@ namespace ESA_Terra_Argila.Controllers
 
         public async Task<IActionResult> GetCartItemCount()
         {
-            if(string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(userId))
             {
                 return NotFound("Utilizador não encontrado.");
             }
@@ -155,12 +171,10 @@ namespace ESA_Terra_Argila.Controllers
 
             if (id == null)
             {
-
                 if (string.IsNullOrEmpty(referer))
                 {
                     return NotFound("Página não encontrada.");
                 }
-
                 return Redirect(referer);
             }
 

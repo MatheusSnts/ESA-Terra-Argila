@@ -64,6 +64,12 @@
             <div style="height: 2rem; font-size: 20px;" class="col-md-12 fw-bold total text-end">
                 Total: @Model?.GetTotal().ToString("C", new System.Globalization.CultureInfo("pt-PT"))
             </div>
+            <div class="mt-4 text-end">
+    <form method="post" action="/api/pagamento/checkout/@Model.Id">
+        <button type="submit" class="btn btn-primary">Finalizar Compra</button>
+    </form>
+</div>
+
         </div>
         <div style="height: 29rem;" class="col-md-4 form-section shadow">
         </div>
