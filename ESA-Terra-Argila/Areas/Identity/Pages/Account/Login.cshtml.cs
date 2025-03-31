@@ -16,17 +16,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ESA_Terra_Argila.Data;
+using ESA_Terra_Argila.Services;
 
 namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
+        private readonly IUserActivityService _userActivityService;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<User> signInManager, IUserActivityService userActivityService, ILogger<LoginModel> logger)    
         {
             _signInManager = signInManager;
+            _userActivityService = userActivityService;
             _logger = logger;
         }
 
@@ -127,6 +130,18 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                         await dbContext.SaveChangesAsync();
                     }
 
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    if (user != null)
+                    {
+                        await _userActivityService.LogActivityAsync(
+                            user.Id,
+                            "Login",
+                            "Login efetuado com sucesso",
+                            true,
+                            $"IP: {HttpContext.Connection.RemoteIpAddress?.ToString()}"
+                        );
+                    }
+
                     _logger.LogInformation($"User {Input.Email} logged in at {DateTime.UtcNow}.");
                     return LocalRedirect(returnUrl);
                 }
@@ -146,6 +161,8 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, "Tentativa de login inválida.");
                     return Page();
                 }
+
+
             }
 
             return Page();

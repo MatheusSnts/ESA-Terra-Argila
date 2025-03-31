@@ -17,6 +17,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddScoped<AdminDashboardService>();
+builder.Services.AddScoped<IUserActivityService, UserActivityService>();
+
+
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 

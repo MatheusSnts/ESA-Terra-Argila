@@ -1,0 +1,103 @@
+﻿@model ESA_Terra_Argila.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard Administrador";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h2 class="my-4">Dashboard do Administrador</h2>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Total de Utilizadores</h6>
+            <h4>@Model.TotalUsers</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Utilizadores Aprovados</h6>
+            <h4>@Model.ApprovedUsers</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Produtos Ativos</h6>
+            <h4>@Model.TotalProducts</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Materiais Ativos</h6>
+            <h4>@Model.TotalMaterials</h4>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Encomendas</h6>
+            <h4>@Model.TotalOrders</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Utilizadores Únicos (24h)</h6>
+            <h4>@Model.UniqueUsers24h</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Utilizadores Únicos (7d)</h6>
+            <h4>@Model.UniqueUsers7d</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Utilizadores Únicos (Mês)</h6>
+            <h4>@Model.UniqueUsersMonth</h4>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Utilizadores Únicos (Total)</h6>
+            <h4>@Model.UniqueUsersTotal</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Acessos (24h)</h6>
+            <h4>@Model.ActiveUsers24h</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Acessos (7d)</h6>
+            <h4>@Model.ActiveUsers7d</h4>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3">
+            <h6>Acessos (Mês)</h6>
+            <h4>@Model.ActiveUsersMonth</h4>
+        </div>
+    </div>
+</div>
+
+<hr />
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card shadow p-3 bg-light">
+            <h6>Total de Acessos</h6>
+            <h4>@Model.ActiveUsersTotal</h4>
+        </div>
+    </div>
+</div>

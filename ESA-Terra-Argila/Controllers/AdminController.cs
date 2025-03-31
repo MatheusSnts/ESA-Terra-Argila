@@ -1,6 +1,7 @@
 ﻿using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Helpers;
 using ESA_Terra_Argila.Models;
+using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,12 @@ namespace ESA_Terra_Argila.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
-
-        public AdminController(ApplicationDbContext context, UserManager<User> userManager)
+        private readonly AdminDashboardService _dashboardService;
+        public AdminController(ApplicationDbContext context, UserManager<User> userManager, AdminDashboardService dashboardService)
         {
             _context = context;
             _userManager = userManager;
+            _dashboardService = dashboardService;
         }
 
         public async Task<IActionResult> AcceptUsers()
@@ -31,6 +33,13 @@ namespace ESA_Terra_Argila.Controllers
             }
             return View(usersList);
         }
+
+        public async Task<IActionResult> Dashboard()
+        {
+            var model = await _dashboardService.GetDashboardStatsAsync();
+            return View(model);
+        }
+
         public async Task<IActionResult> Vendors()
         {
             return View(await GetUsersByRole("Vendor"));
@@ -111,6 +120,8 @@ namespace ESA_Terra_Argila.Controllers
             var users = await _userManager.GetUsersInRoleAsync(role);
             return users.Where(u => u.AcceptedByAdmin).ToList();
         }
+
+
 
 
     }

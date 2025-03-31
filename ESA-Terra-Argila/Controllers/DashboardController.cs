@@ -18,7 +18,7 @@ namespace ESA_Terra_Argila.Controllers
             }
             else if (User.IsInRole("Admin"))
             {
-                return RedirectToRoute(new { controller = "Admin", action = "AcceptUsers" });
+                return RedirectToRoute(new { controller = "Admin", action = "Dashboard" });
             }
             return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
