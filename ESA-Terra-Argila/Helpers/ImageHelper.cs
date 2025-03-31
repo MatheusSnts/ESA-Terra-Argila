@@ -28,5 +28,13 @@ namespace ESA_Terra_Argila.Helpers
                 Path = $"{ItemImagesFolder}{itemId}/{uniqueFileName}"
             };
         }
+
+        public static string Generate(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return string.Empty;
+            
+            // ... existing code ...
+        }
     }
 }
