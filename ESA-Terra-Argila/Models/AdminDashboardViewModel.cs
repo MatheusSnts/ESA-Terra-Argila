@@ -13,12 +13,14 @@
         public int UniqueUsers24h { get; set; }
         public int UniqueUsers7d { get; set; }
         public int UniqueUsersMonth { get; set; }
+        public int UniqueUsersYear { get; set; }
         public int UniqueUsersTotal { get; set; }
 
         //Utilizadores ativos 
         public int ActiveUsers24h { get; set; }
         public int ActiveUsers7d { get; set; }
         public int ActiveUsersMonth { get; set; }
+        public int ActiveUsersYear { get; set; }
         public int ActiveUsersTotal { get; set; }
     }
 }

@@ -7,97 +7,186 @@
 
 <h2 class="my-4">Dashboard do Administrador</h2>
 
-<div class="row g-3">
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Total de Utilizadores</h6>
-            <h4>@Model.TotalUsers</h4>
+<!-- Botão para alternar entre cartões e gráfico -->
+<div class="d-flex justify-content-end mb-3">
+    <button id="toggleViewBtn" class="btn btn-outline-primary">Ver em gráfico</button>
+</div>
+
+<!-- Vista de Cartões -->
+<div id="cardView">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Total de Utilizadores</h6>
+                <h4>@Model.TotalUsers</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Utilizadores Aprovados</h6>
+                <h4>@Model.ApprovedUsers</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Produtos Ativos</h6>
+                <h4>@Model.TotalProducts</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Materiais Ativos</h6>
+                <h4>@Model.TotalMaterials</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Utilizadores Aprovados</h6>
-            <h4>@Model.ApprovedUsers</h4>
+
+    <hr />
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Utilizadores Únicos (24h)</h6>
+                <h4>@Model.UniqueUsers24h</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Utilizadores Únicos (7d)</h6>
+                <h4>@Model.UniqueUsers7d</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Utilizadores Únicos (Mês)</h6>
+                <h4>@Model.UniqueUsersMonth</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Utilizadores Únicos (Ano)</h6>
+                <h4>@Model.UniqueUsersYear</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Produtos Ativos</h6>
-            <h4>@Model.TotalProducts</h4>
+
+    <hr />
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Utilizadores Únicos (Total)</h6>
+                <h4>@Model.UniqueUsersTotal</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Acessos (24h)</h6>
+                <h4>@Model.ActiveUsers24h</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Acessos (7d)</h6>
+                <h4>@Model.ActiveUsers7d</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Acessos (Mês)</h6>
+                <h4>@Model.ActiveUsersMonth</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Materiais Ativos</h6>
-            <h4>@Model.TotalMaterials</h4>
+
+    <hr />
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card shadow p-3 bg-light">
+                <h6>Total de Acessos</h6>
+                <h4>@Model.ActiveUsersTotal</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Total de Encomendas</h6>
+                <h4>@Model.TotalOrders</h4>
+            </div>
         </div>
     </div>
 </div>
 
-<hr />
-
-<div class="row g-3">
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Encomendas</h6>
-            <h4>@Model.TotalOrders</h4>
-        </div>
+<!-- Vista de Gráfico -->
+<div id="chartView" style="display: none;">
+    <h4>Gráfico de Atividade</h4>
+    <div class="d-flex gap-2 mb-3">
+        <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="24h">24h</button>
+        <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="7d">7 dias</button>
+        <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="month">Mês</button>
+        <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="year">Ano</button>
+        <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="total">Total</button>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Utilizadores Únicos (24h)</h6>
-            <h4>@Model.UniqueUsers24h</h4>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Utilizadores Únicos (7d)</h6>
-            <h4>@Model.UniqueUsers7d</h4>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Utilizadores Únicos (Mês)</h6>
-            <h4>@Model.UniqueUsersMonth</h4>
-        </div>
+    <div class="chart-container rounded shadow mb-4">
+        <canvas class="chart rounded" id="activityChart"></canvas>
     </div>
 </div>
 
-<hr />
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const btn = document.getElementById("toggleViewBtn");
+        const cardView = document.getElementById("cardView");
+        const chartView = document.getElementById("chartView");
 
-<div class="row g-3">
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Utilizadores Únicos (Total)</h6>
-            <h4>@Model.UniqueUsersTotal</h4>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Acessos (24h)</h6>
-            <h4>@Model.ActiveUsers24h</h4>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Acessos (7d)</h6>
-            <h4>@Model.ActiveUsers7d</h4>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card shadow p-3">
-            <h6>Acessos (Mês)</h6>
-            <h4>@Model.ActiveUsersMonth</h4>
-        </div>
-    </div>
-</div>
+        const dataByRange = {
+            "24h": @Html.Raw(Json.Serialize(Model.ActiveUsers24h)),
+            "7d": @Html.Raw(Json.Serialize(Model.ActiveUsers7d)),
+            "month": @Html.Raw(Json.Serialize(Model.ActiveUsersMonth)),
+            "year": @Html.Raw(Json.Serialize(Model.ActiveUsersYear)),
+            "total": @Html.Raw(Json.Serialize(Model.ActiveUsersTotal))
+        };
 
-<hr />
-<div class="row g-3">
-    <div class="col-md-3">
-        <div class="card shadow p-3 bg-light">
-            <h6>Total de Acessos</h6>
-            <h4>@Model.ActiveUsersTotal</h4>
-        </div>
-    </div>
-</div>
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ["24h"],
+                datasets: [{
+                    label: 'Acessos',
+                    data: [dataByRange["24h"]],
+                    borderWidth: 2,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        btn.addEventListener("click", () => {
+            const showingCards = cardView.style.display !== "none";
+            cardView.style.display = showingCards ? "none" : "block";
+            chartView.style.display = showingCards ? "block" : "none";
+            btn.textContent = showingCards ? "Ver em cartões" : "Ver em gráfico";
+
+            if (!showingCards) {
+                chart.resize();
+            }
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(fb =>
+            fb.addEventListener('click', () => {
+                const range = fb.getAttribute("data-range");
+                chart.data.labels = [range];
+                chart.data.datasets[0].data = [dataByRange[range]];
+                chart.update();
+            })
+        );
+    </script>
+
+}

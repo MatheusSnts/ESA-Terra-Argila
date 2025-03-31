@@ -19,6 +19,7 @@ namespace ESA_Terra_Argila.Services
             var dayAgo = now.AddDays(-1);
             var weekAgo = now.AddDays(-7);
             var monthAgo = now.AddMonths(-1);
+            var yearAgo = now.AddYears(-1);
 
             //Queries
             var usersQuery = _context.Users.AsNoTracking();
@@ -40,11 +41,13 @@ namespace ESA_Terra_Argila.Services
                 UniqueUsers24h = await activitiesQuery.Where(a => a.Timestamp >= dayAgo).Select(a => a.UserId).Distinct().CountAsync(),
                 UniqueUsers7d = await activitiesQuery.Where(a => a.Timestamp >= weekAgo).Select(a => a.UserId).Distinct().CountAsync(),
                 UniqueUsersMonth = await activitiesQuery.Where(a => a.Timestamp >= monthAgo).Select(a => a.UserId).Distinct().CountAsync(),
+                UniqueUsersYear = await activitiesQuery.Where(a => a.Timestamp >= yearAgo).Select(a => a.UserId).Distinct().CountAsync(),
                 UniqueUsersTotal = await activitiesQuery.Select(a => a.UserId).Distinct().CountAsync(),
 
                 ActiveUsers24h = await activitiesQuery.CountAsync(a => a.Timestamp >= dayAgo),
                 ActiveUsers7d = await activitiesQuery.CountAsync(a => a.Timestamp >= weekAgo),
                 ActiveUsersMonth = await activitiesQuery.CountAsync(a => a.Timestamp >= monthAgo),
+                ActiveUsersYear = await activitiesQuery.CountAsync(a => a.Timestamp >= yearAgo),
                 ActiveUsersTotal = await activitiesQuery.CountAsync()
             };
 
