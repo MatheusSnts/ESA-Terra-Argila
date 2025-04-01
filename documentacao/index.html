@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação - ESA Terra Argila</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+        header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        header p {
+            color: #7f8c8d;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .card {
+            width: 30%;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .card p {
+            color: #555;
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+        .card a:hover {
+            background-color: #2980b9;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            color: #7f8c8d;
+        }
+        @media (max-width: 900px) {
+            .card {
+                width: 45%;
+            }
+        }
+        @media (max-width: 600px) {
+            .card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Documentação do Sistema ESA Terra Argila</h1>
+        <p>Guia completo da arquitetura, models e funcionalidades do sistema</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Models</h2>
+            <p>Documentação detalhada de todos os models do sistema, incluindo propriedades, relacionamentos e métodos.</p>
+            <a href="models.html">Ver Documentação</a>
+        </div>
+
+        <div class="card">
+            <h2>Sistema de Pedidos</h2>
+            <p>Documentação específica sobre o sistema de pedidos, incluindo o fluxo de pedidos e a gestão do carrinho de compras.</p>
+            <a href="orders.html">Ver Documentação</a>
+        </div>
+
+        <div class="card">
+            <h2>Controllers</h2>
+            <p>Documentação dos controllers do sistema, incluindo endpoints, parâmetros e respostas.</p>
+            <a href="#">Em breve</a>
+        </div>
+
+        <div class="card">
+            <h2>Autenticação</h2>
+            <p>Documentação do sistema de autenticação e autorização, incluindo papéis e permissões.</p>
+            <a href="#">Em breve</a>
+        </div>
+
+        <div class="card">
+            <h2>Diagramas</h2>
+            <p>Diagramas de entidade-relacionamento, fluxogramas e outros diagramas do sistema.</p>
+            <a href="#">Em breve</a>
+        </div>
+
+        <div class="card">
+            <h2>API</h2>
+            <p>Documentação da API do sistema, incluindo endpoints, métodos, parâmetros e exemplos de uso.</p>
+            <a href="#">Em breve</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 ESA Terra Argila. Todos os direitos reservados.</p>
+        <p>Documentação gerada em @DateTime.Now.ToString("dd/MM/yyyy")</p>
+    </footer>
+</body>
+</html> 

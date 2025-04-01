@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação de Models - ESA Terra Argila</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #16a085;
+        }
+        .property {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #2ecc71;
+        }
+        .property h4 {
+            margin: 0 0 5px 0;
+            color: #27ae60;
+        }
+        .property p {
+            margin: 5px 0;
+        }
+        .relationship {
+            color: #8e44ad;
+            font-style: italic;
+        }
+        .decorator {
+            display: inline-block;
+            font-size: 0.8em;
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        .class-hierarchy {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .model-index {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .model-index a {
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+        .model-index a:hover {
+            background-color: #2980b9;
+        }
+        code {
+            background-color: #f8f8f8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Documentação de Models - ESA Terra Argila</h1>
+    
+    <p>Esta documentação fornece uma visão detalhada dos modelos de dados (models) utilizados no sistema ESA Terra Argila.</p>
+    
+    <h2>Índice de Models</h2>
+    <div class="model-index">
+        <a href="#Item">Item</a>
+        <a href="#Product">Product</a>
+        <a href="#Material">Material</a>
+        <a href="#Category">Category</a>
+        <a href="#User">User</a>
+        <a href="#Order">Order</a>
+        <a href="#OrderItem">OrderItem</a>
+        <a href="#Tag">Tag</a>
+        <a href="#ItemImage">ItemImage</a>
+        <a href="#Invitation">Invitation</a>
+        <a href="#StockMovement">StockMovement</a>
+        <a href="#LogEntry">LogEntry</a>
+        <a href="#UserActivity">UserActivity</a>
+        <a href="#UserMaterialFavorite">UserMaterialFavorite</a>
+        <a href="#ProductMaterial">ProductMaterial</a>
+    </div>
+
+    <!-- Item Model -->
+    <h2 id="Item">Item (Classe Abstrata)</h2>
+    <p>Classe base abstrata para produtos e materiais no sistema.</p>
+    
+    <div class="class-hierarchy">
+        <strong>Hierarquia:</strong> Item → Product, Material
+    </div>
+    
+    <h3>Propriedades</h3>
+    
+    <div class="property">
+        <h4>Id <span class="decorator">Key</span></h4>
+        <p>Tipo: <code>int</code></p>
+        <p>Identificador único do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>UserId</h4>
+        <p>Tipo: <code>string?</code></p>
+        <p>Identificador do usuário que criou o item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>CategoryId</h4>
+        <p>Tipo: <code>int?</code></p>
+        <p>Identificador da categoria do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Name <span class="decorator">Required</span> <span class="decorator">StringLength(100)</span></h4>
+        <p>Tipo: <code>string</code></p>
+        <p>Nome do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Reference <span class="decorator">Required</span> <span class="decorator">StringLength(50)</span></h4>
+        <p>Tipo: <code>string</code></p>
+        <p>Referência ou código do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Description <span class="decorator">Required</span> <span class="decorator">StringLength(500)</span></h4>
+        <p>Tipo: <code>string</code></p>
+        <p>Descrição detalhada do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Price <span class="decorator">Required</span> <span class="decorator">Range(0.01, double.MaxValue)</span></h4>
+        <p>Tipo: <code>float</code></p>
+        <p>Preço do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Stock <span class="decorator">Range(0, double.MaxValue)</span></h4>
+        <p>Tipo: <code>float</code></p>
+        <p>Quantidade em estoque do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Unit <span class="decorator">Required</span> <span class="decorator">StringLength(20)</span></h4>
+        <p>Tipo: <code>string</code></p>
+        <p>Unidade de medida do item (ex: kg, unidades, etc.).</p>
+    </div>
+    
+    <div class="property">
+        <h4>CreatedAt <span class="decorator">DatabaseGenerated</span></h4>
+        <p>Tipo: <code>DateTime</code></p>
+        <p>Data e hora de criação do item.</p>
+    </div>
+    
+    <h3>Relacionamentos</h3>
+    
+    <div class="property">
+        <h4>Category <span class="relationship">ForeignKey('CategoryId')</span></h4>
+        <p>Tipo: <code>Category?</code></p>
+        <p>Categoria à qual o item pertence.</p>
+    </div>
+    
+    <div class="property">
+        <h4>User <span class="relationship">ForeignKey('UserId')</span></h4>
+        <p>Tipo: <code>User?</code></p>
+        <p>Usuário que criou o item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Images <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;ItemImage&gt;</code></p>
+        <p>Imagens associadas ao item.</p>
+    </div>
+
+    <!-- Product Model -->
+    <h2 id="Product">Product</h2>
+    <p>Representa um produto no sistema, derivado da classe Item.</p>
+    
+    <div class="class-hierarchy">
+        <strong>Hierarquia:</strong> Item → Product
+    </div>
+    
+    <h3>Propriedades Específicas</h3>
+    
+    <div class="property">
+        <h4>Tags <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;Tag&gt;</code></p>
+        <p>Tags associadas ao produto.</p>
+    </div>
+    
+    <div class="property">
+        <h4>ProductMaterials <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;ProductMaterial&gt;</code></p>
+        <p>Materiais usados na composição do produto.</p>
+    </div>
+
+    <!-- Material Model -->
+    <h2 id="Material">Material</h2>
+    <p>Representa um material no sistema, derivado da classe Item.</p>
+    
+    <div class="class-hierarchy">
+        <strong>Hierarquia:</strong> Item → Material
+    </div>
+    
+    <h3>Propriedades Específicas</h3>
+    
+    <div class="property">
+        <h4>ProductMaterials <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;ProductMaterial&gt;</code></p>
+        <p>Produtos nos quais este material é utilizado.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Tags <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;Tag&gt;</code></p>
+        <p>Tags associadas ao material.</p>
+    </div>
+    
+    <div class="property">
+        <h4>FavoritedByUsers <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;UserMaterialFavorite&gt;</code></p>
+        <p>Relações de favoritos com usuários.</p>
+    </div>
+
+    <!-- User Model -->
+    <h2 id="User">User</h2>
+    <p>Representa um usuário no sistema, estendendo IdentityUser.</p>
+    
+    <div class="class-hierarchy">
+        <strong>Hierarquia:</strong> IdentityUser → User
+    </div>
+    
+    <h3>Propriedades</h3>
+    
+    <div class="property">
+        <h4>FullName <span class="decorator">Required</span> <span class="decorator">PersonalData</span></h4>
+        <p>Tipo: <code>string</code></p>
+        <p>Nome completo do usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Street <span class="decorator">PersonalData</span></h4>
+        <p>Tipo: <code>string?</code></p>
+        <p>Endereço/rua do usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>StreetNumber <span class="decorator">PersonalData</span></h4>
+        <p>Tipo: <code>string?</code></p>
+        <p>Número do endereço.</p>
+    </div>
+    
+    <div class="property">
+        <h4>City <span class="decorator">PersonalData</span></h4>
+        <p>Tipo: <code>string?</code></p>
+        <p>Cidade do usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>ZipCode <span class="decorator">PersonalData</span></h4>
+        <p>Tipo: <code>string?</code></p>
+        <p>Código postal.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Website <span class="decorator">PersonalData</span></h4>
+        <p>Tipo: <code>string?</code></p>
+        <p>Website do usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Description <span class="decorator">PersonalData</span></h4>
+        <p>Tipo: <code>string?</code></p>
+        <p>Descrição ou biografia do usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>AcceptedByAdmin</h4>
+        <p>Tipo: <code>bool</code></p>
+        <p>Indica se o usuário foi aceito pelo administrador.</p>
+    </div>
+    
+    <div class="property">
+        <h4>CreatedAt <span class="decorator">DatabaseGenerated</span></h4>
+        <p>Tipo: <code>DateTime</code></p>
+        <p>Data e hora de criação da conta.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Role <span class="decorator">NotMapped</span></h4>
+        <p>Tipo: <code>UserRole</code></p>
+        <p>Tipo de usuário (papel/função no sistema).</p>
+    </div>
+    
+    <h3>Relacionamentos</h3>
+    
+    <div class="property">
+        <h4>Products <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;Product&gt;</code></p>
+        <p>Produtos criados pelo usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Materials <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;Material&gt;</code></p>
+        <p>Materiais associados ao usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>FavoriteMaterials <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;UserMaterialFavorite&gt;</code></p>
+        <p>Materiais favoritos do usuário.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Orders <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;Order&gt;</code></p>
+        <p>Pedidos feitos pelo usuário.</p>
+    </div>
+
+    <!-- Order Model -->
+    <h2 id="Order">Order</h2>
+    <p>Representa um pedido no sistema.</p>
+    
+    <h3>Propriedades</h3>
+    
+    <div class="property">
+        <h4>Id <span class="decorator">Key</span></h4>
+        <p>Tipo: <code>int</code></p>
+        <p>Identificador único do pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>UserId</h4>
+        <p>Tipo: <code>string</code></p>
+        <p>Identificador do usuário que fez o pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Status</h4>
+        <p>Tipo: <code>OrderStatus</code></p>
+        <p>Status atual do pedido (Draft, Placed, Processing, Shipped, Delivered, Cancelled).</p>
+    </div>
+    
+    <div class="property">
+        <h4>CreatedAt</h4>
+        <p>Tipo: <code>DateTime</code></p>
+        <p>Data e hora de criação do pedido.</p>
+    </div>
+    
+    <h3>Relacionamentos</h3>
+    
+    <div class="property">
+        <h4>User <span class="relationship">ForeignKey('UserId')</span></h4>
+        <p>Tipo: <code>User?</code></p>
+        <p>Usuário que fez o pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>OrderItems <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;OrderItem&gt;</code></p>
+        <p>Itens incluídos no pedido.</p>
+    </div>
+
+    <!-- OrderItem Model -->
+    <h2 id="OrderItem">OrderItem</h2>
+    <p>Representa um item em um pedido.</p>
+    
+    <h3>Propriedades</h3>
+    
+    <div class="property">
+        <h4>Id <span class="decorator">Key</span></h4>
+        <p>Tipo: <code>int</code></p>
+        <p>Identificador único do item do pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Quantity</h4>
+        <p>Tipo: <code>float</code></p>
+        <p>Quantidade do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>OrderId</h4>
+        <p>Tipo: <code>int?</code></p>
+        <p>Identificador do pedido relacionado.</p>
+    </div>
+    
+    <div class="property">
+        <h4>ItemId</h4>
+        <p>Tipo: <code>int?</code></p>
+        <p>Identificador do item relacionado.</p>
+    </div>
+    
+    <h3>Relacionamentos</h3>
+    
+    <div class="property">
+        <h4>Order <span class="relationship">ForeignKey('OrderId')</span></h4>
+        <p>Tipo: <code>Order?</code></p>
+        <p>Pedido ao qual este item pertence.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Item <span class="relationship">ForeignKey('ItemId')</span></h4>
+        <p>Tipo: <code>Item</code></p>
+        <p>O item (produto ou material) incluído no pedido.</p>
+    </div>
+    
+    <h3>Métodos</h3>
+    
+    <div class="property">
+        <h4>GetTotal()</h4>
+        <p>Retorna: <code>float</code></p>
+        <p>Calcula o valor total (preço * quantidade) deste item no pedido.</p>
+    </div>
+
+    <!-- Mais models... -->
+    <!-- Apenas os principais estão documentados em detalhes -->
+    
+    <h2 id="Tag">Tag</h2>
+    <p>Representa uma tag para categorizar produtos ou materiais.</p>
+    
+    <h2 id="ItemImage">ItemImage</h2>
+    <p>Representa uma imagem associada a um produto ou material.</p>
+    
+    <h2 id="Invitation">Invitation</h2>
+    <p>Representa um convite para registro no sistema.</p>
+    
+    <h2 id="StockMovement">StockMovement</h2>
+    <p>Registra movimentações de estoque de materiais.</p>
+    
+    <h2 id="LogEntry">LogEntry</h2>
+    <p>Registra eventos e ações importantes no sistema.</p>
+    
+    <h2 id="UserActivity">UserActivity</h2>
+    <p>Registra atividades e interações dos usuários com o sistema.</p>
+    
+    <h2 id="UserMaterialFavorite">UserMaterialFavorite</h2>
+    <p>Estabelece a relação entre usuários e materiais favoritos.</p>
+    
+    <h2 id="ProductMaterial">ProductMaterial</h2>
+    <p>Estabelece a relação entre produtos e materiais utilizados em sua composição.</p>
+    
+    <a href="#" class="back-to-top">Voltar ao Topo</a>
+</body>
+</html> 
