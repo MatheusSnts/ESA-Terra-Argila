@@ -109,7 +109,8 @@ namespace ESA_Terra_Argila.Controllers
                     OrderId = order.Id,
                     ItemId = id,
                     Quantity = 1,
-                    UnitPrice = item.Price
+                    UnitPrice = (decimal)item.Price 
+
                 };
                 order.OrderItems.Add(orderItem);
             }
@@ -118,7 +119,7 @@ namespace ESA_Terra_Argila.Controllers
                 orderItem.Quantity++;
             }
 
-            orderItem.TotalPrice = (decimal)orderItem.Quantity * orderItem.UnitPrice;
+            orderItem.TotalPrice = (decimal)orderItem.Quantity * (decimal)item.Price;
 
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Item adicionado ao carrinho!";
@@ -201,7 +202,7 @@ namespace ESA_Terra_Argila.Controllers
             }
             else
             {
-                orderItem.TotalPrice = (decimal)orderItem.Quantity * orderItem.UnitPrice;
+                orderItem.TotalPrice = (decimal)orderItem.Quantity * (decimal)orderItem.UnitPrice;
             }
 
             await _context.SaveChangesAsync();

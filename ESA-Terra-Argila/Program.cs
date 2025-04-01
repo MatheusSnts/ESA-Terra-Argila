@@ -18,7 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
 
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -33,7 +34,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-// Configurações de Lockout
+// Configuraï¿½ï¿½es de Lockout
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 3;
     options.Lockout.AllowedForNewUsers = true;

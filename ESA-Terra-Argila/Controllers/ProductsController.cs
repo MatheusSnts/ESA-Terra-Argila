@@ -470,6 +470,26 @@ namespace ESA_Terra_Argila.Controllers
             return _context.Items.Any(e => e.Id == id);
         }
 
+        // POST: Products/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var product = await _context.Items.FindAsync(id);
+            if (product != null)
+            {
+                _context.Items.Remove(product);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Produto removido com sucesso!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Erro ao remover produto!";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
 

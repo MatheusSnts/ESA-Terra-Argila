@@ -35,6 +35,7 @@ namespace ESA_Terra_Argila.Helpers
                 return string.Empty;
             
             // ... existing code ...
+            return string.Empty;
         }
     }
 }

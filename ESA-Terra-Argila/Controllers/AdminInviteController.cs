@@ -46,7 +46,7 @@ namespace ESA_Terra_Argila.Controllers
             {
                 Email = request.Email,
                 Token = encodedToken,
-                ExpirationDate = DateTime.UtcNow.AddDays(7),
+                ExpiryDate = DateTime.UtcNow.AddDays(7),
                 Used = false
             };
 
@@ -77,7 +77,7 @@ namespace ESA_Terra_Argila.Controllers
                 .FirstOrDefaultAsync(i => i.Email == email && i.Token == token);
 
 
-            if (invitation == null || invitation.Used || invitation.ExpirationDate < DateTime.UtcNow)
+            if (invitation == null || invitation.Used || invitation.ExpiryDate < DateTime.UtcNow)
             {
 
                 return BadRequest("Convite inválido ou expirado.");

@@ -24,17 +24,14 @@ namespace ESA_Terra_Argila.Services
                 throw new ArgumentNullException(nameof(email));
             }
 
-            // Lê configurações do appsettings.json
-            var emailSettings = _configuration.GetSection("EmailSettings").Get<EmailSettings>();
-
-            using (var client = new SmtpClient(emailSettings.Host, emailSettings.Port))
+            using (var client = new SmtpClient(_emailConfig.Host, _emailConfig.Port))
             {
-                client.Credentials = new NetworkCredential(emailSettings.UserName, emailSettings.Password);
-                client.EnableSsl = emailSettings.EnableSsl;
+                client.Credentials = new NetworkCredential(_emailConfig.UserName, _emailConfig.Password);
+                client.EnableSsl = _emailConfig.EnableSsl;
 
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(emailSettings.UserName),
+                    From = new MailAddress(_emailConfig.SenderEmail, _emailConfig.SenderName),
                     Subject = subject,
                     Body = htmlMessage,
                     IsBodyHtml = true
@@ -96,14 +93,5 @@ namespace ESA_Terra_Argila.Services
 
             await SendEmailAsync(user.Email, subject, message);
         }
-    }
-
-    public class EmailSettings
-    {
-        public string Host { get; set; } = default!;
-        public int Port { get; set; }
-        public string UserName { get; set; } = default!;
-        public string Password { get; set; } = default!;
-        public bool EnableSsl { get; set; }
     }
 }

@@ -66,6 +66,10 @@ namespace ESA_Terra_Argila.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var roles = await _userManager.GetRolesAsync(user);
             var isVendor = roles.Contains("Vendor");
 
