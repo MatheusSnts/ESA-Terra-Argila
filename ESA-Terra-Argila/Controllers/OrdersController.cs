@@ -35,11 +35,24 @@ namespace ESA_Terra_Argila.Controllers
                     .ThenInclude(oi => oi.Item)
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
 
-            foreach (var oi in order.OrderItems)
+            if (order == null)
             {
-                await _context.Entry(oi.Item).Reference(i => i.Category).LoadAsync();
-                await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
+                order = new Order
+                {
+                    UserId = userId,
+                    Status = OrderStatus.Draft,
+                    OrderItems = new List<OrderItem>()
+                };
             }
+            else
+            {
+                foreach (var oi in order.OrderItems)
+                {
+                    await _context.Entry(oi.Item).Reference(i => i.Category).LoadAsync();
+                    await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
+                }
+            }
+            
             return View(order);
         }
 
