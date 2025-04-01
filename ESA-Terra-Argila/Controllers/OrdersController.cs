@@ -35,7 +35,8 @@ namespace ESA_Terra_Argila.Controllers
                     .ThenInclude(oi => oi.Item)
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
 
-            foreach (var oi in order.OrderItems)
+            var items = order?.OrderItems ?? new HashSet<OrderItem>();
+            foreach (var oi in items)
             {
                 await _context.Entry(oi.Item).Reference(i => i.Category).LoadAsync();
                 await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
