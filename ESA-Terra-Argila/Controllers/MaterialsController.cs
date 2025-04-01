@@ -19,6 +19,10 @@ using ESA_Terra_Argila.Enums;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pelo gerenciamento de materiais no sistema.
+    /// Gerencia a listagem, criação, edição, exclusão e controle de estoque de materiais.
+    /// </summary>
     [Authorize]
     public class MaterialsController : Controller
     {
@@ -29,7 +33,12 @@ namespace ESA_Terra_Argila.Controllers
         private readonly ILogger<MaterialsController> _logger;
 
 
-
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de materiais.
+        /// </summary>
+        /// <param name="context">Contexto do banco de dados da aplicação.</param>
+        /// <param name="userManager">Gerenciador de usuários do sistema.</param>
+        /// <param name="logger">Serviço de log da aplicação.</param>
         public MaterialsController(ApplicationDbContext context, UserManager<User> userManager, ILogger<MaterialsController> logger)
         {
             _context = context;
@@ -38,13 +47,21 @@ namespace ESA_Terra_Argila.Controllers
 
         }
 
+        /// <summary>
+        /// Método executado antes de cada ação do controlador para obter o ID do usuário atual.
+        /// </summary>
+        /// <param name="context">Contexto da execução da ação.</param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
             userId = _userManager.GetUserId(User);
         }
 
-        // GET: Materials
+        /// <summary>
+        /// Exibe a página principal de materiais. Para fornecedores, mostra materiais favoritos;
+        /// para outros usuários, mostra materiais próprios.
+        /// </summary>
+        /// <returns>A visão de índice com a lista de materiais apropriada para o tipo de usuário.</returns>
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -75,7 +92,15 @@ namespace ESA_Terra_Argila.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Exibe a listagem pública de materiais com opções de filtro e ordenação.
+        /// </summary>
+        /// <param name="page">Número da página atual.</param>
+        /// <param name="orderBy">Critério de ordenação (asc/desc por preço).</param>
+        /// <param name="priceMin">Preço mínimo para filtro.</param>
+        /// <param name="priceMax">Preço máximo para filtro.</param>
+        /// <param name="suppliers">Lista de IDs de fornecedores para filtro.</param>
+        /// <returns>A visão de lista com materiais paginados e filtrados.</returns>
         [AllowAnonymous]
         public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? suppliers)
         {
@@ -148,6 +173,11 @@ namespace ESA_Terra_Argila.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Marca ou desmarca um material como favorito para o usuário atual.
+        /// </summary>
+        /// <param name="request">Modelo com ID do material e status de favorito.</param>
+        /// <returns>Resultado JSON com status da operação.</returns>
         [HttpPost]
         public async Task<IActionResult> SetFavorite([FromBody] FavoriteRequestModel request)
         {
@@ -185,6 +215,11 @@ namespace ESA_Terra_Argila.Controllers
             return Ok(new { success = true, message = "Favorito atualizado!" });
         }
 
+        /// <summary>
+        /// Remove um material da lista de favoritos do usuário atual.
+        /// </summary>
+        /// <param name="id">ID do material a ser removido dos favoritos.</param>
+        /// <returns>Redirecionamento para a página de índice.</returns>
         [HttpPost]
         public async Task<IActionResult> UnsetFavorite(int id)
         {
@@ -202,7 +237,11 @@ namespace ESA_Terra_Argila.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Materials/Details/5
+        /// <summary>
+        /// Exibe os detalhes de um material específico.
+        /// </summary>
+        /// <param name="id">ID do material a ser visualizado.</param>
+        /// <returns>A visão de detalhes do material.</returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -234,7 +273,10 @@ namespace ESA_Terra_Argila.Controllers
             return View(material);
         }
 
-        // GET: Materials/Create
+        /// <summary>
+        /// Exibe o formulário para criação de um novo material.
+        /// </summary>
+        /// <returns>A visão do formulário de criação.</returns>
         public IActionResult Create()
         {
             ViewData["Categories"] = new SelectList(_context.Categories.Where(c => c.UserId == userId), "Id", "Name");
@@ -243,7 +285,13 @@ namespace ESA_Terra_Argila.Controllers
             return View();
         }
 
-        // POST: Materials/Create
+        /// <summary>
+        /// Processa a submissão do formulário para criação de um novo material.
+        /// </summary>
+        /// <param name="material">Dados do material a ser criado.</param>
+        /// <param name="Images">Lista de arquivos de imagem para o material.</param>
+        /// <param name="Tags">Lista de IDs de tags associadas ao material.</param>
+        /// <returns>Redirecionamento para a página de índice em caso de sucesso ou exibição do formulário com erros.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,Name,Reference,Description,Price,Unit")] Material material, List<IFormFile> Images, List<int> Tags)
@@ -289,7 +337,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(material);
         }
 
-        // GET: Materials/Edit/5
+        /// <summary>
+        /// Exibe o formulário para edição de um material existente.
+        /// </summary>
+        /// <param name="id">ID do material a ser editado.</param>
+        /// <returns>A visão do formulário de edição preenchido com os dados do material.</returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -317,7 +369,14 @@ namespace ESA_Terra_Argila.Controllers
             return View(material);
         }
 
-        // POST: Materials/Edit/5
+        /// <summary>
+        /// Processa a submissão do formulário para edição de um material existente.
+        /// </summary>
+        /// <param name="id">ID do material a ser editado.</param>
+        /// <param name="material">Dados atualizados do material.</param>
+        /// <param name="Images">Lista de novos arquivos de imagem para o material.</param>
+        /// <param name="Tags">Lista atualizada de IDs de tags associadas ao material.</param>
+        /// <returns>Redirecionamento para a página de índice em caso de sucesso ou exibição do formulário com erros.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CategoryId,Name,Reference,Description,Price,Unit")] Material material, List<IFormFile> Images, List<int> Tags)
@@ -420,7 +479,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(material);
         }
 
-        // GET: Materials/Delete/5
+        /// <summary>
+        /// Exibe a página de confirmação para exclusão de um material.
+        /// </summary>
+        /// <param name="id">ID do material a ser excluído.</param>
+        /// <returns>Redirecionamento para a página de índice após a exclusão.</returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -448,7 +511,11 @@ namespace ESA_Terra_Argila.Controllers
             //return View(material);
         }
 
-        // POST: Materials/Delete/5
+        /// <summary>
+        /// Processa a confirmação de exclusão de um material.
+        /// </summary>
+        /// <param name="id">ID do material a ser excluído.</param>
+        /// <returns>Redirecionamento para a página de índice após a exclusão.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -468,10 +535,21 @@ namespace ESA_Terra_Argila.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Verifica se um material com o ID especificado existe no banco de dados.
+        /// </summary>
+        /// <param name="id">ID do material a verificar.</param>
+        /// <returns>Verdadeiro se o material existir, falso caso contrário.</returns>
         private bool MaterialExists(int id)
         {
             return _context.Items.Any(e => e.Id == id);
         }
+        
+        /// <summary>
+        /// Exibe o histórico de movimentações de estoque de um material.
+        /// </summary>
+        /// <param name="id">ID do material a ser consultado.</param>
+        /// <returns>A visão com o histórico de movimentações de estoque.</returns>
         public async Task<IActionResult> StockHistory(int id)
         {
             var material = await _context.Items
@@ -495,6 +573,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(movements);
         }
 
+        /// <summary>
+        /// Exibe o formulário para criação de uma nova movimentação de estoque.
+        /// </summary>
+        /// <param name="id">ID do material para registrar a movimentação.</param>
+        /// <returns>A visão do formulário de criação de movimentação de estoque.</returns>
         public IActionResult CreateStockMovement(int id)
         {
             var material = _context.Items.Find(id);
@@ -512,6 +595,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(movement);
         }
 
+        /// <summary>
+        /// Processa a submissão do formulário para criação de uma nova movimentação de estoque.
+        /// </summary>
+        /// <param name="movement">Dados da movimentação de estoque a ser registrada.</param>
+        /// <returns>Redirecionamento para a página de índice em caso de sucesso.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateStockMovement([Bind("MaterialId,Quantity,Type")] StockMovement movement)
@@ -552,7 +640,12 @@ namespace ESA_Terra_Argila.Controllers
             return RedirectToAction("Index", "Materials");
         }
 
-
+        /// <summary>
+        /// Atualiza o estoque de um material diretamente com um novo valor.
+        /// </summary>
+        /// <param name="id">ID do material a ter o estoque atualizado.</param>
+        /// <param name="novoStock">Novo valor de estoque a ser definido.</param>
+        /// <returns>Resultado JSON com mensagem de confirmação.</returns>
         public async Task<IActionResult> AtualizarStock(int id, int novoStock)
         {
             var material = await _context.Items.FindAsync(id);
@@ -578,9 +671,19 @@ namespace ESA_Terra_Argila.Controllers
 
     }
 
+    /// <summary>
+    /// Modelo que representa uma solicitação para marcar/desmarcar um material como favorito.
+    /// </summary>
     public class FavoriteRequestModel
     {
+        /// <summary>
+        /// ID do material a ser marcado/desmarcado como favorito.
+        /// </summary>
         public int Id { get; set; }
+        
+        /// <summary>
+        /// Indica se o material deve ser marcado como favorito (true) ou desmarcado (false).
+        /// </summary>
         public bool IsFavorite { get; set; }
     }
 }

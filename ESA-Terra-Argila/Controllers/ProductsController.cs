@@ -19,6 +19,10 @@ using ESA_Terra_Argila.Enums;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelo gerenciamento de produtos.
+    /// Requer autenticação para a maioria das ações, exceto quando explicitamente permitido.
+    /// </summary>
     [Authorize]
     public class ProductsController : Controller
     {
@@ -26,18 +30,31 @@ namespace ESA_Terra_Argila.Controllers
         private string? userId;
         private readonly UserManager<User> _userManager;
 
-
+        /// <summary>
+        /// Construtor do ProductsController.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados</param>
+        /// <param name="userManager">Gerenciador de usuários</param>
         public ProductsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
+
+        /// <summary>
+        /// Método executado antes de cada ação, para obter o ID do usuário atual.
+        /// </summary>
+        /// <param name="context">Contexto da execução da ação</param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
             userId = _userManager.GetUserId(User);
         }
 
+        /// <summary>
+        /// Exibe a lista de produtos do usuário atual.
+        /// </summary>
+        /// <returns>View com a lista de produtos</returns>
         // GET: Products
         public async Task<IActionResult> Index()
         {
@@ -49,6 +66,17 @@ namespace ESA_Terra_Argila.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        /// <summary>
+        /// Exibe a lista de produtos para todos os usuários, com opções de filtragem e paginação.
+        /// Esta ação é acessível por qualquer usuário, mesmo não autenticado.
+        /// </summary>
+        /// <param name="page">Número da página atual</param>
+        /// <param name="orderBy">Ordem de classificação (asc/desc)</param>
+        /// <param name="priceMin">Preço mínimo para filtro</param>
+        /// <param name="priceMax">Preço máximo para filtro</param>
+        /// <param name="vendors">Lista de IDs de vendedores para filtro</param>
+        /// <param name="search">Termo de busca</param>
+        /// <returns>View com a lista de produtos filtrada e paginada</returns>
         [AllowAnonymous]
         public async Task<IActionResult> List(int? page, string? orderBy, float? priceMin, float? priceMax, List<string>? vendors, string? search)
         {
@@ -108,6 +136,11 @@ namespace ESA_Terra_Argila.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Exibe os detalhes de um produto específico.
+        /// </summary>
+        /// <param name="id">ID do produto</param>
+        /// <returns>View com os detalhes do produto ou NotFound se não existir</returns>
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -131,6 +164,10 @@ namespace ESA_Terra_Argila.Controllers
             return View(product);
         }
 
+        /// <summary>
+        /// Exibe o formulário para criação de um novo produto.
+        /// </summary>
+        /// <returns>View com o formulário de criação</returns>
         // GET: Products/Create
         public IActionResult Create()
         {
@@ -146,9 +183,16 @@ namespace ESA_Terra_Argila.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Processa o envio do formulário de criação de um novo produto.
+        /// </summary>
+        /// <param name="product">Dados do produto a ser criado</param>
+        /// <param name="Images">Lista de imagens do produto</param>
+        /// <param name="Tags">Lista de IDs de tags associadas ao produto</param>
+        /// <param name="Materials">Lista de IDs de materiais utilizados no produto</param>
+        /// <param name="MaterialsQty">Lista de quantidades dos materiais utilizados</param>
+        /// <returns>Redireciona para Index em caso de sucesso ou retorna à View com os dados em caso de erro</returns>
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -218,6 +262,11 @@ namespace ESA_Terra_Argila.Controllers
             return View(product);
         }
 
+        /// <summary>
+        /// Exibe o formulário para edição de um produto existente.
+        /// </summary>
+        /// <param name="id">ID do produto a ser editado</param>
+        /// <returns>View com o formulário de edição ou NotFound se o produto não existir</returns>
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

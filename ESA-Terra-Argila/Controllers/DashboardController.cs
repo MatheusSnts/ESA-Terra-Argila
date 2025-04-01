@@ -3,9 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelo painel de controle do sistema.
+    /// Gerencia o redirecionamento dos usuários para suas respectivas áreas baseado em suas funções.
+    /// </summary>
     [Authorize]
     public class DashboardController : Controller
     {
+        /// <summary>
+        /// Redireciona o usuário para sua área específica baseado em sua função no sistema.
+        /// Vendedores são direcionados para produtos, fornecedores para materiais e administradores para aprovação de usuários.
+        /// </summary>
+        /// <returns>Redirecionamento para a área apropriada baseado na função do usuário.</returns>
         public IActionResult Item()
         {
             if (User.IsInRole("Vendor"))
@@ -23,6 +32,10 @@ namespace ESA_Terra_Argila.Controllers
             return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
 
+        /// <summary>
+        /// Exibe a página principal do painel de controle.
+        /// </summary>
+        /// <returns>A view padrão do dashboard.</returns>
         public IActionResult Index()
         {
             return View();
