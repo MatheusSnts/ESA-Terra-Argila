@@ -132,11 +132,11 @@ namespace ESA_Terra_Argila.Controllers
             switch (range)
             {
                 case "24h":
-                    start = now.AddHours(-23); // 23 para incluir o atual
+                    start = now.AddHours(-23); 
                     groupFormat = "HH\\h";
                     break;
                 case "7d":
-                    start = now.AddDays(-6); // últimos 7 dias, incluindo hoje
+                    start = now.AddDays(-6); 
                     groupFormat = "dd/MM";
                     break;
                 case "month":
@@ -153,10 +153,9 @@ namespace ESA_Terra_Argila.Controllers
                     break;
             }
 
-            // Busca os dados do EF primeiro e só depois agrupa em memória (evita erro de tipo)
             var grouped = _context.UserActivities
                 .Where(a => a.Timestamp >= start)
-                .AsEnumerable() // A partir daqui já não é SQL — é LINQ in-memory
+                .AsEnumerable() 
                 .GroupBy(a => a.Timestamp.ToLocalTime().ToString(groupFormat))
                 .OrderBy(g => g.Key)
                 .Select(g => new
@@ -164,7 +163,7 @@ namespace ESA_Terra_Argila.Controllers
                     label = g.Key,
                     count = g.Count()
                 })
-                .ToList(); // Isto pode ser ToList() pois já estás em memória
+                .ToList(); 
 
             return Json(grouped);
         }
