@@ -1,0 +1,17 @@
+{
+  "README.html": {
+    "href": "README.html",
+    "title": "Terra e Argila | ESA Terra Argila API Documentation",
+    "summary": "Terra e Argila Projeto focado em materiais de construção sustentáveis, integrando gestão de clientes, orçamentos e controlo de stock. Sumário Descrição Geral Principais Funcionalidades Arquitetura e Tecnologias Como Executar Contribuição Licença Descrição Geral O Terra e Argila é uma iniciativa voltada a modernizar e tornar mais sustentável o setor de construção civil. O objetivo é proporcionar: Gestão integrada de clientes (perfis, histórico de pedidos, permissões); Ferramentas de orçamentação com ênfase em economia de recursos e impacto ambiental positivo; Controlo de stock em tempo real, facilitando vendas, faturação e alertas de níveis críticos. Esta solução busca otimizar processos, reduzir custos e encorajar práticas sustentáveis. Principais Funcionalidades Autenticação e Segurança Sistema de login e armazenamento seguro de credenciais. Logs e auditorias para rastreamento de acessos. Gestão de Perfis Criação e gestão de contas (cliente, empresa, administrador). Permissões e acesso diferenciado por perfil. Orçamentos Sustentáveis Comparação entre materiais tradicionais e sustentáveis. Cálculo de economia e impacto ambiental. Stock e Vendas Monitorização de stock em tempo real. Processamento de vendas (faturação, relatórios, alertas). Painel de Gestão Personalizado Interfaces personalizadas para cada tipo de utilizador. Melhoria da usabilidade e eficiência operacional. Arquitetura e Tecnologias Metodologia: Agile/SCRUM Front-End: HTML + CSS Back-End: ASP.NET Base de Dados: SQL Server Infraestrutura: Azure Cloud"
+  },
+  "api/index.html": {
+    "href": "api/index.html",
+    "title": "Documentação da API ESA Terra Argila | ESA Terra Argila API Documentation",
+    "summary": "Documentação da API ESA Terra Argila Bem-vindo à documentação da API do projeto ESA Terra Argila. Esta documentação é gerada automaticamente a partir dos comentários XML no código fonte. Models Principais Item - Classe base abstrata para itens no sistema Product - Representa um produto no sistema Order - Representa um pedido no sistema OrderItem - Representa um item dentro de um pedido Category - Representa uma categoria de produtos ou materiais User - Representa um usuário do sistema Controllers CategoriesController - Gerencia operações relacionadas a categorias ProductsController - Gerencia operações relacionadas a produtos OrdersController - Gerencia operações relacionadas a pedidos AdminController - Gerencia operações administrativas"
+  },
+  "index.html": {
+    "href": "index.html",
+    "title": "ESA Terra Argila - Documentação | ESA Terra Argila API Documentation",
+    "summary": "ESA Terra Argila - Documentação Bem-vindo à documentação do projeto ESA Terra Argila. Introdução O ESA Terra Argila é um sistema de comércio eletrônico especializado em produtos de artesanato em argila, que conecta artesãos e compradores. Estrutura do Projeto O projeto é estruturado em várias áreas: Documentação da API - Documentação técnica dos models e controllers Documentação de Models - Documentação detalhada dos models do sistema Sistema de Pedidos - Documentação específica do sistema de pedidos"
+  }
+}

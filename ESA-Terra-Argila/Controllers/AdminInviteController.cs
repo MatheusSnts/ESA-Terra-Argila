@@ -13,6 +13,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelo gerenciamento de convites administrativos.
+    /// Permite que administradores enviem convites para novos usuários se registrarem no sistema.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AdminInviteController : Controller
@@ -21,6 +25,12 @@ namespace ESA_Terra_Argila.Controllers
         private readonly IEmailSender _emailSender;
         private readonly UserManager<User> _userManager;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controller de convites administrativos.
+        /// </summary>
+        /// <param name="context">Contexto do banco de dados da aplicação.</param>
+        /// <param name="userManager">Gerenciador de usuários do Identity.</param>
+        /// <param name="emailSender">Serviço para envio de emails.</param>
         public AdminInviteController(ApplicationDbContext context, UserManager<User> userManager, IEmailSender emailSender)
         {
             _context = context;
@@ -28,6 +38,11 @@ namespace ESA_Terra_Argila.Controllers
             _emailSender = emailSender;
         }
 
+        /// <summary>
+        /// Envia um convite por email para um novo usuário se registrar no sistema.
+        /// </summary>
+        /// <param name="request">Requisição contendo o email do usuário a ser convidado.</param>
+        /// <returns>Ok se o convite for enviado com sucesso, ou BadRequest se houver erro.</returns>
         [HttpPost("SendInvitation")]
         public async Task<IActionResult> SendInvitation([FromBody] InvitationRequest request)
         {
@@ -67,33 +82,38 @@ namespace ESA_Terra_Argila.Controllers
             return Ok("Convite enviado com sucesso.");
         }
 
+        /// <summary>
+        /// Processa o registro de um novo usuário através de um convite válido.
+        /// </summary>
+        /// <param name="token">Token de validação do convite.</param>
+        /// <param name="email">Email do usuário convidado.</param>
+        /// <returns>Redirecionamento para a página de registro ou BadRequest se o convite for inválido.</returns>
         [HttpGet("Register")]
         public async Task<IActionResult> Register(string token, string email)
         {
-
-
             var invitation = await _context.Invitations
                 .FirstOrDefaultAsync(i => i.Email == email && i.Token == token);
 
-
             if (invitation == null || invitation.Used || invitation.ExpirationDate < DateTime.UtcNow)
             {
-
                 return BadRequest("Convite inválido ou expirado.");
             }
             invitation.Used = true;
 
             await _context.SaveChangesAsync();
 
-
             return Redirect($"/Identity/Account/Register?email={email}&token={token}");
-
         }
-
     }
-}
 
-public class InvitationRequest
-{
-    public string Email { get; set; }
+    /// <summary>
+    /// Modelo para a requisição de envio de convite administrativo.
+    /// </summary>
+    public class InvitationRequest
+    {
+        /// <summary>
+        /// Email do usuário a ser convidado.
+        /// </summary>
+        public string Email { get; set; }
+    }
 }

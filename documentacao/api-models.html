@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação de Models - ESA Terra Argila</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        nav {
+            background-color: #f8f8f8;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: bold;
+        }
+        section {
+            margin-bottom: 40px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h2 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .property {
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 3px solid #3498db;
+        }
+        .property h4 {
+            margin-bottom: 5px;
+            color: #2980b9;
+        }
+        .property p {
+            margin-top: 5px;
+        }
+        .type {
+            color: #16a085;
+            font-family: monospace;
+            background-color: #f9f9f9;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .index {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        .index ul {
+            list-style-type: none;
+            padding: 0;
+            column-count: 2;
+        }
+        .index ul li {
+            margin-bottom: 8px;
+        }
+        .index ul li a {
+            text-decoration: none;
+            color: #0066cc;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            text-decoration: none;
+            opacity: 0.7;
+        }
+        .back-to-top:hover {
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            .index ul {
+                column-count: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Documentação de Models - ESA Terra Argila</h1>
+        <p>Documentação gerada a partir dos comentários XML do código fonte</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="../documentacao/index.html">Início</a></li>
+            <li><a href="../documentacao/models.html">Models</a></li>
+            <li><a href="../documentacao/orders.html">Sistema de Pedidos</a></li>
+        </ul>
+    </nav>
+    
+    <div class="index">
+        <h2>Índice de Models</h2>
+        <ul>
+            <li><a href="#item">Item</a></li>
+            <li><a href="#product">Product</a></li>
+            <li><a href="#order">Order</a></li>
+            <li><a href="#orderitem">OrderItem</a></li>
+            <li><a href="#category">Category</a></li>
+            <li><a href="#user">User</a></li>
+        </ul>
+    </div>
+    
+    <section id="item">
+        <h2>Item</h2>
+        <p>Classe abstrata que representa um item genérico no sistema. Serve como classe base para diferentes tipos de itens como Produtos e Materiais.</p>
+        
+        <h3>Propriedades</h3>
+        
+        <div class="property">
+            <h4>Id <span class="type">int</span></h4>
+            <p>Identificador único do item.</p>
+        </div>
+        
+        <div class="property">
+            <h4>UserId <span class="type">string?</span></h4>
+            <p>Identificador do usuário proprietário/criador do item.</p>
+        </div>
+        
+        <div class="property">
+            <h4>CategoryId <span class="type">int?</span></h4>
+            <p>Identificador da categoria à qual o item pertence.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Name <span class="type">string</span></h4>
+            <p>Nome do item. Obrigatório, máximo de 100 caracteres.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Reference <span class="type">string</span></h4>
+            <p>Referência/código do item. Obrigatório, máximo de 50 caracteres.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Description <span class="type">string</span></h4>
+            <p>Descrição detalhada do item. Obrigatório, máximo de 500 caracteres.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Price <span class="type">float</span></h4>
+            <p>Preço unitário do item. Obrigatório, deve ser maior que zero.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Stock <span class="type">float</span></h4>
+            <p>Quantidade em estoque do item. Valor padrão é zero.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Unit <span class="type">string</span></h4>
+            <p>Unidade de medida do item (ex: kg, unidade, m²). Obrigatório, máximo de 20 caracteres.</p>
+        </div>
+        
+        <div class="property">
+            <h4>CreatedAt <span class="type">DateTime</span></h4>
+            <p>Data de criação do item, gerada automaticamente.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Category <span class="type">Category?</span></h4>
+            <p>Categoria à qual o item pertence. Relacionamento com a entidade Category.</p>
+        </div>
+        
+        <div class="property">
+            <h4>User <span class="type">User?</span></h4>
+            <p>Usuário proprietário/criador do item. Relacionamento com a entidade User.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Images <span class="type">ICollection&lt;ItemImage&gt;</span></h4>
+            <p>Coleção de imagens associadas ao item.</p>
+        </div>
+    </section>
+    
+    <section id="product">
+        <h2>Product</h2>
+        <p>Representa um produto no sistema. Herda da classe abstrata Item, estendendo-a com propriedades específicas de produtos.</p>
+        
+        <h3>Propriedades</h3>
+        
+        <div class="property">
+            <h4>ProductMaterials <span class="type">ICollection&lt;ProductMaterial&gt;</span></h4>
+            <p>Coleção de materiais associados ao produto. Relacionamento com a entidade ProductMaterial que conecta produtos e materiais.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Tags <span class="type">ICollection&lt;Tag&gt;</span></h4>
+            <p>Coleção de tags associadas ao produto. Permite categorizar e filtrar produtos por características específicas.</p>
+        </div>
+    </section>
+    
+    <section id="order">
+        <h2>Order</h2>
+        <p>Representa um pedido no sistema. Armazena informações sobre pedidos feitos pelos usuários, incluindo os itens solicitados e o status atual.</p>
+        
+        <h3>Propriedades</h3>
+        
+        <div class="property">
+            <h4>Id <span class="type">int</span></h4>
+            <p>Identificador único do pedido.</p>
+        </div>
+        
+        <div class="property">
+            <h4>UserId <span class="type">string?</span></h4>
+            <p>Identificador do usuário que realizou o pedido.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Status <span class="type">OrderStatus</span></h4>
+            <p>Status atual do pedido (Pendente, Confirmado, Enviado, Entregue, Cancelado).</p>
+        </div>
+        
+        <div class="property">
+            <h4>User <span class="type">User?</span></h4>
+            <p>Usuário que realizou o pedido. Relacionamento com a entidade User.</p>
+        </div>
+        
+        <div class="property">
+            <h4>CreatedAt <span class="type">DateTime</span></h4>
+            <p>Data de criação do pedido, gerada automaticamente.</p>
+        </div>
+        
+        <div class="property">
+            <h4>OrderItems <span class="type">ICollection&lt;OrderItem&gt;</span></h4>
+            <p>Coleção de itens incluídos no pedido.</p>
+        </div>
+        
+        <h3>Métodos</h3>
+        
+        <div class="property">
+            <h4>GetTotal() <span class="type">float</span></h4>
+            <p>Calcula o valor total do pedido somando os valores de todos os itens incluídos.</p>
+        </div>
+    </section>
+    
+    <section id="orderitem">
+        <h2>OrderItem</h2>
+        <p>Representa um item específico dentro de um pedido. Armazena informações sobre a quantidade e o item solicitado.</p>
+        
+        <h3>Propriedades</h3>
+        
+        <div class="property">
+            <h4>Id <span class="type">int</span></h4>
+            <p>Identificador único do item do pedido.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Quantity <span class="type">float</span></h4>
+            <p>Quantidade solicitada do item.</p>
+        </div>
+        
+        <div class="property">
+            <h4>OrderId <span class="type">int?</span></h4>
+            <p>Identificador do pedido ao qual este item pertence.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Order <span class="type">Order?</span></h4>
+            <p>Pedido ao qual este item pertence. Relacionamento com a entidade Order.</p>
+        </div>
+        
+        <div class="property">
+            <h4>ItemId <span class="type">int?</span></h4>
+            <p>Identificador do item (produto ou material) que foi pedido.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Item <span class="type">Item</span></h4>
+            <p>Item (produto ou material) que foi pedido. Relacionamento com a entidade Item.</p>
+        </div>
+        
+        <h3>Métodos</h3>
+        
+        <div class="property">
+            <h4>GetTotal() <span class="type">float</span></h4>
+            <p>Calcula o valor total deste item no pedido (preço unitário × quantidade).</p>
+        </div>
+    </section>
+    
+    <section id="category">
+        <h2>Category</h2>
+        <p>Representa uma categoria para produtos e materiais no sistema. Permite organizar itens em grupos lógicos para facilitar a navegação e filtragem.</p>
+        
+        <h3>Propriedades</h3>
+        
+        <div class="property">
+            <h4>Id <span class="type">int</span></h4>
+            <p>Identificador único da categoria.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Reference <span class="type">string</span></h4>
+            <p>Código de referência da categoria. Obrigatório, máximo de 50 caracteres.</p>
+        </div>
+        
+        <div class="property">
+            <h4>UserId <span class="type">string?</span></h4>
+            <p>Identificador do usuário que criou a categoria.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Name <span class="type">string</span></h4>
+            <p>Nome da categoria. Obrigatório, máximo de 100 caracteres.</p>
+        </div>
+        
+        <div class="property">
+            <h4>CreatedAt <span class="type">DateTime</span></h4>
+            <p>Data de criação da categoria, gerada automaticamente.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Products <span class="type">ICollection&lt;Product&gt;</span></h4>
+            <p>Coleção de produtos associados a esta categoria.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Materials <span class="type">ICollection&lt;Material&gt;</span></h4>
+            <p>Coleção de materiais associados a esta categoria.</p>
+        </div>
+        
+        <div class="property">
+            <h4>User <span class="type">User?</span></h4>
+            <p>Usuário que criou a categoria. Relacionamento com a entidade User.</p>
+        </div>
+    </section>
+    
+    <section id="user">
+        <h2>User</h2>
+        <p>Representa um usuário no sistema. Estende a classe IdentityUser do ASP.NET Identity para incluir informações adicionais específicas do sistema.</p>
+        
+        <h3>Propriedades</h3>
+        
+        <div class="property">
+            <h4>FullName <span class="type">string</span></h4>
+            <p>Nome completo do usuário. Campo obrigatório.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Street <span class="type">string?</span></h4>
+            <p>Endereço (rua) do usuário.</p>
+        </div>
+        
+        <div class="property">
+            <h4>StreetNumber <span class="type">string?</span></h4>
+            <p>Número da residência/estabelecimento do usuário.</p>
+        </div>
+        
+        <div class="property">
+            <h4>City <span class="type">string?</span></h4>
+            <p>Cidade/localidade do usuário.</p>
+        </div>
+        
+        <div class="property">
+            <h4>ZipCode <span class="type">string?</span></h4>
+            <p>Código postal do endereço do usuário.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Website <span class="type">string?</span></h4>
+            <p>Website pessoal ou da empresa do usuário.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Description <span class="type">string?</span></h4>
+            <p>Descrição ou biografia do usuário.</p>
+        </div>
+        
+        <div class="property">
+            <h4>AcceptedByAdmin <span class="type">bool</span></h4>
+            <p>Indica se o usuário foi aceito/aprovado por um administrador. Valor padrão é false (não aprovado).</p>
+        </div>
+        
+        <div class="property">
+            <h4>CreatedAt <span class="type">DateTime</span></h4>
+            <p>Data de criação da conta do usuário, gerada automaticamente.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Role <span class="type">UserRole</span></h4>
+            <p>Papel/função do usuário no sistema (Artesão, Cliente, Admin). Este campo não é persistido diretamente no banco de dados.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Products <span class="type">ICollection&lt;Product&gt;</span></h4>
+            <p>Coleção de produtos associados a este usuário (criados ou gerenciados por ele).</p>
+        </div>
+        
+        <div class="property">
+            <h4>Materials <span class="type">ICollection&lt;Material&gt;</span></h4>
+            <p>Coleção de materiais associados a este usuário (criados ou gerenciados por ele).</p>
+        </div>
+        
+        <div class="property">
+            <h4>FavoriteMaterials <span class="type">ICollection&lt;UserMaterialFavorite&gt;</span></h4>
+            <p>Coleção de materiais marcados como favoritos por este usuário.</p>
+        </div>
+        
+        <div class="property">
+            <h4>Orders <span class="type">ICollection&lt;Order&gt;</span></h4>
+            <p>Coleção de pedidos feitos por este usuário.</p>
+        </div>
+    </section>
+    
+    <a href="#" class="back-to-top">↑</a>
+</body>
+</html> 

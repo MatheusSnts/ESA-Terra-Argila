@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação de Pedidos - ESA Terra Argila</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #16a085;
+        }
+        .property {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #2ecc71;
+        }
+        .property h4 {
+            margin: 0 0 5px 0;
+            color: #27ae60;
+        }
+        .property p {
+            margin: 5px 0;
+        }
+        .relationship {
+            color: #8e44ad;
+            font-style: italic;
+        }
+        .decorator {
+            display: inline-block;
+            font-size: 0.8em;
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        .class-hierarchy {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .model-index {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .model-index a {
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+        .model-index a:hover {
+            background-color: #2980b9;
+        }
+        code {
+            background-color: #f8f8f8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        .method {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-left: 3px solid #f1c40f;
+        }
+        .nav-bar {
+            background-color: #2c3e50;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .nav-bar a {
+            color: white;
+            margin-right: 15px;
+            text-decoration: none;
+        }
+        .nav-bar a:hover {
+            text-decoration: underline;
+        }
+        .diagram {
+            max-width: 100%;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="models.html">Visão Geral dos Models</a>
+        <a href="orders.html">Sistema de Pedidos</a>
+        <a href="index.html">Início</a>
+    </div>
+
+    <h1>Sistema de Pedidos - Documentação Detalhada</h1>
+    
+    <p>Esta documentação fornece detalhes sobre o funcionamento do sistema de pedidos na plataforma ESA Terra Argila.</p>
+    
+    <div class="model-index">
+        <a href="#Order">Order</a>
+        <a href="#OrderItem">OrderItem</a>
+        <a href="#OrderStatus">OrderStatus</a>
+        <a href="#Fluxo">Fluxo de Pedido</a>
+        <a href="#Metodos">Métodos Principais</a>
+    </div>
+
+    <h2 id="Order">Model: Order</h2>
+    <p>O model <code>Order</code> representa um pedido realizado por um usuário no sistema.</p>
+    
+    <h3>Propriedades</h3>
+    
+    <div class="property">
+        <h4>Id <span class="decorator">Key</span></h4>
+        <p>Tipo: <code>int</code></p>
+        <p>Identificador único do pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>UserId</h4>
+        <p>Tipo: <code>string</code></p>
+        <p>Identificador do usuário que fez o pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Status</h4>
+        <p>Tipo: <code>OrderStatus</code></p>
+        <p>Status atual do pedido. Ver enum <a href="#OrderStatus">OrderStatus</a> para possíveis valores.</p>
+    </div>
+    
+    <div class="property">
+        <h4>CreatedAt</h4>
+        <p>Tipo: <code>DateTime</code></p>
+        <p>Data e hora de criação do pedido.</p>
+    </div>
+    
+    <h3>Relacionamentos</h3>
+    
+    <div class="property">
+        <h4>User <span class="relationship">ForeignKey('UserId')</span></h4>
+        <p>Tipo: <code>User?</code></p>
+        <p>Usuário que fez o pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>OrderItems <span class="relationship">Collection</span></h4>
+        <p>Tipo: <code>ICollection&lt;OrderItem&gt;</code></p>
+        <p>Itens incluídos no pedido.</p>
+    </div>
+
+    <h3>Métodos</h3>
+    
+    <div class="method">
+        <h4>GetTotal()</h4>
+        <p>Retorna: <code>float</code></p>
+        <p>Calcula o valor total do pedido, somando os valores de todos os itens.</p>
+        <pre><code>
+public float GetTotal()
+{
+    return OrderItems?.Sum(oi => oi.GetTotal()) ?? 0;
+}
+        </code></pre>
+    </div>
+
+    <h2 id="OrderItem">Model: OrderItem</h2>
+    <p>O model <code>OrderItem</code> representa um item específico em um pedido.</p>
+    
+    <h3>Propriedades</h3>
+    
+    <div class="property">
+        <h4>Id <span class="decorator">Key</span></h4>
+        <p>Tipo: <code>int</code></p>
+        <p>Identificador único do item do pedido.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Quantity</h4>
+        <p>Tipo: <code>float</code></p>
+        <p>Quantidade do item.</p>
+    </div>
+    
+    <div class="property">
+        <h4>OrderId</h4>
+        <p>Tipo: <code>int?</code></p>
+        <p>Identificador do pedido relacionado.</p>
+    </div>
+    
+    <div class="property">
+        <h4>ItemId</h4>
+        <p>Tipo: <code>int?</code></p>
+        <p>Identificador do item relacionado.</p>
+    </div>
+    
+    <h3>Relacionamentos</h3>
+    
+    <div class="property">
+        <h4>Order <span class="relationship">ForeignKey('OrderId')</span></h4>
+        <p>Tipo: <code>Order?</code></p>
+        <p>Pedido ao qual este item pertence.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Item <span class="relationship">ForeignKey('ItemId')</span></h4>
+        <p>Tipo: <code>Item</code></p>
+        <p>O item (produto ou material) incluído no pedido.</p>
+    </div>
+    
+    <h3>Métodos</h3>
+    
+    <div class="method">
+        <h4>GetTotal()</h4>
+        <p>Retorna: <code>float</code></p>
+        <p>Calcula o valor total (preço * quantidade) deste item no pedido.</p>
+        <pre><code>
+public float GetTotal()
+{
+    return Item.Price * Quantity;
+}
+        </code></pre>
+    </div>
+
+    <h2 id="OrderStatus">Enum: OrderStatus</h2>
+    <p>Enum que define os possíveis estados de um pedido no sistema.</p>
+    
+    <table>
+        <tr>
+            <th>Valor</th>
+            <th>Descrição</th>
+        </tr>
+        <tr>
+            <td>Draft</td>
+            <td>Pedido em rascunho (carrinho de compras)</td>
+        </tr>
+        <tr>
+            <td>Placed</td>
+            <td>Pedido realizado pelo cliente</td>
+        </tr>
+        <tr>
+            <td>Processing</td>
+            <td>Pedido em processamento</td>
+        </tr>
+        <tr>
+            <td>Shipped</td>
+            <td>Pedido enviado</td>
+        </tr>
+        <tr>
+            <td>Delivered</td>
+            <td>Pedido entregue</td>
+        </tr>
+        <tr>
+            <td>Cancelled</td>
+            <td>Pedido cancelado</td>
+        </tr>
+    </table>
+
+    <h2 id="Fluxo">Fluxo de um Pedido</h2>
+    <p>O diagrama abaixo ilustra o fluxo típico de um pedido no sistema:</p>
+    
+    <div class="diagram">
+        <pre>
+Início
+  |
+  v
++----------------+     +----------------+     +----------------+
+| Carrinho       |     | Pedido         |     | Processamento  |
+| (Draft)        |---->| (Placed)       |---->| (Processing)   |
++----------------+     +----------------+     +----------------+
+                                                     |
+                                                     v
++----------------+     +----------------+     +----------------+
+| Entregue       |<----| Enviado        |<----| Preparação     |
+| (Delivered)    |     | (Shipped)      |     | (Processing)   |
++----------------+     +----------------+     +----------------+
+        </pre>
+    </div>
+
+    <h2 id="Metodos">Métodos Principais do OrdersController</h2>
+    <p>A seguir estão os principais métodos do controller que gerenciam os pedidos:</p>
+    
+    <div class="method">
+        <h4>Cart()</h4>
+        <p>Exibe o carrinho de compras do usuário atual.</p>
+        <p>Retorna uma view com o pedido no status Draft.</p>
+    </div>
+    
+    <div class="method">
+        <h4>AddToCart(int id)</h4>
+        <p>Adiciona um item ao carrinho de compras.</p>
+        <p>Se o item já estiver no carrinho, incrementa a quantidade.</p>
+    </div>
+    
+    <div class="method">
+        <h4>DeleteItem(int? id)</h4>
+        <p>Remove um item do carrinho de compras.</p>
+    </div>
+    
+    <div class="method">
+        <h4>AddQuantity(AddQuantityRequestModel request)</h4>
+        <p>Atualiza a quantidade de um item no carrinho.</p>
+    </div>
+    
+    <div class="method">
+        <h4>GetCartItemCount()</h4>
+        <p>Retorna o número de itens no carrinho do usuário atual.</p>
+    </div>
+
+    <a href="#" class="back-to-top">Voltar ao Topo</a>
+
+    <script>
+        // Scroll suave para links de âncora
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                if (this.getAttribute('href') === '#') {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
