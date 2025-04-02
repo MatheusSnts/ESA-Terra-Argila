@@ -42,68 +42,44 @@ namespace ESA_Terra_Argila.Controllers
             return View(order);
         }
 
-        public async Task<IActionResult> AddToCart(int id)
-        {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
-
-            if (order == null)
-            {
-                order = new Order
-                {
-                    UserId = userId,
-                    Status = OrderStatus.Draft
-                };
-                _context.Orders.Add(order);
-            }
-
-            var material = await _context.Items.FindAsync(id);
-            if (material == null)
-                return NotFound("Produto não encontrado");
-            var existingItem = order.OrderItems.FirstOrDefault(oi => oi.ItemId == id);
-            if (existingItem != null)
-            {
-                existingItem.Quantity += 1;
-            }
-            else
-            {
-                var orderItem = new OrderItem
-                {
-                    ItemId = id,
-                    Quantity = 1
-                };
-                order.OrderItems.Add(orderItem);
-            }
-
-            await _context.SaveChangesAsync();
-
-            var referer = Request.Headers.Referer.ToString();
-            if (!string.IsNullOrEmpty(referer))
-            {
-                return Redirect(referer);
-            }
-
-            return RedirectToAction("Index", "Home");
-        }
-
         public async Task<IActionResult> BuyNow(int id)
         {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Item)
-                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
-
-            if (order == null || !order.OrderItems.Any())
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
             {
-                return NotFound("Pedido não encontrado ou sem itens.");
+                return Unauthorized("Usuário não autenticado.");
             }
 
-            foreach (var oi in order.OrderItems)
+            // Buscar o item SEM usar Include diretamente na classe abstrata
+            var item = await _context.Items
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (item == null)
             {
-                await _context.Entry(oi.Item).Reference(i => i.Category).LoadAsync();
-                await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
+                return NotFound("Item não encontrado.");
             }
+
+            // Carregar as propriedades de navegação manualmente
+            await _context.Entry(item).Reference(i => i.Category).LoadAsync();
+            await _context.Entry(item).Collection(i => i.Images).LoadAsync();
+
+            // Criar o pedido
+            var order = new Order
+            {
+                UserId = userId,
+                Status = OrderStatus.Pending,
+                OrderItems = new List<OrderItem>
+        {
+            new OrderItem
+            {
+                ItemId = item.Id,
+                Quantity = 1
+            }
+        }
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
 
             return View("BuyNow", order);
         }

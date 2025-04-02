@@ -65,10 +65,10 @@
                 Total: @Model?.GetTotal().ToString("C", new System.Globalization.CultureInfo("pt-PT"))
             </div>
             <div class="mt-4 text-end">
-    <form method="post" action="/api/pagamento/checkout/@Model.Id">
-        <button type="submit" class="btn btn-primary">Finalizar Compra</button>
-    </form>
-</div>
+                <form method="post" action="/api/pagamento/checkout/@Model.Id">
+                    <button type="submit" class="btn btn-primary">Finalizar Compra</button>
+                </form>
+            </div>
 
         </div>
         <div style="height: 29rem;" class="col-md-4 form-section shadow">
