@@ -122,6 +122,52 @@ namespace ESA_Terra_Argila.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetActivityData(string range)
+        {
+            var now = DateTime.UtcNow;
+            DateTime start;
+            string groupFormat;
+
+            switch (range)
+            {
+                case "24h":
+                    start = now.AddHours(-23); // 23 para incluir o atual
+                    groupFormat = "HH\\h";
+                    break;
+                case "7d":
+                    start = now.AddDays(-6); // últimos 7 dias, incluindo hoje
+                    groupFormat = "dd/MM";
+                    break;
+                case "month":
+                    start = now.AddMonths(-1);
+                    groupFormat = "dd/MM";
+                    break;
+                case "year":
+                    start = now.AddYears(-1);
+                    groupFormat = "MMM yyyy";
+                    break;
+                default:
+                    start = DateTime.MinValue;
+                    groupFormat = "yyyy-MM-dd";
+                    break;
+            }
+
+            // Busca os dados do EF primeiro e só depois agrupa em memória (evita erro de tipo)
+            var grouped = _context.UserActivities
+                .Where(a => a.Timestamp >= start)
+                .AsEnumerable() // A partir daqui já não é SQL — é LINQ in-memory
+                .GroupBy(a => a.Timestamp.ToLocalTime().ToString(groupFormat))
+                .OrderBy(g => g.Key)
+                .Select(g => new
+                {
+                    label = g.Key,
+                    count = g.Count()
+                })
+                .ToList(); // Isto pode ser ToList() pois já estás em memória
+
+            return Json(grouped);
+        }
 
 
     }

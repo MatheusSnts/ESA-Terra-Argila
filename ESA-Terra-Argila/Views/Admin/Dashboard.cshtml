@@ -138,25 +138,20 @@
         const cardView = document.getElementById("cardView");
         const chartView = document.getElementById("chartView");
 
-        const dataByRange = {
-            "24h": @Html.Raw(Json.Serialize(Model.ActiveUsers24h)),
-            "7d": @Html.Raw(Json.Serialize(Model.ActiveUsers7d)),
-            "month": @Html.Raw(Json.Serialize(Model.ActiveUsersMonth)),
-            "year": @Html.Raw(Json.Serialize(Model.ActiveUsersYear)),
-            "total": @Html.Raw(Json.Serialize(Model.ActiveUsersTotal))
-        };
-
         const ctx = document.getElementById('activityChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ["24h"],
+                labels: [],
                 datasets: [{
                     label: 'Acessos',
-                    data: [dataByRange["24h"]],
+                    data: [],
                     borderWidth: 2,
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)'
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 5,
                 }]
             },
             options: {
@@ -168,6 +163,7 @@
             }
         });
 
+       
         btn.addEventListener("click", () => {
             const showingCards = cardView.style.display !== "none";
             cardView.style.display = showingCards ? "none" : "block";
@@ -179,14 +175,32 @@
             }
         });
 
-        document.querySelectorAll('.filter-btn').forEach(fb =>
-            fb.addEventListener('click', () => {
-                const range = fb.getAttribute("data-range");
-                chart.data.labels = [range];
-                chart.data.datasets[0].data = [dataByRange[range]];
+        
+        async function fetchAndUpdateChart(range) {
+            try {
+                const response = await fetch(`/Admin/GetActivityData?range=${range}`);
+                const data = await response.json();
+
+                chart.data.labels = data.map(d => d.label);
+                chart.data.datasets[0].data = data.map(d => d.count); 
                 chart.update();
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+            }
+        }
+
+        
+        fetchAndUpdateChart("24h");
+
+       
+        document.querySelectorAll('.filter-btn').forEach(btn =>
+            btn.addEventListener('click', () => {
+                const range = btn.getAttribute("data-range");
+                fetchAndUpdateChart(range);
             })
         );
     </script>
+}
+
 
 }
