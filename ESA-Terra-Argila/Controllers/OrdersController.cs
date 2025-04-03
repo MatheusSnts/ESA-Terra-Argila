@@ -132,7 +132,44 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>Resultado OK (método a ser implementado)</returns>
         public async Task<IActionResult> BuyNow(int id)
         {
-            return Ok();
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Unauthorized("Usuário não autenticado.");
+            }
+
+          
+            var item = await _context.Items
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (item == null)
+            {
+                return NotFound("Item não encontrado.");
+            }
+
+        
+            await _context.Entry(item).Reference(i => i.Category).LoadAsync();
+            await _context.Entry(item).Collection(i => i.Images).LoadAsync();
+
+       
+            var order = new Order
+            {
+                UserId = userId,
+                Status = OrderStatus.Pending,
+                OrderItems = new List<OrderItem>
+        {
+            new OrderItem
+            {
+                ItemId = item.Id,
+                Quantity = 1
+            }
+        }
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            return View("BuyNow", order);
         }
 
         /// <summary>
