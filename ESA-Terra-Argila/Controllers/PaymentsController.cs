@@ -56,7 +56,7 @@ namespace ESA_Terra_Argila.Controllers
                     LineItems = lineItems,
                     Mode = "payment",
                     SuccessUrl = $"{domain}/PaymentSuccess",
-                    CancelUrl = $"{domain}/"
+                    CancelUrl = $"{domain}"
                 };
 
                 var service = new SessionService();

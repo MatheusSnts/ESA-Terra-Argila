@@ -185,6 +185,7 @@ namespace ESA_Terra_Argila.Controllers
                 return BadRequest("Dados inválidos.");
             }
 
+
             var item = await _context.OrderItems
                 .Include(oi => oi.Order)
                 .Include(oi => oi.Item)

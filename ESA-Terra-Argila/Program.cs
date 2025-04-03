@@ -7,6 +7,7 @@ using System.Globalization;
 using ESA_Terra_Argila.Resources.ErrorDescribers;
 using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Stripe;
 
 
 
@@ -39,9 +40,12 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 });
 
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
 
 using (var scope = app.Services.CreateScope())
 {
@@ -57,6 +61,7 @@ using (var scope = app.Services.CreateScope())
     await Seeder.SeedUsersAsync(userManager);
 }
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -69,8 +74,10 @@ else
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 
 app.UseRouting();
 
