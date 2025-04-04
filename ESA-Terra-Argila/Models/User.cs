@@ -106,6 +106,7 @@ namespace ESA_Terra_Argila.Models
         /// Coleção de pedidos feitos por este usuário.
         /// </summary>
         public virtual ICollection<Order> Orders { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         /// <summary>
         /// Construtor do User.

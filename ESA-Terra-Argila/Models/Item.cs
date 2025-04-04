@@ -92,6 +92,8 @@ namespace ESA_Terra_Argila.Models
         /// </summary>
         public virtual ICollection<ItemImage> Images { get; set; }
 
+        public DateTime? DeletedAt { get; set; }
+
         /// <summary>
         /// Construtor do Item. Inicializa a data de criação com a data/hora atual
         /// e inicializa a coleção de imagens.

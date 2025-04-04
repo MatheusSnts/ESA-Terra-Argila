@@ -60,7 +60,7 @@ namespace ESA_Terra_Argila.Controllers
         {
             var applicationDbContext = _context.Items
                     .OfType<Product>()
-                    .Where(p => p.UserId == userId)
+                    .Where(p => p.UserId == userId && p.DeletedAt == null && p.User.DeletedAt == null)
                     .Include(p => p.Category)
                     .Include(p => p.User);
             return View(await applicationDbContext.ToListAsync());
@@ -82,6 +82,7 @@ namespace ESA_Terra_Argila.Controllers
         {
             var query = _context.Items
                 .OfType<Product>()
+                .Where(p => p.DeletedAt == null && p.User.DeletedAt == null)
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .Include(m => m.Images)
@@ -151,6 +152,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var product = await _context.Items
                 .OfType<Product>()
+                .Where(p => p.DeletedAt == null && p.User.DeletedAt == null)
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .Include(p => p.Images)
@@ -277,6 +279,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var product = await _context.Items
                 .OfType<Product>()
+                .Where(p => p.DeletedAt == null && p.User.DeletedAt == null)
                 .Include(p => p.Tags)
                 .Include(p => p.Images)
                 .Include(p => p.ProductMaterials)
@@ -336,6 +339,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var foundProduct = await _context.Items
                 .OfType<Product>()
+                .Where(p => p.DeletedAt == null && p.User.DeletedAt == null)
                 .Include(p => p.Tags)
                 .Include(p => p.Images)
                 .Include(p => p.ProductMaterials)
@@ -446,7 +450,8 @@ namespace ESA_Terra_Argila.Controllers
                 return NotFound();
             }
 
-            _context.Items.Remove(product);
+            product.DeletedAt = DateTime.UtcNow;
+            _context.Update(product);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Produto removido com sucesso!";
             return RedirectToAction("Index");

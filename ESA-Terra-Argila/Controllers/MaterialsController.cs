@@ -72,9 +72,8 @@ namespace ESA_Terra_Argila.Controllers
 
             if (isVendor)
             {
-                // Se for "Vendor", busca apenas materiais FAVORITOS do usuário
                 materials = _context.UserMaterialFavorites
-                    .Where(umf => umf.UserId == userId)
+                    .Where(umf => umf.UserId == userId && umf.Material.DeletedAt == null && umf.Material.User.DeletedAt == null)
                     .Include(m => m.Material.Category)
                     .Include(m => m.User)
                     .Select(umf => umf.Material);
@@ -85,7 +84,7 @@ namespace ESA_Terra_Argila.Controllers
             {
                 materials = _context.Items
                     .OfType<Material>()
-                    .Where(m => m.UserId == userId)
+                    .Where(m => m.UserId == userId && m.DeletedAt == null && m.User.DeletedAt == null)
                     .Include(m => m.Category)
                     .Include(m => m.User);
                 return View(await materials.ToListAsync());
@@ -106,6 +105,7 @@ namespace ESA_Terra_Argila.Controllers
         {
             var query = _context.Items
                 .OfType<Material>()
+                .Where(m => m.DeletedAt == null && m.User.DeletedAt == null)
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .Include(m => m.Images)
@@ -252,6 +252,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var material = await _context.Items
                 .OfType<Material>()
+                .Where(m => m.DeletedAt == null && m.User.DeletedAt == null)
                 .Include(m => m.Category)
                 .Include(m => m.User)
                 .Include(m => m.Images)
@@ -352,6 +353,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var material = await _context.Items
                 .OfType<Material>()
+                .Where(m => m.DeletedAt == null && m.User.DeletedAt == null)
                 .Include(m => m.Tags)
                 .Include(m => m.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -388,6 +390,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var foundMaterial = await _context.Items
                 .OfType<Material>()
+                .Where(m => m.DeletedAt == null && m.User.DeletedAt == null)
                 .Include(m => m.Tags)
                 .Include(m => m.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -503,7 +506,9 @@ namespace ESA_Terra_Argila.Controllers
                 TempData["ErrorMessage"] = "Material não encontrado!";
                 return NotFound();
             }
-            _context.Items.Remove(material);
+
+            material.DeletedAt = DateTime.UtcNow;
+            _context.Items.Update(material);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Material removido com sucesso!";
             return RedirectToAction("Index");

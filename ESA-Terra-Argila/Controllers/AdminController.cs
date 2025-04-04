@@ -35,7 +35,7 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>View com a lista de usuários não aprovados</returns>
         public async Task<IActionResult> AcceptUsers()
         {
-            var users = _context.Users.Where(u => !u.AcceptedByAdmin);
+            var users = _context.Users.Where(u => !u.AcceptedByAdmin && u.DeletedAt == null);
             var usersList = await users.ToListAsync();
             foreach (var user in usersList) 
             {
@@ -169,7 +169,14 @@ namespace ESA_Terra_Argila.Controllers
         private async Task<List<User>> GetUsersByRole(string role)
         {
             var users = await _userManager.GetUsersInRoleAsync(role);
-            return users.Where(u => u.AcceptedByAdmin).ToList();
+            return users.Where(u => u.AcceptedByAdmin && u.DeletedAt == null).ToList();
+        }
+
+        private async Task<List<User>> GetDeletedUsers()
+        {
+            return await _context.Users
+                .Where(u => u.DeletedAt != null)
+                .ToListAsync();
         }
     }
 }
