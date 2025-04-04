@@ -8,6 +8,9 @@ using ESA_Terra_Argila.Resources.ErrorDescribers;
 using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
+using ESA_Terra_Argila.Policies.AuthorizationRequirements;
+using ESA_Terra_Argila.Policies;
+using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -31,6 +34,13 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
     .AddDefaultUI();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AcceptedByAdmin", policy =>
+        policy.Requirements.Add(new AcceptedByAdminRequirement()));
+});
+
+builder.Services.AddScoped<IAuthorizationHandler, AcceptedByAdminHandler>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

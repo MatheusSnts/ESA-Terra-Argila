@@ -10,6 +10,7 @@ using ESA_Terra_Argila.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -17,6 +18,7 @@ namespace ESA_Terra_Argila.Controllers
     /// Controller responsável pelo gerenciamento de tags no sistema.
     /// Permite a criação, edição, visualização e remoção de tags associadas a produtos e materiais.
     /// </summary>
+    [Authorize(Policy = "AcceptedByAdmin")]
     public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;

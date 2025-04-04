@@ -18,7 +18,7 @@ namespace ESA_Terra_Argila.Controllers
     /// Controller responsável pelo gerenciamento de categorias.
     /// Todas as ações requerem autenticação, exceto quando explicitamente permitido.
     /// </summary>
-    [Authorize] // Exige autenticação para todas as ações
+    [Authorize(Policy = "AcceptedByAdmin")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;

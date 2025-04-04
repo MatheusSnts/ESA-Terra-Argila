@@ -1,10 +1,31 @@
 ﻿@page
 @model AccessDeniedModel
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = "Acesso negado";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+<div style="width: 100%; max-width: 600px; margin: 100px auto; padding: 20px; border: 1px solid #ccc; font-family: Arial, sans-serif; text-align: center;">
+    <h1>Acesso Negado</h1>
+    <p style="font-size: 1.1em; margin-bottom: 20px;">
+        Desculpe, mas você não tem permissão para acessar esta página.
+    </p>
+    <hr style="margin: 20px 0;">
+    <p style="font-size: 0.9em; color: #555;">
+        Se você acredita que isso seja um engano, entre em contato com o administrador do sistema ou verifique suas credenciais de acesso.
+    </p>
+
+    <div style="margin-top: 30px;">
+        <button style="
+                padding: 12px 24px;
+                border: none;
+                background-color: #007BFF;
+                color: #fff;
+                font-size: 1em;
+                border-radius: 4px;
+                cursor: pointer;
+            "
+                onclick="window.history.back();">
+            Voltar
+        </button>
+    </div>
+</div>

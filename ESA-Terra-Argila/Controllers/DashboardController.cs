@@ -7,7 +7,9 @@ namespace ESA_Terra_Argila.Controllers
     /// Controller responsável pelo painel de controle do sistema.
     /// Gerencia o redirecionamento dos usuários para suas respectivas áreas baseado em suas funções.
     /// </summary>
-    [Authorize]
+    /// 
+
+    [Authorize(Policy = "AcceptedByAdmin")]
     public class DashboardController : Controller
     {
         /// <summary>

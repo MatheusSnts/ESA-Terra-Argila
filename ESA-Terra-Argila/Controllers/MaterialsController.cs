@@ -23,7 +23,7 @@ namespace ESA_Terra_Argila.Controllers
     /// Controlador responsável pelo gerenciamento de materiais no sistema.
     /// Gerencia a listagem, criação, edição, exclusão e controle de estoque de materiais.
     /// </summary>
-    [Authorize]
+    [Authorize(Policy = "AcceptedByAdmin")]
     public class MaterialsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -242,6 +242,7 @@ namespace ESA_Terra_Argila.Controllers
         /// </summary>
         /// <param name="id">ID do material a ser visualizado.</param>
         /// <returns>A visão de detalhes do material.</returns>
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

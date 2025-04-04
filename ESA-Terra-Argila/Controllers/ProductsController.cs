@@ -23,7 +23,8 @@ namespace ESA_Terra_Argila.Controllers
     /// Controller responsável pelo gerenciamento de produtos.
     /// Requer autenticação para a maioria das ações, exceto quando explicitamente permitido.
     /// </summary>
-    [Authorize]
+    /// 
+    [Authorize(Policy = "AcceptedByAdmin")]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -143,6 +144,7 @@ namespace ESA_Terra_Argila.Controllers
         /// <param name="id">ID do produto</param>
         /// <returns>View com os detalhes do produto ou NotFound se não existir</returns>
         // GET: Products/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -370,7 +372,7 @@ namespace ESA_Terra_Argila.Controllers
 
                     if (Materials != null && Materials.Any())
                     {
-                        foundProduct.ProductMaterials.Clear(); 
+                        foundProduct.ProductMaterials.Clear();
 
                         for (int i = 0; i < Materials.Count; i++)
                         {
