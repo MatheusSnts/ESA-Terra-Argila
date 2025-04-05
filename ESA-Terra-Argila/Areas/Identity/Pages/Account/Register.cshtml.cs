@@ -120,12 +120,42 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var existingUser = await _userManager.FindByEmailAsync(Input.Email);
 
-                user.FullName = Input.FullName;
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                IdentityResult result;
+                User user;
+
+                if (existingUser != null)
+                {
+                    if (existingUser.DeletedAt != null)
+                    {
+                        existingUser.DeletedAt = null;
+                        existingUser.FullName = Input.FullName;
+                        await _userStore.SetUserNameAsync(existingUser, Input.Email, CancellationToken.None);
+                        await _emailStore.SetEmailAsync(existingUser, Input.Email, CancellationToken.None);
+
+                        result = await _userManager.UpdateAsync(existingUser);
+                        user = existingUser;
+
+                        var token = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
+                        await _userManager.ResetPasswordAsync(existingUser, token, Input.Password);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Já existe uma conta com este email.");
+                        return Page();
+                    }
+                }
+                else
+                {
+                    user = CreateUser();
+                    user.FullName = Input.FullName;
+
+                    await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                    result = await _userManager.CreateAsync(user, Input.Password);
+                }
 
                 if (result.Succeeded)
                 {

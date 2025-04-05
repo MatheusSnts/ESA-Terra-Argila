@@ -534,3 +534,19 @@ img {
 .hidden {
     display: none;
 }
+.sidebar-item {
+    display: flex;
+    align-items: center; 
+    gap: 8px; 
+}
+
+    .sidebar-item svg {
+        flex-shrink: 0; 
+        height: 24px; 
+        width: 24px; 
+    }
+
+    .sidebar-item span {
+        line-height: 1; 
+    }
+

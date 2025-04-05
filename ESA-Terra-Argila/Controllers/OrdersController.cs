@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ESA_Terra_Argila.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelo gerenciamento de pedidos e carrinho de compras.
+    /// </summary>
     public class OrdersController : Controller
     {
 
@@ -16,18 +19,32 @@ namespace ESA_Terra_Argila.Controllers
         private string? userId;
         private readonly UserManager<User> _userManager;
 
+        /// <summary>
+        /// Construtor do OrdersController.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados</param>
+        /// <param name="userManager">Gerenciador de usuários</param>
         public OrdersController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Método executado antes de cada ação, para obter o ID do usuário atual.
+        /// </summary>
+        /// <param name="context">Contexto da execução da ação</param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
             userId = _userManager.GetUserId(User);
         }
 
+        /// <summary>
+        /// Exibe o carrinho de compras do usuário atual.
+        /// Se não existir um carrinho, cria um novo.
+        /// </summary>
+        /// <returns>View com o carrinho de compras</returns>
         public async Task<IActionResult> Cart()
         {
             var order = await _context.Orders
@@ -35,15 +52,36 @@ namespace ESA_Terra_Argila.Controllers
                     .ThenInclude(oi => oi.Item)
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
 
+
             var items = order?.OrderItems ?? new HashSet<OrderItem>();
             foreach (var oi in items)
+
             {
-                await _context.Entry(oi.Item).Reference(i => i.Category).LoadAsync();
-                await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
+                order = new Order
+                {
+                    UserId = userId,
+                    Status = OrderStatus.Draft,
+                    OrderItems = new List<OrderItem>()
+                };
             }
+            else
+            {
+                foreach (var oi in order.OrderItems)
+                {
+                    await _context.Entry(oi.Item).Reference(i => i.Category).LoadAsync();
+                    await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
+                }
+            }
+            
             return View(order);
         }
 
+        /// <summary>
+        /// Adiciona um item ao carrinho de compras.
+        /// Se o carrinho não existir, cria um novo.
+        /// </summary>
+        /// <param name="id">ID do item a ser adicionado</param>
+        /// <returns>Redireciona para a página anterior ou para a página inicial</returns>
         public async Task<IActionResult> AddToCart(int id)
         {
             var order = await _context.Orders
@@ -88,11 +126,60 @@ namespace ESA_Terra_Argila.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        /// <summary>
+        /// Inicia o processo de compra imediata para um item.
+        /// (Método stub, não implementado completamente)
+        /// </summary>
+        /// <param name="id">ID do item a ser comprado</param>
+        /// <returns>Resultado OK (método a ser implementado)</returns>
         public async Task<IActionResult> BuyNow(int id)
         {
-            return Ok();
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Unauthorized("Usuário não autenticado.");
+            }
+
+          
+            var item = await _context.Items
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (item == null)
+            {
+                return NotFound("Item não encontrado.");
+            }
+
+        
+            await _context.Entry(item).Reference(i => i.Category).LoadAsync();
+            await _context.Entry(item).Collection(i => i.Images).LoadAsync();
+
+       
+            var order = new Order
+            {
+                UserId = userId,
+                Status = OrderStatus.Pending,
+                OrderItems = new List<OrderItem>
+        {
+            new OrderItem
+            {
+                ItemId = item.Id,
+                Quantity = 1
+            }
+        }
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            return View("BuyNow", order);
         }
 
+        /// <summary>
+        /// Altera a quantidade de um item no carrinho de compras.
+        /// </summary>
+        /// <param name="request">Modelo com ID do item e valor a ser adicionado à quantidade</param>
+        /// <returns>Resultado JSON com informações atualizadas</returns>
         [HttpPost]
         public async Task<IActionResult> AddQuantity([FromBody] AddQuantityRequestModel request)
         {
@@ -100,6 +187,7 @@ namespace ESA_Terra_Argila.Controllers
             {
                 return BadRequest("Dados inválidos.");
             }
+
 
             var item = await _context.OrderItems
                 .Include(oi => oi.Order)
@@ -131,6 +219,10 @@ namespace ESA_Terra_Argila.Controllers
             });
         }
 
+        /// <summary>
+        /// Retorna o número de itens no carrinho de compras do usuário atual.
+        /// </summary>
+        /// <returns>Resultado JSON com a contagem de itens</returns>
         public async Task<IActionResult> GetCartItemCount()
         {
             if(string.IsNullOrEmpty(userId))
@@ -150,6 +242,11 @@ namespace ESA_Terra_Argila.Controllers
             });
         }
 
+        /// <summary>
+        /// Remove um item do carrinho de compras.
+        /// </summary>
+        /// <param name="id">ID do item a ser removido</param>
+        /// <returns>Redireciona para a página anterior</returns>
         public async Task<IActionResult> DeleteItem(int? id)
         {
             var referer = Request.Headers.Referer.ToString();
@@ -182,9 +279,19 @@ namespace ESA_Terra_Argila.Controllers
             return Redirect(referer);
         }
 
+        /// <summary>
+        /// Modelo para a requisição de alteração de quantidade.
+        /// </summary>
         public class AddQuantityRequestModel
         {
+            /// <summary>
+            /// ID do item no carrinho.
+            /// </summary>
             public int Id { get; set; }
+            
+            /// <summary>
+            /// Valor a ser adicionado à quantidade atual (pode ser positivo ou negativo).
+            /// </summary>
             public int Value { get; set; }
         }
     }
