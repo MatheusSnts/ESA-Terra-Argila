@@ -24,11 +24,14 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<User> _signInManager;
         private readonly IUserActivityService _userActivityService;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<User> signInManager, IUserActivityService userActivityService, ILogger<LoginModel> logger)    
+        public LoginModel(SignInManager<User> signInManager,UserManager<User> userManager, IUserActivityService userActivityService,
+                  ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _userActivityService = userActivityService;
             _logger = logger;
         }
