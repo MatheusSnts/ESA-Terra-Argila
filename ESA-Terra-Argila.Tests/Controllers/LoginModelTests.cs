@@ -18,6 +18,8 @@ using System;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
 using System.Text.Json;
+using ESA_Terra_Argila.Services;
+
 
 namespace ESA_Terra_Argila.Tests.Controllers
 {
@@ -27,6 +29,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
         private readonly Mock<ILogger<LoginModel>> _loggerMock;
         private readonly LoginModel _pageModel;
         private readonly Mock<UserManager<User>> _userManagerMock;
+        private readonly Mock<IUserActivityService> _userActivityServiceMock;
         private readonly ApplicationDbContext _dbContext;
 
         public LoginModelTests()
@@ -48,6 +51,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var lookupNormalizerMock = new Mock<ILookupNormalizer>();
             var errorDescriberMock = new Mock<IdentityErrorDescriber>();
             var serviceProviderMock = new Mock<IServiceProvider>();
+            _userActivityServiceMock = new Mock<IUserActivityService>();
             var loggerMock = new Mock<ILogger<UserManager<User>>>();
 
             _userManagerMock = new Mock<UserManager<User>>(
@@ -90,7 +94,9 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var httpContext = new DefaultHttpContext { RequestServices = serviceProvider };
 
             // Instancia o LoginModel com o HttpContext configurado
-            _pageModel = new LoginModel(_signInManagerMock.Object, _userManagerMock.Object, _loggerMock.Object)
+
+            _pageModel = new LoginModel( _signInManagerMock.Object,_userManagerMock.Object, _userActivityServiceMock.Object,_loggerMock.Object)
+
             {
                 PageContext = new PageContext(new ActionContext(httpContext, new RouteData(), new PageActionDescriptor()))
             };

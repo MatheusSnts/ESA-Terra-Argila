@@ -16,19 +16,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ESA_Terra_Argila.Data;
+using ESA_Terra_Argila.Services;
 
 namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
+
+        private readonly IUserActivityService _userActivityService;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<User> signInManager, UserManager<User> userManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<User> signInManager,UserManager<User> userManager, IUserActivityService userActivityService,
+                  ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _userActivityService = userActivityService;
+
             _logger = logger;
         }
 
@@ -138,8 +144,18 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                         await dbContext.SaveChangesAsync();
                     }
 
+                    await _userActivityService.LogActivityAsync(
+                            user.Id,
+                            "Login",
+                            "Login efetuado com sucesso",
+                            true,
+                            $"IP: {HttpContext.Connection.RemoteIpAddress?.ToString()}"
+                    );
+
                     _logger.LogInformation($"User {Input.Email} logged in at {DateTime.UtcNow}.");
                     return LocalRedirect(returnUrl);
+
+                    
                 }
 
                 if (result.RequiresTwoFactor)
@@ -152,9 +168,14 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                     return RedirectToPage("./Lockout");
                 }
 
-                _logger.LogWarning($"Invalid login attempt for {Input.Email} at {DateTime.UtcNow}.");
-                ModelState.AddModelError(string.Empty, "Tentativa de login inválida.");
+                else
+                {
+                    _logger.LogWarning($"Invalid login attempt for {Input.Email} at {DateTime.UtcNow}.");
+                    ModelState.AddModelError(string.Empty, "Tentativa de login inválida.");
+                    return Page();
+                }
             }
+
 
             return Page();
         }

@@ -1,10 +1,12 @@
 ﻿using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Helpers;
 using ESA_Terra_Argila.Models;
+using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.SqlServer.Server;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -18,15 +20,12 @@ namespace ESA_Terra_Argila.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
 
-        /// <summary>
-        /// Construtor do AdminController.
-        /// </summary>
-        /// <param name="context">Contexto da base de dados</param>
-        /// <param name="userManager">Gerenciador de usuários</param>
-        public AdminController(ApplicationDbContext context, UserManager<User> userManager)
+        private readonly AdminDashboardService _dashboardService;
+        public AdminController(ApplicationDbContext context, UserManager<User> userManager, AdminDashboardService dashboardService)
         {
             _context = context;
             _userManager = userManager;
+            _dashboardService = dashboardService;
         }
 
         /// <summary>
@@ -45,10 +44,14 @@ namespace ESA_Terra_Argila.Controllers
             return View(usersList);
         }
 
-        /// <summary>
-        /// Exibe a lista de vendedores aprovados no sistema.
-        /// </summary>
-        /// <returns>View com a lista de vendedores</returns>
+
+        public async Task<IActionResult> Dashboard()
+        {
+            var model = await _dashboardService.GetDashboardStatsAsync();
+            return View(model);
+        }
+
+
         public async Task<IActionResult> Vendors()
         {
             return View(await GetUsersByRole("Vendor"));
@@ -172,11 +175,93 @@ namespace ESA_Terra_Argila.Controllers
             return users.Where(u => u.AcceptedByAdmin && u.DeletedAt == null).ToList();
         }
 
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetActivityData(string range)
+        {
+            var now = DateTime.UtcNow;
+            DateTime start;
+            string format;
+            Func<DateTime, DateTime> step;
+
+            switch (range)
+            {
+                case "24h":
+                    start = now.AddHours(-23); 
+                    format = "HH\\h";
+                    break;
+                case "7d":
+                    start = now.AddDays(-6); 
+                    format = "dd/MM";
+                    break;
+                case "month":
+                    start = now.AddMonths(-1);
+                    format = "dd/MM";
+                    break;
+                case "year":
+                    start = now.AddYears(-1);
+                    format = "MMM yyyy";
+                    break;
+                case "total":
+                    start = now.AddYears(-2); 
+                    format = "yyyy";
+                    step = dt => dt.AddYears(1);
+                    break;
+                default:
+                    start = DateTime.MinValue;
+                    format = "yyyy-MM-dd";
+                    break;
+            }
+
+            var raw = _context.UserActivities
+            .Where(a => a.Timestamp >= start)
+            .AsEnumerable()
+            .GroupBy(a => a.Timestamp.ToString(format))
+            .ToDictionary(g => g.Key, g => g.Count());
+
+            var result = new List<object>();
+
+            if (range == "24h")
+            {
+                for (int i = 0; i < 24; i++)
+                {
+                    var label = $"{i:00}h";
+                    result.Add(new { label, count = raw.ContainsKey(label) ? raw[label] : 0 });
+                }
+            }
+            else
+            {
+                var current = start;
+                while (current <= now)
+                {
+                    var label = current.ToString(format);
+                    result.Add(new { label, count = raw.ContainsKey(label) ? raw[label] : 0 });
+                    current = range switch
+                    {
+                        "year" => current.AddMonths(1),
+                        "month" => current.AddDays(1),
+                        _ => current.AddDays(1)
+
+                           
+                    };
+                 
+                }
+
+
+            }
+            
+            return Json(result);
+        }
+
+
+
         private async Task<List<User>> GetDeletedUsers()
         {
             return await _context.Users
                 .Where(u => u.DeletedAt != null)
                 .ToListAsync();
         }
+
     }
 }

@@ -52,7 +52,9 @@ namespace ESA_Terra_Argila.Controllers
                     .ThenInclude(oi => oi.Item)
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
 
-            if (order == null)
+            var items = order?.OrderItems ?? new HashSet<OrderItem>();
+
+            if (!items.Any())
             {
                 order = new Order
                 {
@@ -69,7 +71,7 @@ namespace ESA_Terra_Argila.Controllers
                     await _context.Entry(oi.Item).Collection(i => i.Images).LoadAsync();
                 }
             }
-            
+
             return View(order);
         }
 
@@ -85,7 +87,7 @@ namespace ESA_Terra_Argila.Controllers
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
 
-            if (order == null)
+            if (order == null || !order.OrderItems.Any())
             {
                 order = new Order
                 {

@@ -2,13 +2,37 @@
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
+@{
+    string redirectController = "Dashboard";
+    string redirectAction = "Index";
+
+    if (SignInManager.IsSignedIn(User))
+    {
+        if (User.IsInRole("Admin"))
+        {
+            redirectController = "Admin";
+            redirectAction = "Dashboard";
+        }
+        else if (User.IsInRole("Vendor"))
+        {
+            redirectController = "Products";
+            redirectAction = "Index";
+        }
+        else if (User.IsInRole("Supplier"))
+        {
+            redirectController = "Materials";
+            redirectAction = "Index";
+        }
+    }
+}
 @if (SignInManager.IsSignedIn(User))
 {
-    <a asp-controller="Dashboard" asp-action="Index" title="Gestão">Gestão</a>
+    <a asp-controller="@redirectController" asp-action="@redirectAction" title="Gestão">Gestão</a>
+
     <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Perfil">Perfil</a>
-    <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-        <button  type="submit">Logout</button>
-    </form> 
+    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button type="submit">Logout</button>
+    </form>
 }
 else
 {
@@ -28,4 +52,3 @@ else
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-item-count hidden"></span>
     </a>
 }
-
