@@ -104,7 +104,7 @@ namespace ESA_Terra_Argila.Controllers
         <p>Você foi convidado a se registar no sistema Terra&Argila.</p>
         <p>Sua senha temporária é: <strong>{password}</strong></p>
         <p>Por favor clique no link abaixo para completar e editar o seu perfil:</p>
-        <p><a href='{callbackUrl}'>Editar Perfil</a></p>
+        <p><a href='{callbackUrl}'/a></p>
         <p>Este link expirará em 7 dias.</p>";
 
             await _emailSender.SendEmailAsync(request.Email, subject, message);

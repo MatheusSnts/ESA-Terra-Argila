@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <h2>Enviar convite para Empresa</h2>
 
-    <div class="alert alert-success d-none" id="successMessage"></div>
+    <div class="alert alert-success d-none" id="successMessage">Convite enviado com sucesso!</div>
     <div class="alert alert-danger d-none" id="errorMessage"></div>
 
     <form id="inviteForm">
@@ -15,7 +15,7 @@
             <input type="email" class="form-control" id="email" required />
         </div>
         <input type="hidden" id="role" value="Vendor" />
-        <button type="submit" class="btn btn-primary">Enviar convite</button>
+        <button type="submit" class="add-button">Enviar convite</button>
     </form>
 </div>
 
@@ -26,6 +26,12 @@
 
             const email = document.getElementById('email').value;
             const role = document.getElementById('role').value;
+            const submitBtn = this.querySelector('button[type="submit"]');
+
+
+            submitBtn.disabled = true;
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Enviar...';
 
             try {
                 const response = await fetch('/api/AdminInvite/SendInvitation', {
@@ -56,7 +62,13 @@
                 console.error(err);
                 document.getElementById("errorMessage").textContent = "Erro inesperado.";
                 document.getElementById("errorMessage").classList.remove("d-none");
+            } finally {
+                // Reativa o botão e volta ao texto original
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
             }
         });
     </script>
 }
+
+
