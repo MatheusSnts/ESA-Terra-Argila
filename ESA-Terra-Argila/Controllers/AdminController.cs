@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.SqlServer.Server;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -127,45 +128,76 @@ namespace ESA_Terra_Argila.Controllers
         {
             var now = DateTime.UtcNow;
             DateTime start;
-            string groupFormat;
+            string format;
+            Func<DateTime, DateTime> step;
 
             switch (range)
             {
                 case "24h":
                     start = now.AddHours(-23); 
-                    groupFormat = "HH\\h";
+                    format = "HH\\h";
                     break;
                 case "7d":
                     start = now.AddDays(-6); 
-                    groupFormat = "dd/MM";
+                    format = "dd/MM";
                     break;
                 case "month":
                     start = now.AddMonths(-1);
-                    groupFormat = "dd/MM";
+                    format = "dd/MM";
                     break;
                 case "year":
                     start = now.AddYears(-1);
-                    groupFormat = "MMM yyyy";
+                    format = "MMM yyyy";
+                    break;
+                case "total":
+                    start = now.AddYears(-2); 
+                    format = "yyyy";
+                    step = dt => dt.AddYears(1);
                     break;
                 default:
                     start = DateTime.MinValue;
-                    groupFormat = "yyyy-MM-dd";
+                    format = "yyyy-MM-dd";
                     break;
             }
 
-            var grouped = _context.UserActivities
-                .Where(a => a.Timestamp >= start)
-                .AsEnumerable() 
-                .GroupBy(a => a.Timestamp.ToLocalTime().ToString(groupFormat))
-                .OrderBy(g => g.Key)
-                .Select(g => new
-                {
-                    label = g.Key,
-                    count = g.Count()
-                })
-                .ToList(); 
+            var raw = _context.UserActivities
+            .Where(a => a.Timestamp >= start)
+            .AsEnumerable()
+            .GroupBy(a => a.Timestamp.ToString(format))
+            .ToDictionary(g => g.Key, g => g.Count());
 
-            return Json(grouped);
+            var result = new List<object>();
+
+            if (range == "24h")
+            {
+                for (int i = 0; i < 24; i++)
+                {
+                    var label = $"{i:00}h";
+                    result.Add(new { label, count = raw.ContainsKey(label) ? raw[label] : 0 });
+                }
+            }
+            else
+            {
+                var current = start;
+                while (current <= now)
+                {
+                    var label = current.ToString(format);
+                    result.Add(new { label, count = raw.ContainsKey(label) ? raw[label] : 0 });
+                    current = range switch
+                    {
+                        "year" => current.AddMonths(1),
+                        "month" => current.AddDays(1),
+                        _ => current.AddDays(1)
+
+                           
+                    };
+                 
+                }
+
+
+            }
+            
+            return Json(result);
         }
 
 

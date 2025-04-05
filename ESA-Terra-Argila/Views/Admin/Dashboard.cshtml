@@ -154,11 +154,18 @@
                     pointRadius: 5,
                 }]
             },
-            options: {
+                   options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true }
+                    x: {
+                        ticks: {
+                            autoSkip: false 
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
         });
@@ -203,4 +210,4 @@
 }
 
 
-}
+
