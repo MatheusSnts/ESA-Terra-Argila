@@ -144,20 +144,18 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                         await dbContext.SaveChangesAsync();
                     }
 
-                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
-                    if (user != null)
-                    {
-                        await _userActivityService.LogActivityAsync(
+                    await _userActivityService.LogActivityAsync(
                             user.Id,
                             "Login",
                             "Login efetuado com sucesso",
                             true,
                             $"IP: {HttpContext.Connection.RemoteIpAddress?.ToString()}"
-                        );
-                    }
+                    );
 
                     _logger.LogInformation($"User {Input.Email} logged in at {DateTime.UtcNow}.");
                     return LocalRedirect(returnUrl);
+
+                    
                 }
 
                 if (result.RequiresTwoFactor)
