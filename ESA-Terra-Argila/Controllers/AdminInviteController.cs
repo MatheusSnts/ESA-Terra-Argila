@@ -65,7 +65,8 @@ namespace ESA_Terra_Argila.Controllers
                 Email = request.Email,
                 UserName = request.Email,
                 FullName = "Novo Utilizador",
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                AcceptedByAdmin = true
             };
 
             var result = await _userManager.CreateAsync(user, password);
@@ -100,9 +101,9 @@ namespace ESA_Terra_Argila.Controllers
             var subject = "Convite para Registo no Sistema";
             var message = $@"
         <p>Olá,</p>
-        <p>Você foi convidado a se registar como <strong>{request.Role}</strong>.</p>
+        <p>Você foi convidado a se registar no sistema Terra&Argila.</p>
         <p>Sua senha temporária é: <strong>{password}</strong></p>
-        <p>Por favor clique no link abaixo para completar e editar seu perfil:</p>
+        <p>Por favor clique no link abaixo para completar e editar o seu perfil:</p>
         <p><a href='{callbackUrl}'>Editar Perfil</a></p>
         <p>Este link expirará em 7 dias.</p>";
 
@@ -133,6 +134,24 @@ namespace ESA_Terra_Argila.Controllers
             await _context.SaveChangesAsync();
 
             return Redirect($"/Identity/Account/Register?email={email}&token={token}");
+        }
+
+        /// <summary>
+        /// renderiza a view para enviar o convite a um fornecedor
+        /// </summary>
+        [HttpGet("InviteSupplier")]
+        public IActionResult InviteSupplier()
+        {
+            return View("~/Views/Admin/InviteSupplier.cshtml");
+        }
+
+        /// <summary>
+        /// renderiza a view para enviar o convite a um vendedor
+        /// </summary>
+        [HttpGet("InviteVendor")]
+        public IActionResult InviteVendor()
+        {
+            return View("~/Views/Admin/InviteVendor.cshtml");
         }
 
         /// <summary>
