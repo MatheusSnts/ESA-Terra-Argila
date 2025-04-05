@@ -43,17 +43,46 @@ namespace ESA_Terra_Argila.Controllers
         /// </summary>
         /// <param name="request">Requisição contendo o email do usuário a ser convidado.</param>
         /// <returns>Ok se o convite for enviado com sucesso, ou BadRequest se houver erro.</returns>
+       
         [HttpPost("SendInvitation")]
         public async Task<IActionResult> SendInvitation([FromBody] InvitationRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Email))
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Role))
             {
-                return BadRequest("O e-mail não pode estar vazio.");
+                return BadRequest("Email e role são obrigatórios.");
             }
 
+            var userExists = await _userManager.FindByEmailAsync(request.Email);
+            if (userExists != null)
+            {
+                return BadRequest("Já existe um utilizador com este email.");
+            }
 
+            
+            var password = GenerateSecurePassword();
+            var user = new User
+            {
+                Email = request.Email,
+                UserName = request.Email,
+                FullName = "Novo Utilizador",
+                EmailConfirmed = true,
+                AcceptedByAdmin = true
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            // Atribuir role
+            if (!await _userManager.IsInRoleAsync(user, request.Role))
+            {
+                await _userManager.AddToRoleAsync(user, request.Role);
+            }
+
+            // Gerar token
             var tokenBytes = RandomNumberGenerator.GetBytes(32);
-            var rawToken = Convert.ToBase64String(tokenBytes);
             var encodedToken = WebEncoders.Base64UrlEncode(tokenBytes);
 
             var invitation = new Invitation
@@ -67,20 +96,22 @@ namespace ESA_Terra_Argila.Controllers
             _context.Invitations.Add(invitation);
             await _context.SaveChangesAsync();
 
-            var callbackUrl = $"{Request.Scheme}://{Request.Host}/api/AdminInvite/Register?token={encodedToken}&email={request.Email}";
+            var callbackUrl = $"{Request.Scheme}://{Request.Host}/Identity/Account/Manage?email={request.Email}&token={encodedToken}";
 
             var subject = "Convite para Registo no Sistema";
             var message = $@"
-                <p>Olá,</p>
-                <p>Você foi convidado para se Registar no sistema.</p>
-                <p>Clique no link abaixo para completar o seu Registo:</p>
-                <p><a href='{callbackUrl}'>Completar Registo</a></p>
-                <p>Este link expirará em 7 dias.</p>";
+        <p>Olá,</p>
+        <p>Você foi convidado a se registar no sistema Terra&Argila.</p>
+        <p>Sua senha temporária é: <strong>{password}</strong></p>
+        <p>Por favor clique no link abaixo para completar e editar o seu perfil:</p>
+        <p><a href='{callbackUrl}'/a></p>
+        <p>Este link expirará em 7 dias.</p>";
 
             await _emailSender.SendEmailAsync(request.Email, subject, message);
 
             return Ok("Convite enviado com sucesso.");
         }
+
 
         /// <summary>
         /// Processa o registro de um novo usuário através de um convite válido.
@@ -104,6 +135,53 @@ namespace ESA_Terra_Argila.Controllers
 
             return Redirect($"/Identity/Account/Register?email={email}&token={token}");
         }
+
+        /// <summary>
+        /// renderiza a view para enviar o convite a um fornecedor
+        /// </summary>
+        [HttpGet("InviteSupplier")]
+        public IActionResult InviteSupplier()
+        {
+            return View("~/Views/Admin/InviteSupplier.cshtml");
+        }
+
+        /// <summary>
+        /// renderiza a view para enviar o convite a um vendedor
+        /// </summary>
+        [HttpGet("InviteVendor")]
+        public IActionResult InviteVendor()
+        {
+            return View("~/Views/Admin/InviteVendor.cshtml");
+        }
+
+        /// <summary>
+        /// Gera uma palavra-passe segura conforme os requisitos do Identity.
+        /// </summary>
+        private string GenerateSecurePassword()
+        {
+            const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string lower = "abcdefghijklmnopqrstuvwxyz";
+            const string digits = "0123456789";
+            const string special = "!@#$%^&*_-+=";
+
+            var random = new Random();
+            var password = new StringBuilder();
+
+            // Garante pelo menos um de cada tipo
+            password.Append(upper[random.Next(upper.Length)]);
+            password.Append(lower[random.Next(lower.Length)]);
+            password.Append(digits[random.Next(digits.Length)]);
+            password.Append(special[random.Next(special.Length)]);
+
+            // Preenche com mais caracteres
+            var allChars = upper + lower + digits + special;
+            for (int i = 0; i < 8; i++)
+            {
+                password.Append(allChars[random.Next(allChars.Length)]);
+            }
+
+            return password.ToString();
+        }
     }
 
     /// <summary>
@@ -115,5 +193,9 @@ namespace ESA_Terra_Argila.Controllers
         /// Email do usuário a ser convidado.
         /// </summary>
         public string Email { get; set; }
+        /// <summary>
+        /// Role da conta, fornecedor ou empresa
+        /// </summary>
+        public string Role { get; set; } // "Supplier" ou "Vendor"
     }
 }
