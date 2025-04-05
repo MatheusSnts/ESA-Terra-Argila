@@ -55,7 +55,9 @@ namespace ESA_Terra_Argila.Controllers
                     PaymentMethodTypes = new List<string> { "card" },
                     LineItems = lineItems,
                     Mode = "payment",
-                    SuccessUrl = $"{domain}/PaymentSuccess",
+                  
+                    SuccessUrl = $"{domain}/PaymentSuccess?orderId={order.Id}",
+
                     CancelUrl = $"{domain}"
                 };
 
@@ -68,6 +70,35 @@ namespace ESA_Terra_Argila.Controllers
             {
                 return BadRequest(new { message = "Erro ao criar sessão de pagamento.", error = ex.Message });
             }
+        }
+        [HttpPost("record/{orderId}")]
+        public async Task<IActionResult> RecordPayment(int orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                return NotFound(new { message = "pedido não encontrado." });
+            }
+
+         
+           
+            var totalAmount = order.GetTotal();
+
+            var payment = new Payment
+            {
+                OrderId = order.Id,
+                Amount = totalAmount,
+                PaymentDateTime = DateTime.UtcNow
+            };
+
+            _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "pagamento guardado com sucesso." });
         }
     }
 }
