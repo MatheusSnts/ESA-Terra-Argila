@@ -37,25 +37,35 @@ namespace ESA_Terra_Argila.Tests.Controllers
 
             _context = new ApplicationDbContext(options);
 
-            // Configurar o UserManager Mock
             var userStore = new Mock<IUserStore<User>>();
             _mockUserManager = new Mock<UserManager<User>>(
                 userStore.Object, null, null, null, null, null, null, null, null);
 
-            // Configurar o comportamento do UserManager
+            _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync((User)null);
+
+            _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            _mockUserManager.Setup(x => x.IsInRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+
+            _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+
             _mockUserManager.Setup(x => x.GetUserIdAsync(It.IsAny<User>()))
                 .ReturnsAsync(_adminUserId);
+
             _mockUserManager.Setup(x => x.GetUserId(It.IsAny<ClaimsPrincipal>()))
                 .Returns(_adminUserId);
+
             _mockUserManager.Setup(x => x.FindByIdAsync(_adminUserId))
                 .ReturnsAsync(new User { Id = _adminUserId, FullName = "Admin User" });
 
-            // Configurar o EmailSender Mock
             _mockEmailSender = new Mock<IEmailSender>();
             _mockEmailSender.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
-            // Configurar o controller
             var httpContext = new DefaultHttpContext();
             var urlHelper = new Mock<IUrlHelper>();
             urlHelper.Setup(x => x.Action(It.IsAny<UrlActionContext>()))
@@ -73,10 +83,10 @@ namespace ESA_Terra_Argila.Tests.Controllers
                     Mock.Of<ITempDataProvider>())
             };
 
-            // Configurar Request.Scheme e Request.Host
             httpContext.Request.Scheme = "https";
             httpContext.Request.Host = new HostString("test.com");
         }
+
 
         public void Dispose()
         {
@@ -90,9 +100,10 @@ namespace ESA_Terra_Argila.Tests.Controllers
             // Arrange
             var request = new InvitationRequest
             {
-                Email = "test@example.com"
+                Email = "email@teste.pt",
+                Role = "Vendor"
             };
-
+            
             // Act
             var result = await _controller.SendInvitation(request);
 
@@ -113,6 +124,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 It.IsAny<string>(),
                 It.IsAny<string>()
             ), Times.Once);
+
         }
 
         [Fact]
@@ -121,7 +133,8 @@ namespace ESA_Terra_Argila.Tests.Controllers
             // Arrange
             var request = new InvitationRequest
             {
-                Email = ""
+                Email = "",
+                Role = "Vendor"
             };
 
             // Act
@@ -129,7 +142,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("O e-mail não pode estar vazio.", badRequestResult.Value);
+            Assert.Equal("Email e role são obrigatórios.", badRequestResult.Value);
 
             // Verificar que nenhum convite foi criado
             var conviteCount = await _context.Invitations.CountAsync();
