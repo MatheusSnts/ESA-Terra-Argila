@@ -1,0 +1,49 @@
+﻿
+@model ESA_Terra_Argila.Models.SupplierDashboardViewModel
+@{
+    ViewData["Title"] = "Painel do Fornecedor";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h2 class="my-4">Dashboard do Fornecedor</h2>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 shadow-sm">
+            <h5>Total de Materiais</h5>
+            <p class="display-6">@Model.TotalMateriais</p>
+            <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver Materiais</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 shadow-sm">
+            <h5>Material mais favorito</h5>
+            @if (Model.MaterialMaisFavorito != null)
+            {
+                <p><strong>@Model.MaterialMaisFavorito</strong></p>
+                <p>Favoritos: @Model.FavoritosDoMaisPopular</p>
+            }
+            else
+            {
+                <p>Sem dados suficientes.</p>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 shadow-sm">
+            <h5>Material mais vendido</h5>
+            @if (Model.MaterialMaisVendido != null)
+            {
+                <p><strong>@Model.MaterialMaisVendido</strong></p>
+                <p>Quantidade vendida: @Model.QuantidadeVendida</p>
+            }
+            else
+            {
+                <p>Sem dados de vendas.</p>
+            }
+        </div>
+    </div>
+</div>

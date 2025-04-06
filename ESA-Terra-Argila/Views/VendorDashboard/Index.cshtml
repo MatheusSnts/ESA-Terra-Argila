@@ -1,0 +1,26 @@
+﻿
+@model ESA_Terra_Argila.Models.VendorDashboardViewModel
+@{
+    ViewData["Title"] = "Painel do Vendedor";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+
+
+<h2 class="my-4">Dashboard do Vendedor</h2>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card p-3 shadow-sm">
+            <h5>Produtos</h5>
+            <a class="btn btn-primary" asp-controller="Products" asp-action="Index">Ver produtos</a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3 shadow-sm">
+            <h5>Materiais Favoritos</h5>
+            <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver materiais</a>
+        </div>
+    </div>
+</div>
