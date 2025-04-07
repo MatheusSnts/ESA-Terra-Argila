@@ -171,6 +171,11 @@ namespace ESA_Terra_Argila.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
+            foreach (var orderItem in order.OrderItems)
+            {
+                orderItem.Item.Stock -= orderItem.Quantity; 
+   
+            }
             return View("BuyNow", order);
         }
 
