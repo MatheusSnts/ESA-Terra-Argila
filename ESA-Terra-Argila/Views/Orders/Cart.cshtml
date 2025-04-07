@@ -10,8 +10,15 @@
 </style>
 
 <div class="container">
+    
     <div class="col-md-12 my-3">
+        <div>
+        <form method="get" action="@Url.Action("OrdersList", "Orders")">
+            <button type="submit" class="btn btn-success">Acompanhar Pedidos</button>
+        </form>
+        </div>
         <h2>Carrinho de compras</h2>
+        
     </div>
     <div class="d-flex gap-4">
 
@@ -90,7 +97,13 @@
                 <form method="post" action="/api/pagamento/checkout/@Model.Id">
                     <button type="submit" class="btn btn-primary">Finalizar Compra</button>
                 </form>
+
+                
             </div>
+
+
+
+
 
         </div>
         <div style="height: 29rem;" class="col-md-4 form-section shadow">
