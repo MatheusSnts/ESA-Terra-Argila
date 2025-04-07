@@ -22,7 +22,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<AdminDashboardService>();
+builder.Services.AddScoped<SupplierDashboardService>();
+builder.Services.AddScoped<VendorDashboardService>();
+
 builder.Services.AddScoped<IUserActivityService, UserActivityService>();
+
 
 
 

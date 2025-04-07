@@ -1,0 +1,48 @@
+﻿
+@model ESA_Terra_Argila.Models.VendorDashboardViewModel
+
+@{
+    ViewData["Title"] = "Vendor Dashboard";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h2 class="my-4">Vendor Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Produtos</h5>
+            <p class="display-6">@Model.TotalProducts</p>
+            <a class="btn btn-primary" asp-controller="Products" asp-action="Index">Ver Produtos</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Stock</h5>
+            <p class="display-6">@Model.TotalStock</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Melhor Produto</h5>
+            <p><strong>@Model.BestSellingProduct</strong></p>
+            <p>Vendidos: @Model.BestSellingQuantity</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Favoritos</h5>
+            <p class="display-6">@Model.TotalFavorites</p>
+        </div>
+    </div>
+
+    <div class="col-md-12 mt-4">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Faturação</h5>
+            <p class="display-6">€@Model.TotalRevenue.ToString("F2")</p>
+        </div>
+    </div>  
+</div>
