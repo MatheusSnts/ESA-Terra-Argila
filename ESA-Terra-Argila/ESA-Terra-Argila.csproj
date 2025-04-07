@@ -11,6 +11,12 @@
 
   <ItemGroup>
     <Compile Remove="Views\Admin\Dashboard.cshtml.cs" />
+    <Compile Remove="Views\Orders\Index.cshtml.cs" />
+    <Compile Remove="Views\Orders\OrdersList.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Orders\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Order>
+
+<h2 class="text-center">Meus Pedidos</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-center">Você ainda não realizou nenhuma compra.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Data</th>
+                <th>Status do Pedido</th>
+                <th>Total</th>
+                <th>Itens</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td><span class="badge bg-success">@order.Status</span></td>
+                    <td>@order.GetTotal().ToString("C", new System.Globalization.CultureInfo("pt-PT"))</td>
+                    <td>
+                        <ul>
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <li>@item.Item.Name - Quantidade: @item.Quantity</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <form method="post" action="@Url.Action("DeleteOrder", "Orders", new { orderId = order.Id })" onsubmit="return confirm('Tem certeza que deseja excluir este pedido?');">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5a.5.5 0 0 1 .5.5V12a.5.5 0 0 1-1 0V6h-.5a.5.5 0 0 1 0-1h1z" />
+                                    <path d="M8 5.5a.5.5 0 0 1 .5.5V12a.5.5 0 0 1-1 0V6h-.5a.5.5 0 0 1 0-1h1z" />
+                                    <path d="M10.5 5.5a.5.5 0 0 1 .5.5V12a.5.5 0 0 1-1 0V6h-.5a.5.5 0 0 1 0-1h1z" />
+                                    <path fill-rule="evenodd" d="M4.5 1a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1V2h3a.5.5 0 0 1 0 1H2a.5.5 0 0 1 0-1h3V1zm1 1h5V1h-5v1z" />
+                                    <path fill-rule="evenodd" d="M3 3v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V3H3zm10 0H3v10a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

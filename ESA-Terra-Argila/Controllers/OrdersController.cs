@@ -240,6 +240,38 @@ namespace ESA_Terra_Argila.Controllers
                 count
             });
         }
+        public async Task<IActionResult> DeleteOrder(int orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems) 
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                return NotFound("Pedido não encontrado.");
+            }
+
+            
+            _context.OrderItems.RemoveRange(order.OrderItems);
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("OrdersList");
+        }
+
+
+        public async Task<IActionResult> OrdersList()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+                .Where(o => o.UserId == userId && o.Status != OrderStatus.Draft)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            return View(orders);
+        }
+
 
         /// <summary>
         /// Remove um item do carrinho de compras.
@@ -252,31 +284,31 @@ namespace ESA_Terra_Argila.Controllers
 
             if (id == null)
             {
-
-                if (string.IsNullOrEmpty(referer))
-                {
-                    return NotFound("Página não encontrada.");
-                }
-
-                return Redirect(referer);
+                return string.IsNullOrEmpty(referer) ? NotFound("Página não encontrada.") : Redirect(referer);
             }
 
             var item = await _context.OrderItems
+                .Include(oi => oi.Order) 
                 .FirstOrDefaultAsync(oi => oi.Id == id);
 
             if (item != null)
             {
+                var order = item.Order; 
+
                 _context.OrderItems.Remove(item);
                 await _context.SaveChangesAsync();
+
+                
+                if (!order.OrderItems.Any())
+                {
+                    order.Status = OrderStatus.Canceled;
+                    await _context.SaveChangesAsync();
+                }
             }
 
-            if (string.IsNullOrEmpty(referer))
-            {
-                return NotFound("Página não encontrada.");
-            }
-
-            return Redirect(referer);
+            return string.IsNullOrEmpty(referer) ? NotFound("Página não encontrada.") : Redirect(referer);
         }
+
 
         /// <summary>
         /// Modelo para a requisição de alteração de quantidade.
