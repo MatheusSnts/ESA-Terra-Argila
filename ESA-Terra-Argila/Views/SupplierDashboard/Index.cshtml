@@ -1,49 +1,50 @@
 ﻿
 @model ESA_Terra_Argila.Models.SupplierDashboardViewModel
+
 @{
-    ViewData["Title"] = "Painel do Fornecedor";
+    ViewData["Title"] = "Supplier Dashboard";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<h2 class="my-4">Dashboard do Fornecedor</h2>
+<h2 class="my-4">Supplier Dashboard</h2>
 
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card p-3 shadow-sm">
-            <h5>Total de Materiais</h5>
-            <p class="display-6">@Model.TotalMateriais</p>
+            <h5>Total Materiais</h5>
+            <p class="display-6">@Model.TotalMaterials</p>
             <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver Materiais</a>
         </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card p-3 shadow-sm">
-            <h5>Material mais favorito</h5>
-            @if (Model.MaterialMaisFavorito != null)
-            {
-                <p><strong>@Model.MaterialMaisFavorito</strong></p>
-                <p>Favoritos: @Model.FavoritosDoMaisPopular</p>
-            }
-            else
-            {
-                <p>Sem dados suficientes.</p>
-            }
+            <h5>Total Stock</h5>
+            <p class="display-6">@Model.TotalStock</p>
         </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card p-3 shadow-sm">
-            <h5>Material mais vendido</h5>
-            @if (Model.MaterialMaisVendido != null)
-            {
-                <p><strong>@Model.MaterialMaisVendido</strong></p>
-                <p>Quantidade vendida: @Model.QuantidadeVendida</p>
-            }
-            else
-            {
-                <p>Sem dados de vendas.</p>
-            }
+            <h5>Material Favorito</h5>
+            <p><strong>@Model.MostFavoritedMaterial</strong></p>
+            <p>Nº Favoritos: @Model.MostFavoritedCount</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Melhor Material</h5>
+            <p><strong>@Model.BestSellingMaterial</strong></p>
+            <p>Vendidos: @Model.BestSellingQuantity</p>
+        </div>
+    </div>
+
+    <div class="col-md-12 mt-4">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Faturação</h5>
+            <p class="display-6">€@Model.TotalRevenue.ToString("F2")</p>
         </div>
     </div>
 </div>

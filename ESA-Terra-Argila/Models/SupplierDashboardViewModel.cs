@@ -2,15 +2,20 @@
 {
     public class SupplierDashboardViewModel
     {
-        public string NomeFornecedor { get; set; }
-        public int TotalMateriais { get; set; }
-        public float StockTotal { get; set; }
+        public string SupplierName { get; set; }
 
-        public string MaterialMaisFavorito { get; set; }
-        public int FavoritosDoMaisPopular { get; set; }
+        public int TotalMaterials { get; set; }
 
-        public string MaterialMaisVendido { get; set; }
-        public float QuantidadeVendida { get; set; }
+        public float TotalStock { get; set; }
 
+        public string MostFavoritedMaterial { get; set; }
+
+        public int MostFavoritedCount { get; set; }
+
+        public string BestSellingMaterial { get; set; }
+
+        public float BestSellingQuantity { get; set; }
+
+        public decimal TotalRevenue { get; set; }
     }
 }

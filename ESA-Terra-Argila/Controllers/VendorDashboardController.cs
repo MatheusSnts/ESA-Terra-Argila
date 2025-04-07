@@ -1,5 +1,6 @@
 ﻿using ESA_Terra_Argila.Data;
 using ESA_Terra_Argila.Models;
+using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,31 +13,22 @@ namespace ESA_Terra_Argila.Controllers
     [Authorize(Roles = "Vendor")]
     public class VendorDashboardController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly VendorDashboardService _dashboardService;
         private readonly UserManager<User> _userManager;
 
-        public VendorDashboardController(ApplicationDbContext context, UserManager<User> userManager)
+        public VendorDashboardController(VendorDashboardService dashboardService, UserManager<User> userManager)
         {
-            _context = context;
+            _dashboardService = dashboardService;
             _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-
-            var viewModel = new VendorDashboardViewModel
-            {
-                TotalProdutos = await _context.Items
-                .OfType<Product>()
-                .CountAsync(p => p.UserId == user.Id),
-                TotalFavoritos = await _context.UserMaterialFavorites
-                                    .CountAsync(f => f.UserId == user.Id)
-            };
-
+            var viewModel = await _dashboardService.GetDashboardDataAsync(user);
             return View(viewModel);
         }
-
     }
 }
+
 
