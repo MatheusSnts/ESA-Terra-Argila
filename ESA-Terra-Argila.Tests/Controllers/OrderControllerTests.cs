@@ -311,7 +311,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             // Verificar se o item foi removido
             var updatedOrder = await _context.Orders
                 .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.UserId == _userId && o.Status == OrderStatus.Draft);
+                .FirstOrDefaultAsync(o => o.UserId == _userId && o.Status == OrderStatus.Canceled);
             
             Assert.NotNull(updatedOrder);
             Assert.Empty(updatedOrder.OrderItems);
