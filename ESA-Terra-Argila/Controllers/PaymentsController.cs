@@ -6,6 +6,8 @@ using ESA_Terra_Argila.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using ESA_Terra_Argila.Services;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -14,10 +16,13 @@ namespace ESA_Terra_Argila.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public PaymentController(ApplicationDbContext context)
+
+        public PaymentController(ApplicationDbContext context, IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         [HttpPost("checkout/{orderId}")]
@@ -76,16 +81,15 @@ namespace ESA_Terra_Argila.Controllers
         {
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Item)
+                    .ThenInclude(oi => oi.Item)
+                .Include(o => o.User) // <- Aqui carregamos o usuário
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
             {
-                return NotFound(new { message = "pedido não encontrado." });
+                return NotFound(new { message = "Pedido não encontrado." });
             }
 
-         
-           
             var totalAmount = order.GetTotal();
 
             var payment = new Payment
@@ -97,8 +101,39 @@ namespace ESA_Terra_Argila.Controllers
 
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
+            // Geração de fatura em HTML
+            var invoiceBody = $@"
+        <p>Olá {order.User.FullName},</p>
 
-            return Ok(new { message = "pagamento guardado com sucesso." });
+        <p>Obrigado pela sua compra! Aqui estão os detalhes da sua fatura:</p>
+
+        <p><strong>Pedido #{order.Id}</strong></p>
+
+        <ul>
+                    {string.Join("", order.OrderItems.Select(oi =>
+                    $"<li>{oi.Item.Name} x{oi.Quantity} = {(oi.Item.Price * oi.Quantity):C2}</li>"))}
+        </ul>
+
+         <p><strong>Total:</strong> {totalAmount:C2}</p>
+         <p><strong>Data do pagamento:</strong> {payment.PaymentDateTime:dd/MM/yyyy HH:mm}</p>
+
+        <p>Se tiver alguma dúvida, entre em contato conosco.</p>
+
+        <p>Cumprimentos, <br/>ESA Terra Argila</p>";
+
+
+            // Envio do e-mail
+            if (!string.IsNullOrWhiteSpace(order.User.Email))
+            {
+                await _emailSender.SendEmailAsync(
+                    order.User.Email,
+                    $"Fatura - Pedido #{order.Id}",
+                    invoiceBody
+                );
+            }
+
+            return Ok(new { message = "Pagamento guardado com sucesso e fatura enviada por e-mail." });
         }
+
     }
 }
