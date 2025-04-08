@@ -7,6 +7,6 @@
         Processing,
         Shipped,
         Delivered,
-        Cancelled
+        Canceled,
     }
 }

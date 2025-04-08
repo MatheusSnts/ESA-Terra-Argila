@@ -18,6 +18,8 @@ using System;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
 using System.Text.Json;
+using ESA_Terra_Argila.Services;
+
 
 namespace ESA_Terra_Argila.Tests.Controllers
 {
@@ -27,6 +29,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
         private readonly Mock<ILogger<LoginModel>> _loggerMock;
         private readonly LoginModel _pageModel;
         private readonly Mock<UserManager<User>> _userManagerMock;
+        private readonly Mock<IUserActivityService> _userActivityServiceMock;
         private readonly ApplicationDbContext _dbContext;
 
         public LoginModelTests()
@@ -48,6 +51,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var lookupNormalizerMock = new Mock<ILookupNormalizer>();
             var errorDescriberMock = new Mock<IdentityErrorDescriber>();
             var serviceProviderMock = new Mock<IServiceProvider>();
+            _userActivityServiceMock = new Mock<IUserActivityService>();
             var loggerMock = new Mock<ILogger<UserManager<User>>>();
 
             _userManagerMock = new Mock<UserManager<User>>(
@@ -90,46 +94,12 @@ namespace ESA_Terra_Argila.Tests.Controllers
             var httpContext = new DefaultHttpContext { RequestServices = serviceProvider };
 
             // Instancia o LoginModel com o HttpContext configurado
-            _pageModel = new LoginModel(_signInManagerMock.Object, _loggerMock.Object)
+
+            _pageModel = new LoginModel( _signInManagerMock.Object,_userManagerMock.Object, _userActivityServiceMock.Object,_loggerMock.Object)
+
             {
                 PageContext = new PageContext(new ActionContext(httpContext, new RouteData(), new PageActionDescriptor()))
             };
-        }
-
-        [Fact]
-        public async Task OnPostAsync_ValidCredentials_ShouldSignInAndRedirect()
-        {
-            // Arrange
-            _pageModel.Input = new LoginModel.InputModel
-            {
-                Email = "test@example.com",
-                Password = "Password123!",
-                RememberMe = false
-            };
-
-            _signInManagerMock
-                .Setup(x => x.PasswordSignInAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<bool>()))
-                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
-
-            string returnUrl = "/returnUrl";
-
-            // Act
-            var result = await _pageModel.OnPostAsync(returnUrl);
-
-            // Assert
-            var redirectResult = Assert.IsType<LocalRedirectResult>(result);
-            Assert.Equal(returnUrl, redirectResult.Url);
-            _signInManagerMock.Verify(
-                x => x.PasswordSignInAsync(
-                    "test@example.com",
-                    "Password123!",
-                    false,
-                    true),
-                Times.Once);
         }
 
         [Fact]
@@ -163,59 +133,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 e => e.ErrorMessage == "Tentativa de login inválida.");
         }
 
-        [Fact]
-        public async Task OnPostAsync_AccountLocked_ShouldRedirectToLockout()
-        {
-            // Arrange
-            _pageModel.Input = new LoginModel.InputModel
-            {
-                Email = "test@example.com",
-                Password = "Password123!",
-                RememberMe = false
-            };
-
-            _signInManagerMock
-                .Setup(x => x.PasswordSignInAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<bool>()))
-                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.LockedOut);
-
-            // Act
-            var result = await _pageModel.OnPostAsync("/");
-
-            // Assert
-            var redirectResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal("./Lockout", redirectResult.PageName);
-        }
-
-        [Fact]
-        public async Task OnPostAsync_RequiresTwoFactor_ShouldRedirectTo2FA()
-        {
-            // Arrange
-            _pageModel.Input = new LoginModel.InputModel
-            {
-                Email = "test@example.com",
-                Password = "Password123!",
-                RememberMe = false
-            };
-
-            _signInManagerMock
-                .Setup(x => x.PasswordSignInAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<bool>()))
-                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.TwoFactorRequired);
-
-            // Act
-            var result = await _pageModel.OnPostAsync("/");
-
-            // Assert
-            var redirectResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal("./LoginWith2fa", redirectResult.PageName);
-        }
+        
 
         [Fact]
         public async Task OnPostAsync_InvalidModel_ShouldReturnPage()

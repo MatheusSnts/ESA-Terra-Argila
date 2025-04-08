@@ -16,17 +16,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ESA_Terra_Argila.Data;
+using ESA_Terra_Argila.Services;
 
 namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
+
+        private readonly IUserActivityService _userActivityService;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<User> signInManager,UserManager<User> userManager, IUserActivityService userActivityService,
+                  ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
+            _userActivityService = userActivityService;
+
             _logger = logger;
         }
 
@@ -111,7 +119,16 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user == null || user.DeletedAt != null)
+                {
+                    _logger.LogWarning($"Tentativa de login para conta inexistente ou excluída: {Input.Email}");
+                    ModelState.AddModelError(string.Empty, "Tentativa de login inválida.");
+                    return Page();
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+
                 if (result.Succeeded)
                 {
                     using (var scope = HttpContext.RequestServices.CreateScope())
@@ -127,8 +144,18 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                         await dbContext.SaveChangesAsync();
                     }
 
+                    await _userActivityService.LogActivityAsync(
+                            user.Id,
+                            "Login",
+                            "Login efetuado com sucesso",
+                            true,
+                            $"IP: {HttpContext.Connection.RemoteIpAddress?.ToString()}"
+                    );
+
                     _logger.LogInformation($"User {Input.Email} logged in at {DateTime.UtcNow}.");
                     return LocalRedirect(returnUrl);
+
+                    
                 }
 
                 if (result.RequiresTwoFactor)
@@ -140,6 +167,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                     _logger.LogWarning($"User {Input.Email} is locked out at {DateTime.UtcNow}.");
                     return RedirectToPage("./Lockout");
                 }
+
                 else
                 {
                     _logger.LogWarning($"Invalid login attempt for {Input.Email} at {DateTime.UtcNow}.");
@@ -147,6 +175,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                     return Page();
                 }
             }
+
 
             return Page();
         }

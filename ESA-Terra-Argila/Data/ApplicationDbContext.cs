@@ -20,7 +20,9 @@ namespace ESA_Terra_Argila.Data
         public DbSet<UserActivity> UserActivities { get; set; } = default!;
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<Order> Orders { get; set; } = default!;
-        public DbSet<OrderItem> OrderItems { get; set; } = default!;
+        public DbSet<OrderItem> OrderItems { get; set; } = default!; 
+        public DbSet<Payment> Payments { get; set; }
+
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -32,11 +34,16 @@ namespace ESA_Terra_Argila.Data
         {
             base.OnModelCreating(modelBuilder);
 
+
+            modelBuilder.Entity<Item>()
+                .Property(i => i.IsSustainable)
+                .HasDefaultValue(false);
+
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.SetNull); 
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.User)

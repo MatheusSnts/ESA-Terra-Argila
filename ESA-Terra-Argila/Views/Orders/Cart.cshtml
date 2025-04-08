@@ -10,47 +10,71 @@
 </style>
 
 <div class="container">
+    
     <div class="col-md-12 my-3">
+        <div>
+        <form method="get" action="@Url.Action("OrdersList", "Orders")">
+            <button type="submit" class="btn btn-success">Acompanhar Pedidos</button>
+        </form>
+        </div>
         <h2>Carrinho de compras</h2>
+        
     </div>
     <div class="d-flex gap-4">
+
         <div class="col-md-7 d-flex flex-column justify-content-between">
+
             <div style="height: 27rem;" class="col-md-12 overflow-auto">
+
                 @if (Model?.OrderItems != null && Model.OrderItems.Count > 0)
                 {
+
                     @foreach (OrderItem item in Model.OrderItems)
                     {
+
                         string category = item.Item.Category?.Name ?? "Sem categoria";
                         <div data-id="@item.Id" class="col-md-12 d-flex border-bottom pb-2 mb-2 justify-content-between align-items-center cart-item">
                             <div class="d-flex align-items-center gap-2">
                                 <div class="cart-image">
                                     <img src="@item.Item.Images.FirstOrDefault()?.Path" alt="Item">
                                 </div>
+
                                 <div>
                                     <p class="fw-bold mb-0">@item.Item.Name</p>
                                     <p class="mb-0">@category</p>
                                 </div>
+
                             </div>
+
                             <div class="d-flex gap-2 align-items-center">
                                 <svg onclick="removeCartItemQuantity(event)" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" width="30" height="30" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
                                 </svg>
+
                                 <span style="font-size: 16px;" class="stock-badge fw-bold quantity rounded">@item.Quantity</span>
+
                                 <svg onclick="addCartItemQuantity(event)" class="cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" width="30" height="30" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
+
                             </div>
+
                             <div class="d-flex align-items-center">
                                 <div style="font-size: 20px;" class="fw-bold mb-0 partial">@item.GetTotal().ToString("C", new System.Globalization.CultureInfo("pt-PT"))</div>
                             </div>
+
                             <div class="d-flex align-self-start">
                                 <a class="text-secondary" asp-action="DeleteItem" asp-route-id="@item.Id" onclick="return confirm('Tem a certeza que deseja remover este item do carrinho?');">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                                     </svg>
+
                                 </a>
+
                             </div>
+
                         </div>
+
                     }
                 }
                 else
@@ -61,14 +85,87 @@
                     </div>
                 }
             </div>
+
+
             <div style="height: 2rem; font-size: 20px;" class="col-md-12 fw-bold total text-end">
                 Total: @Model?.GetTotal().ToString("C", new System.Globalization.CultureInfo("pt-PT"))
             </div>
+
+
+
+            <div class="mt-4 text-end">
+                <form method="post" action="/api/pagamento/checkout/@Model.Id">
+                    <button type="submit" class="btn btn-primary">Finalizar Compra</button>
+                </form>
+
+                
+            </div>
+
+
+
+
+
         </div>
-        <div style="height: 29rem;" class="col-md-4 form-section shadow">
+        <div class="col-md-4 shadow d-flex flex-column justify-content-between align-items-center p-3" style="background-color: #a7af87; border-radius: 10px; height: 29rem;">
+            <h5 class="fw-bold text-center">Relatório sustentável</h5>
+
+            <div style="width: 220px; height: 220px;">
+                <canvas id="relatorioSustentavel" width="220" height="220"></canvas>
+            </div>
+
+            <div class="text-center">
+                <div class="d-flex justify-content-center align-items-center gap-2 mb-1">
+                    <span style="background-color: #B25514; display:inline-block; width: 1rem; height: 1rem; border-radius: 3px;"></span>
+                    <span>Material normal</span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                    <span style="background-color: #5C6C42; display:inline-block; width: 1rem; height: 1rem; border-radius: 3px;"></span>
+                    <span>Material sustentável</span>
+                </div>
+            </div>
+
+            <p class="mt-2 fw-semibold text-center small">
+                Ao escolher sustentabilidade, ajudaste a salvar<br />
+                uma floresta inteira de virar prateleiras.
+            </p>
         </div>
+
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('relatorioSustentavel').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Material normal', 'Material sustentável'],
+                datasets: [{
+                    data: [@ViewBag.NaoSustentavelPercent, @ViewBag.SustentavelPercent],
+                    backgroundColor: ['#B25514', '#5C6C42'],    
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+
 </div>
+
+
+
 
 
 

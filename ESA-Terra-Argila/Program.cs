@@ -7,6 +7,10 @@ using System.Globalization;
 using ESA_Terra_Argila.Resources.ErrorDescribers;
 using ESA_Terra_Argila.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Stripe;
+using ESA_Terra_Argila.Policies.AuthorizationRequirements;
+using ESA_Terra_Argila.Policies;
+using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -17,6 +21,14 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddScoped<AdminDashboardService>();
+builder.Services.AddScoped<SupplierDashboardService>();
+builder.Services.AddScoped<VendorDashboardService>();
+
+builder.Services.AddScoped<IUserActivityService, UserActivityService>();
+
+
+
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -30,6 +42,13 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
     .AddDefaultUI();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AcceptedByAdmin", policy =>
+        policy.Requirements.Add(new AcceptedByAdminRequirement()));
+});
+
+builder.Services.AddScoped<IAuthorizationHandler, AcceptedByAdminHandler>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -39,9 +58,14 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 });
 
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 builder.Services.AddRazorPages();
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
+
 
 using (var scope = app.Services.CreateScope())
 {
@@ -57,6 +81,7 @@ using (var scope = app.Services.CreateScope())
     await Seeder.SeedUsersAsync(userManager);
 }
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -69,8 +94,10 @@ else
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 
 app.UseRouting();
 
