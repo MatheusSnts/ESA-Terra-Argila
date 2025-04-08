@@ -200,7 +200,8 @@ namespace ESA_Terra_Argila.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("CategoryId,Name,Reference,Description,Price,Unit")] Product product,
+            [Bind("CategoryId,Name,Reference,Description,Price,Unit,IsSustainable")]
+Product product,
             List<IFormFile> Images,
             List<int> Tags,
             List<int> Materials,
@@ -327,7 +328,7 @@ namespace ESA_Terra_Argila.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,UserId,CategoryId,Name,Reference,Description,Price,Unit")] Product product,
+            [Bind("Id,UserId,CategoryId,Name,Reference,Description,Price,Unit,IsSustainable")] Product product,
             List<IFormFile> Images,
             List<int> Tags,
             List<int> Materials,
@@ -362,6 +363,7 @@ namespace ESA_Terra_Argila.Controllers
                     foundProduct.Description = product.Description;
                     foundProduct.Price = product.Price;
                     foundProduct.Unit = product.Unit;
+                    foundProduct.IsSustainable = product.IsSustainable;
 
                     if (Tags != null && Tags.Any())
                     {

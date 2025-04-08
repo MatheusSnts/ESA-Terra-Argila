@@ -93,6 +93,8 @@ namespace ESA_Terra_Argila.Models
         public virtual ICollection<ItemImage> Images { get; set; }
 
         public DateTime? DeletedAt { get; set; }
+        public bool IsSustainable { get; set; } = false;
+
 
         /// <summary>
         /// Construtor do Item. Inicializa a data de criação com a data/hora atual
