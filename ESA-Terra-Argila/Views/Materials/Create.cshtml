@@ -29,6 +29,13 @@
                     <textarea asp-for="Description" name="Description" class="form-control" placeholder="Descrição do material..."></textarea>
                     <span asp-validation-for="Description" class="text-danger asp-validation"></span>
                 </div>
+
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" asp-for="IsSustainable" />
+                    <label class="form-check-label" asp-for="IsSustainable">
+                        Sustentável
+                    </label>
+                </div>
             </div>
             <div class="col-md-12 d-flex justify-content-between">
                 <div style="width: 48.5%;" class="form-section pt-2 pb-3 px-4">
@@ -45,6 +52,7 @@
                         </select>
                         <span asp-validation-for="Unit" class="text-danger asp-validation"></span>
                     </div>
+
                 </div>
                 <div style="width: 48.5%;" class="form-section pt-2 pb-3 px-4">
                     <div class="form-group">

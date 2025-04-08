@@ -296,7 +296,7 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>Redirecionamento para a página de índice em caso de sucesso ou exibição do formulário com erros.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,Name,Reference,Description,Price,Unit")] Material material, List<IFormFile> Images, List<int> Tags)
+        public async Task<IActionResult> Create([Bind("CategoryId,Name,Reference,Description,Price,Unit,IsSustainable")] Material material, List<IFormFile> Images, List<int> Tags)
         {
             if (ModelState.IsValid)
             {
@@ -382,7 +382,7 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>Redirecionamento para a página de índice em caso de sucesso ou exibição do formulário com erros.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CategoryId,Name,Reference,Description,Price,Unit")] Material material, List<IFormFile> Images, List<int> Tags)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CategoryId,Name,Reference,Description,Price,Unit,IsSustainable")] Material material, List<IFormFile> Images, List<int> Tags)
         {
             if (id != material.Id)
             {
@@ -406,6 +406,7 @@ namespace ESA_Terra_Argila.Controllers
                     foundMaterial.Description = material.Description;
                     foundMaterial.Price = material.Price;
                     foundMaterial.Unit = material.Unit;
+                    foundMaterial.IsSustainable = material.IsSustainable;
 
                     if (Tags != null && Tags.Any())
                     {

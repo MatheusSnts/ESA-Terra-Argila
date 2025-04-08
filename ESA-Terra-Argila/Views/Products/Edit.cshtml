@@ -32,6 +32,14 @@
                     <textarea asp-for="Description" name="Description" class="form-control" placeholder="Descrição do produto..."></textarea>
                     <span asp-validation-for="Description" class="text-danger asp-validation"></span>
                 </div>
+
+                <div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" asp-for="IsSustainable" />
+    <label class="form-check-label" asp-for="IsSustainable">
+        Sustentável
+    </label>
+</div>
+
             </div>
             <div class="col-md-4 form-section d-flex flex-column align-items-center justify-content-end pb-3">
                 <input id="images-input" type="file" name="Images" onchange="updatePreviewImages(event)" style="display: none" accept="image/*" multiple />

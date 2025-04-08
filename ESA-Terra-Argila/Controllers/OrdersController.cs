@@ -72,6 +72,27 @@ namespace ESA_Terra_Argila.Controllers
                 }
             }
 
+            // Calcular sustentabilidade com base nas quantidades
+            float total = 0;
+            float sustentaveis = 0;
+            float naoSustentaveis = 0;
+
+            foreach (var i in items)
+            {
+                if (i.Item != null)
+                {
+                    total += i.Quantity;
+                    if (i.Item.IsSustainable)
+                        sustentaveis += i.Quantity;
+                    else
+                        naoSustentaveis += i.Quantity;
+                }
+            }
+
+            ViewBag.SustentavelPercent = total > 0 ? (int)Math.Round((double)sustentaveis * 100 / total) : 0;
+            ViewBag.NaoSustentavelPercent = total > 0 ? (int)Math.Round((double)naoSustentaveis * 100 / total) : 0;
+
+
             return View(order);
         }
 

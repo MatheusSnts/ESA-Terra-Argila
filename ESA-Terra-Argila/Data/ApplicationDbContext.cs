@@ -34,11 +34,16 @@ namespace ESA_Terra_Argila.Data
         {
             base.OnModelCreating(modelBuilder);
 
+
+            modelBuilder.Entity<Item>()
+                .Property(i => i.IsSustainable)
+                .HasDefaultValue(false);
+
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.SetNull); 
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.User)
