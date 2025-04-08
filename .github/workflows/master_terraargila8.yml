@@ -75,7 +75,7 @@
          id: deploy-to-webapp
          uses: azure/webapps-deploy@v3
          with:
-           app-name: 'terraeargila8'
+           app-name: 'terraargila8'
            slot-name: 'Production'
            package: .
            publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5D2B3A1513C1408B852688DB299E113B }}
