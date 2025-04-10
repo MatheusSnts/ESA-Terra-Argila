@@ -40,7 +40,7 @@ namespace ESA_Terra_Argila.Controllers
 
             try
             {
-                var domain = "https://localhost:7197";
+                var domain = $"{Request.Scheme}://{Request.Host}";
                 var lineItems = order.OrderItems.Select(oi => new SessionLineItemOptions
                 {
                     PriceData = new SessionLineItemPriceDataOptions
