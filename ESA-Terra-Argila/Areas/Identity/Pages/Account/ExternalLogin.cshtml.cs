@@ -102,13 +102,13 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
             {
-                ErrorMessage = $"Error from external provider: {remoteError}";
+                ErrorMessage = $"Erro do provedor externo: {remoteError}";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information.";
+                ErrorMessage = "Erro ao carregar informação de login externo.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -146,7 +146,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information during confirmation.";
+                ErrorMessage = "Erro ao carregar informação de login externo durante a confirmação.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -206,9 +206,9 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(User)}'. " +
-                    $"Ensure that '{nameof(User)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
+                throw new InvalidOperationException($"Não é possível criar uma instância de '{nameof(User)}'. " +
+                    $"Certifique-se de que '{nameof(User)}' não é uma classe abstrata e possui um construtor sem parâmetros, ou alternativamente " +
+                    $"substituir a página de login externo em /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
             }
         }
 
@@ -216,7 +216,7 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
         {
             if (!_userManager.SupportsUserEmail)
             {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
+                throw new NotSupportedException("A interface padrão requer um armazenamento de usuário com suporte a email.");
             }
             return (IUserEmailStore<User>)_userStore;
         }
