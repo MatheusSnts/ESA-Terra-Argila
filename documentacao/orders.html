@@ -157,6 +157,8 @@
         <a href="#OrderStatus">OrderStatus</a>
         <a href="#Fluxo">Fluxo de Pedido</a>
         <a href="#Metodos">Métodos Principais</a>
+        <a href="#Pagamento">Processo de Pagamento</a>
+        <a href="#Historico">Histórico de Pedidos</a>
     </div>
 
     <h2 id="Order">Model: Order</h2>
@@ -356,6 +358,82 @@ Início
     <div class="method">
         <h4>GetCartItemCount()</h4>
         <p>Retorna o número de itens no carrinho do usuário atual.</p>
+    </div>
+
+    <div class="method">
+        <h4>OrdersList()</h4>
+        <p>Exibe o histórico de pedidos do usuário atual.</p>
+        <p>Retorna uma view com todos os pedidos que não estão no status Draft, ordenados do mais recente para o mais antigo.</p>
+    </div>
+
+    <h2 id="Pagamento">Processo de Pagamento e Esvaziamento do Carrinho</h2>
+    <p>Quando um pedido é pago, o sistema executa várias ações para garantir que o fluxo de compra seja adequadamente concluído:</p>
+    
+    <div class="method">
+        <h4>RecordPayment(int orderId) [PaymentController]</h4>
+        <p>Este método é chamado quando um pagamento é confirmado, e realiza as seguintes ações:</p>
+        <ul>
+            <li>Atualiza o status do pedido para <code>Delivered</code></li>
+            <li>Registra os detalhes do pagamento no sistema</li>
+            <li>Verifica se já existe um carrinho vazio (status <code>Draft</code>) para o usuário</li>
+            <li>Se não existir um carrinho vazio, cria um novo carrinho</li>
+            <li>Envia um e-mail de confirmação com os detalhes da compra</li>
+        </ul>
+        <p>Isto garante que o carrinho seja automaticamente esvaziado após a conclusão do pagamento, permitindo que o usuário inicie uma nova compra.</p>
+    </div>
+
+    <h2 id="Historico">Histórico de Pedidos</h2>
+    <p>O sistema mantém um histórico completo de todos os pedidos realizados por cada usuário. Este histórico pode ser acessado de duas maneiras:</p>
+    
+    <div class="property">
+        <h4>Acesso via Carrinho</h4>
+        <p>Na página do carrinho de compras existe um botão "Acompanhar Pedidos" que direciona o usuário para a página de histórico de pedidos.</p>
+    </div>
+    
+    <div class="property">
+        <h4>Lista de Pedidos</h4>
+        <p>A página de histórico (<code>/Orders/OrdersList</code>) exibe todos os pedidos do usuário, com as seguintes informações:</p>
+        <ul>
+            <li>ID do pedido</li>
+            <li>Data de realização</li>
+            <li>Status atual</li>
+            <li>Valor total</li>
+            <li>Lista de itens incluídos com suas respectivas quantidades</li>
+            <li>Opção para excluir o pedido do histórico</li>
+        </ul>
+    </div>
+    
+    <div class="property">
+        <h4>Pedidos no Histórico</h4>
+        <p>Todos os pedidos que não estão no status <code>Draft</code> são exibidos no histórico, incluindo:</p>
+        <ul>
+            <li>Pedidos concluídos (Delivered)</li>
+            <li>Pedidos em andamento (Processing, Shipped)</li>
+            <li>Pedidos cancelados (Cancelled)</li>
+        </ul>
+    </div>
+
+    <div class="diagram">
+        <pre>
+Fluxo completo:
+
++----------------+     +-----------------+     +---------------+
+| Adicionar item |     | Finalizar       |     | Pagamento     |
+| ao carrinho    |---->| compra          |---->| (Stripe)      |
++----------------+     +-----------------+     +---------------+
+                                                      |
+                                                      v
++----------------+     +-----------------+     +---------------+
+| Novo carrinho  |<----| Atualizar status|<----| Confirmação   |
+| disponível     |     | para Delivered  |     | de pagamento  |
++----------------+     +-----------------+     +---------------+
+         |                                             |
+         |                                             v
+         |                                   +------------------+
+         +---------------------------------->| Histórico de     |
+                                             | pedidos exibido  |
+                                             +------------------+
+        </pre>
     </div>
 
     <a href="#" class="back-to-top">Voltar ao Topo</a>
