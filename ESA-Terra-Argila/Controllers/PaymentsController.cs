@@ -99,8 +99,29 @@ namespace ESA_Terra_Argila.Controllers
                 PaymentDateTime = DateTime.UtcNow
             };
 
+            // Atualiza o status do pedido para Delivered (entregue/finalizado)
+            order.Status = Enums.OrderStatus.Delivered;
+
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
+
+            // Verificar se já existe um carrinho vazio para o usuário
+            var existingCart = await _context.Orders
+                .FirstOrDefaultAsync(o => o.UserId == order.UserId && o.Status == Enums.OrderStatus.Draft);
+
+            // Só cria um novo carrinho se não existir um
+            if (existingCart == null)
+            {
+                var newCart = new Order
+                {
+                    UserId = order.UserId,
+                    Status = Enums.OrderStatus.Draft,
+                    OrderItems = new List<OrderItem>()
+                };
+                _context.Orders.Add(newCart);
+                await _context.SaveChangesAsync();
+            }
+
             // Geração de fatura em HTML
             var invoiceBody = $@"
         <p>Olá {order.User.FullName},</p>
