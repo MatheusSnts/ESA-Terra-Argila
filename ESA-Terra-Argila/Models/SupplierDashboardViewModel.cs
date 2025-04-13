@@ -14,7 +14,7 @@
 
         public string BestSellingMaterial { get; set; }
 
-        public float BestSellingQuantity { get; set; }
+        public int BestSellingQuantity { get; set; }
 
         public decimal TotalRevenue { get; set; }
     }
