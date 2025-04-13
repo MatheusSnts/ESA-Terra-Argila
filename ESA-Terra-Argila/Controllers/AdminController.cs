@@ -254,6 +254,76 @@ namespace ESA_Terra_Argila.Controllers
             return Json(result);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetRevenueData(string range)
+        {
+            var now = DateTime.UtcNow;
+            DateTime start;
+            string format;
+            TimeSpan step;
+
+            switch (range)
+            {
+                case "24h":
+                    start = now.AddHours(-23);
+                    format = "HH\\h";
+                    step = TimeSpan.FromHours(1);
+                    break;
+                case "7d":
+                    start = now.AddDays(-6);
+                    format = "dd/MM";
+                    step = TimeSpan.FromDays(1);
+                    break;
+                case "month":
+                    start = now.AddMonths(-1);
+                    format = "dd/MM";
+                    step = TimeSpan.FromDays(1);
+                    break;
+                case "year":
+                    start = now.AddYears(-1);
+                    format = "MMM yyyy";
+                    step = TimeSpan.FromDays(30); 
+                    break;
+                default:
+                    start = DateTime.UtcNow.AddMonths(-1);
+                    format = "dd/MM";
+                    step = TimeSpan.FromDays(1);
+                    break;
+            }
+
+            var raw = await _context.Payments
+                .Where(p => p.PaymentDateTime >= start)
+                .ToListAsync();
+
+            var grouped = raw
+                .GroupBy(p => p.PaymentDateTime.ToString(format))
+                .ToDictionary(g => g.Key, g => g.Sum(p => p.Amount));
+
+            var result = new List<object>();
+            var current = start;
+
+            while (current <= now)
+            {
+                var label = current.ToString(format);
+                result.Add(new
+                {
+                    label,
+                    total = grouped.ContainsKey(label) ? grouped[label] : 0
+                });
+
+                current = range switch
+                {
+                    "year" => current.AddMonths(1),
+                    "month" => current.AddDays(1),
+                    "7d" or "total" => current.AddDays(1),
+                    "24h" => current.AddHours(1),
+                    _ => current.AddDays(1)
+                };
+            }
+
+            return Json(result);
+        }
+
 
 
         private async Task<List<User>> GetDeletedUsers()

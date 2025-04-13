@@ -28,6 +28,8 @@ namespace ESA_Terra_Argila.Services
             var ordersQuery = _context.Orders.AsNoTracking();
             var activitiesQuery = _context.UserActivities.AsNoTracking();
 
+            var totalAdminRevenue = await _context.Payments.SumAsync(p => (decimal?)p.Amount) ?? 0;
+
             //Preencher o modelo com dados reais
             var model = new AdminDashboardViewModel
             {
@@ -48,7 +50,10 @@ namespace ESA_Terra_Argila.Services
                 ActiveUsers7d = await activitiesQuery.CountAsync(a => a.Timestamp >= weekAgo),
                 ActiveUsersMonth = await activitiesQuery.CountAsync(a => a.Timestamp >= monthAgo),
                 ActiveUsersYear = await activitiesQuery.CountAsync(a => a.Timestamp >= yearAgo),
-                ActiveUsersTotal = await activitiesQuery.CountAsync()
+                ActiveUsersTotal = await activitiesQuery.CountAsync(),
+
+                TotalAdminRevenue = totalAdminRevenue
+
             };
 
             return model;

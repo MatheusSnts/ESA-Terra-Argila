@@ -23,7 +23,6 @@ namespace ESA_Terra_Argila.Services
 
             var totalMaterials = await materials.CountAsync();
             var totalStock = await materials.SumAsync(m => m.Stock);
-            //var totalRevenue = await materials.SumAsync(m => m.Revenue);
 
             var mostFavorited = await _context.UserMaterialFavorites
                 .Where(f => materials.Select(m => m.Id).Contains(f.MaterialId))
@@ -43,7 +42,7 @@ namespace ESA_Terra_Argila.Services
                 .Where(sm => sm.Type == "Venda" && materials.Select(m => m.Id).Contains(sm.MaterialId))
                 .GroupBy(sm => sm.MaterialId)
                 .OrderByDescending(g => g.Sum(s => s.Quantity))
-                .Select(g => new { MaterialId = g.Key, Total = g.Sum(s => s.Quantity) })
+                .Select(g => new { MaterialId = g.Key, Quantity = g.Sum(s => s.Quantity) })
                 .FirstOrDefaultAsync();
 
             var bestSellingName = bestSelling != null
@@ -53,6 +52,10 @@ namespace ESA_Terra_Argila.Services
                     .FirstOrDefaultAsync()
                 : "None";
 
+            var totalRevenue = await _context.Payments
+                .Where(p => p.Order.OrderItems.Any(oi => oi.Item.UserId == user.Id))
+                .SumAsync(p => (decimal?)p.Amount) ?? 0;
+
             return new SupplierDashboardViewModel
             {
                 SupplierName = user?.UserName,
@@ -61,9 +64,10 @@ namespace ESA_Terra_Argila.Services
                 MostFavoritedMaterial = mostFavoritedName,
                 MostFavoritedCount = mostFavorited?.Count ?? 0,
                 BestSellingMaterial = bestSellingName,
-                BestSellingQuantity = bestSelling?.Total ?? 0,
-                TotalRevenue = 0 //totalRevenue
+                BestSellingQuantity = bestSelling?.Quantity ?? 0,
+                TotalRevenue = totalRevenue
             };
         }
     }
 }
+

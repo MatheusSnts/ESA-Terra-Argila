@@ -23,39 +23,28 @@ namespace ESA_Terra_Argila.Services
                 .OfType<Product>()
                 .CountAsync(p => p.UserId == user.Id);
 
-
-
             var totalFavorites = await _context.UserMaterialFavorites
                 .CountAsync(f => f.UserId == user.Id);
-            /*
-            var totalRevenue = await _context.Items
+
+            var bestSelling = await _context.Items
                 .OfType<Product>()
                 .Where(p => p.UserId == user.Id)
-                .SumAsync(p => p.Revenue);
-            */
-            /*
-            var totalRevenue = await _context.Orders
-                .Where(o => o.UserId == user.Id)
-                .SumAsync(o => o.TotalAmount);
-            */
-            /*
-            var bestSelling = await _context.Items
-                            .OfType<Product>()
-                            .Where(p => p.UserId == user.Id)
-                            .OrderByDescending(p => p.TotalSold)
-                            .Select(p => new { p.Name, p.TotalSold })
-                            .FirstOrDefaultAsync();
-            */
+                .OrderByDescending(p => p.Stock) 
+                .Select(p => new { p.Name, Quantity = 0 })
+                .FirstOrDefaultAsync();
+
+            var totalRevenue = await _context.Payments
+                .Where(p => p.Order.OrderItems.Any(oi => oi.Item.UserId == user.Id))
+                .SumAsync(p => (decimal?)p.Amount) ?? 0;
 
             return new VendorDashboardViewModel
             {
                 VendorName = user?.UserName,
                 TotalProducts = totalProducts,
-                TotalStock = 0,
                 TotalFavorites = totalFavorites,
-                TotalRevenue = 0,
-                BestSellingProduct = /*bestSelling?.Name ??*/ "None",
-                BestSellingQuantity = 0//bestSelling?.TotalSold ?? 0
+                TotalRevenue = totalRevenue,
+                BestSellingProduct = bestSelling?.Name ?? "None",
+                BestSellingQuantity = bestSelling?.Quantity ?? 0
             };
         }
     }
