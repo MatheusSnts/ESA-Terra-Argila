@@ -116,7 +116,8 @@ namespace ESA_Terra_Argila.Controllers
                 {
                     UserId = order.UserId,
                     Status = Enums.OrderStatus.Draft,
-                    OrderItems = new List<OrderItem>()
+                    OrderItems = new List<OrderItem>(),
+                    CreatedAt = DateTime.UtcNow // Garantir que a data seja recente
                 };
                 _context.Orders.Add(newCart);
                 await _context.SaveChangesAsync();

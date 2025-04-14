@@ -47,14 +47,14 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>View com o carrinho de compras</returns>
         public async Task<IActionResult> Cart()
         {
+            // Buscar o carrinho atual (Order com status Draft)
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Item)
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
 
-            var items = order?.OrderItems ?? new HashSet<OrderItem>();
-
-            if (!items.Any())
+            // Se não existir um carrinho, criar um novo
+            if (order == null)
             {
                 order = new Order
                 {
@@ -62,8 +62,12 @@ namespace ESA_Terra_Argila.Controllers
                     Status = OrderStatus.Draft,
                     OrderItems = new List<OrderItem>()
                 };
+                
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
             }
-            else
+            // Se existir um carrinho, carregar informações relacionadas
+            else if (order.OrderItems.Any())
             {
                 foreach (var oi in order.OrderItems)
                 {
@@ -77,7 +81,7 @@ namespace ESA_Terra_Argila.Controllers
             float sustentaveis = 0;
             float naoSustentaveis = 0;
 
-            foreach (var i in items)
+            foreach (var i in order.OrderItems)
             {
                 if (i.Item != null)
                 {
@@ -92,7 +96,6 @@ namespace ESA_Terra_Argila.Controllers
             ViewBag.SustentavelPercent = total > 0 ? (int)Math.Round((double)sustentaveis * 100 / total) : 0;
             ViewBag.NaoSustentavelPercent = total > 0 ? (int)Math.Round((double)naoSustentaveis * 100 / total) : 0;
 
-
             return View(order);
         }
 
@@ -104,40 +107,52 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>Redireciona para a página anterior ou para a página inicial</returns>
         public async Task<IActionResult> AddToCart(int id)
         {
+            // Verificar se existe um carrinho (Order com status Draft)
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Status == OrderStatus.Draft);
 
-            if (order == null || !order.OrderItems.Any())
+            // Se não existir um carrinho ou se o carrinho não tiver itens, criar um novo
+            if (order == null)
             {
                 order = new Order
                 {
                     UserId = userId,
-                    Status = OrderStatus.Draft
+                    Status = OrderStatus.Draft,
+                    OrderItems = new HashSet<OrderItem>()
                 };
                 _context.Orders.Add(order);
+                await _context.SaveChangesAsync(); // Salvar para garantir que o Order tenha um Id
             }
 
-            var material = await _context.Items.FindAsync(id);
-            if (material == null)
+            // Buscar o item a ser adicionado
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
                 return NotFound("Produto não encontrado");
+
+            // Verificar se o item já existe no carrinho
             var existingItem = order.OrderItems.FirstOrDefault(oi => oi.ItemId == id);
             if (existingItem != null)
             {
+                // Se já existe, incrementar a quantidade
                 existingItem.Quantity += 1;
             }
             else
             {
+                // Se não existe, adicionar novo item ao carrinho
                 var orderItem = new OrderItem
                 {
                     ItemId = id,
-                    Quantity = 1
+                    Quantity = 1,
+                    OrderId = order.Id // Garantir que o OrderId está definido
                 };
                 order.OrderItems.Add(orderItem);
             }
 
+            // Salvar as alterações
             await _context.SaveChangesAsync();
 
+            // Redirecionar para a página anterior ou para a página inicial
             var referer = Request.Headers.Referer.ToString();
             if (!string.IsNullOrEmpty(referer))
             {
