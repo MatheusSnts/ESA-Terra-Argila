@@ -27,9 +27,13 @@ namespace ESA_Terra_Argila.Services
 
             
             var totalMaterials = materialIds.Count;
-            var totalStock = await materialsQuery.SumAsync(m => m.Stock);
 
-            
+
+            var totalSales = await _context.OrderItems
+            .Where(oi => oi.ItemId.HasValue && materialIds.Contains(oi.ItemId.Value))
+            .SumAsync(oi => (int?)oi.Quantity) ?? 0;
+
+
             var mostFavorited = await _context.UserMaterialFavorites
                 .Where(f => materialIds.Contains(f.MaterialId))
                 .GroupBy(f => f.MaterialId)
@@ -45,8 +49,8 @@ namespace ESA_Terra_Argila.Services
                 : "None";
 
 
-            // Melhor material vendido (via OrderItems)
-            // Melhor material vendido
+            
+
             var bestSelling = await _context.OrderItems
                 .Where(oi => oi.ItemId.HasValue && materialIds.Contains(oi.ItemId.Value))
                 .GroupBy(oi => oi.ItemId.Value)
@@ -62,17 +66,17 @@ namespace ESA_Terra_Argila.Services
                     .FirstOrDefaultAsync()
                 : "None";
 
-            // Faturação total
+           
             var totalRevenue = await _context.Payments
                 .Where(p => p.Order.OrderItems.Any(oi => oi.Item.UserId == user.Id))
                 .SumAsync(p => (decimal?)p.Amount) ?? 0;
 
-            // Construção do ViewModel
+            
             return new SupplierDashboardViewModel
             {
                 SupplierName = user?.UserName,
                 TotalMaterials = totalMaterials,
-                TotalStock = totalStock,
+                TotalSales = totalSales,
                 MostFavoritedMaterial = mostFavoritedName,
                 MostFavoritedCount = mostFavorited?.Count ?? 0,
                 BestSellingMaterial = bestSellingName,

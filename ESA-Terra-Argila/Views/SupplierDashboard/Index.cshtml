@@ -8,43 +8,76 @@
 
 <h2 class="my-4">Supplier Dashboard</h2>
 
+<div class="d-flex justify-content-end mb-3">
+    <button id="toggleViewBtn" class="btn btn-outline-primary">
+        <i class="bi bi-graph-up me-1"></i> Ver em gráfico
+    </button>
+</div>
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Total Materiais</h5>
-            <p class="display-6">@Model.TotalMaterials</p>
-            <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver Materiais</a>
+
+<div id="cardView">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Total Materiais</h5>
+                <p class="display-6">@Model.TotalMaterials</p>
+                <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver Materiais</a>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Total Stock</h5>
-            <p class="display-6">@Model.TotalStock</p>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Total Vendas</h5>
+                <p class="display-6">@Model.TotalSales</p>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Material Favorito</h5>
-            <p><strong>@Model.MostFavoritedMaterial</strong></p>
-            <p>Nº Favoritos: @Model.MostFavoritedCount</p>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Material Favorito</h5>
+                <p><strong>@Model.MostFavoritedMaterial</strong></p>
+                <p>Nº Favoritos: @Model.MostFavoritedCount</p>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Melhor Material</h5>
-            <p><strong>@Model.BestSellingMaterial</strong></p>
-            <p>Vendidos: @Model.BestSellingQuantity</p>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Melhor Material</h5>
+                <p><strong>@Model.BestSellingMaterial</strong></p>
+                <p>Vendidos: @Model.BestSellingQuantity</p>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-12 mt-4">
-        <div class="card p-3 shadow-sm">
-            <h5>Total Faturação</h5>
-            <p class="display-6">@Model.TotalRevenue.ToString("C")</p>
+        <div class="col-md-12 mt-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Total Faturação</h5>
+                <p class="display-6">@Model.TotalRevenue.ToString("C")</p>
+            </div>
         </div>
     </div>
 </div>
+
+<div id="chartView" style="display: none;"></div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <script>
+        const toggleBtn = document.getElementById("toggleViewBtn");
+        const cardView = document.getElementById("cardView");
+        const chartView = document.getElementById("chartView");
+
+        toggleBtn.addEventListener("click", () => {
+            const showingCards = cardView.style.display !== "none";
+            cardView.style.display = showingCards ? "none" : "block";
+            chartView.style.display = showingCards ? "block" : "none";
+            toggleBtn.innerHTML = showingCards
+                ? `<i class="bi bi-grid me-1"></i> Ver em cartões`
+                : `<i class="bi bi-graph-up me-1"></i> Ver em gráfico`;
+        });
+
+       
+    </script>
+}
+
+

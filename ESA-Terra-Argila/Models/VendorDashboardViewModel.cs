@@ -7,6 +7,8 @@
 
         public int TotalProducts { get; set; }
 
+        public int TotalSales { get; set; }
+
         public string BestSellingProduct { get; set; }
 
         public int BestSellingQuantity { get; set; }

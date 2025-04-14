@@ -6,7 +6,7 @@
 
         public int TotalMaterials { get; set; }
 
-        public float TotalStock { get; set; }
+        public int TotalSales { get; set; }
 
         public string MostFavoritedMaterial { get; set; }
 
