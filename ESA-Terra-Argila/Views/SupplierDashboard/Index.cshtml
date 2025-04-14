@@ -1,12 +1,11 @@
-﻿
-@model ESA_Terra_Argila.Models.SupplierDashboardViewModel
+﻿@model ESA_Terra_Argila.Models.SupplierDashboardViewModel
 
 @{
-    ViewData["Title"] = "Supplier Dashboard";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewData["Title"] = "Supplier Dashboard - últimos 7 dias";
 }
 
-<h2 class="my-4">Supplier Dashboard</h2>
+<h2 class="my-4">Supplier Dashboard (7 dias)</h2>
 
 <div class="d-flex justify-content-end mb-3">
     <button id="toggleViewBtn" class="btn btn-outline-primary">
@@ -14,7 +13,7 @@
     </button>
 </div>
 
-
+<!-- VISÃO DE CARTÕES -->
 <div id="cardView">
     <div class="row">
         <div class="col-md-3">
@@ -24,14 +23,12 @@
                 <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver Materiais</a>
             </div>
         </div>
-
         <div class="col-md-3">
             <div class="card p-3 shadow-sm">
                 <h5>Total Vendas</h5>
                 <p class="display-6">@Model.TotalSales</p>
             </div>
         </div>
-
         <div class="col-md-3">
             <div class="card p-3 shadow-sm">
                 <h5>Material Favorito</h5>
@@ -39,7 +36,6 @@
                 <p>Nº Favoritos: @Model.MostFavoritedCount</p>
             </div>
         </div>
-
         <div class="col-md-3">
             <div class="card p-3 shadow-sm">
                 <h5>Melhor Material</h5>
@@ -47,7 +43,6 @@
                 <p>Vendidos: @Model.BestSellingQuantity</p>
             </div>
         </div>
-
         <div class="col-md-12 mt-4">
             <div class="card p-3 shadow-sm">
                 <h5>Total Faturação</h5>
@@ -57,12 +52,38 @@
     </div>
 </div>
 
-<div id="chartView" style="display: none;"></div>
+<!-- VISÃO DE GRÁFICOS -->
+<div id="chartView" style="display: none;">
+    
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Faturação (7d)</h4>
+        <div id="revenueChart"></div>
+    </div>
+
+    
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Vendas (7d)</h4>
+        <div id="salesChart"></div>
+    </div>
+
+    
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Total Materiais (7d)</h4>
+        <div id="materialsChart"></div>
+    </div>
+
+   
+    <div class="chart-container rounded shadow p-4 bg-white">
+        <h4>Department Sales (7d)</h4>
+        <div id="departmentSalesChart"></div>
+    </div>
+</div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    
+
     <script>
+        
         const toggleBtn = document.getElementById("toggleViewBtn");
         const cardView = document.getElementById("cardView");
         const chartView = document.getElementById("chartView");
@@ -71,13 +92,110 @@
             const showingCards = cardView.style.display !== "none";
             cardView.style.display = showingCards ? "none" : "block";
             chartView.style.display = showingCards ? "block" : "none";
+
             toggleBtn.innerHTML = showingCards
                 ? `<i class="bi bi-grid me-1"></i> Ver em cartões`
                 : `<i class="bi bi-graph-up me-1"></i> Ver em gráfico`;
         });
 
-       
+
+        let revenueChart, salesChart, materialsChart, monthlySalesChart, departmentSalesChart;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            revenueChart = new ApexCharts(document.querySelector("#revenueChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Faturação', data: [] }],
+                xaxis: {
+                    
+                    categories: ['', '', '', '', '', '', '']
+                }
+            });
+            revenueChart.render();
+
+            
+            salesChart = new ApexCharts(document.querySelector("#salesChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Vendas', data: [] }],
+                xaxis: { categories: ['', '', '', '', '', '', ''] }
+            });
+            salesChart.render();
+
+            
+            materialsChart = new ApexCharts(document.querySelector("#materialsChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Materiais', data: [] }],
+                xaxis: { categories: ['', '', '', '', '', '', ''] }
+            });
+            materialsChart.render();
+
+            
+            monthlySalesChart = new ApexCharts(document.querySelector("#monthlySalesChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Monthly Sales', data: [] }],
+                xaxis: { categories: ['', '', '', '', '', '', ''] }
+            });
+            monthlySalesChart.render();
+
+            
+            departmentSalesChart = new ApexCharts(document.querySelector("#departmentSalesChart"), {
+                chart: { type: 'donut', height: 300 },
+                labels: [],
+                series: [],
+                legend: { position: 'bottom' }
+            });
+            departmentSalesChart.render();
+
+            
+            fetchAll7d();
+        });
+
+        async function fetchAll7d() {
+            try {
+                
+                const [
+                    resRevenue,
+                    resSales,
+                    resMaterials,
+                    resMonthly,
+                    resDept
+                ] = await Promise.all([
+                    fetch('/SupplierDashboard/GetRevenueData7d'),
+                    fetch('/SupplierDashboard/GetSalesData7d'),
+                    fetch('/SupplierDashboard/GetMaterialsData7d'),
+                    fetch('/SupplierDashboard/GetMonthlySales7d'),
+                    fetch('/SupplierDashboard/GetDepartmentSales7d')
+                ]);
+
+                const dataRevenue = await resRevenue.json();
+                const dataSales = await resSales.json();
+                const dataMaterials = await resMaterials.json();
+                const dataMonthly = await resMonthly.json();
+                const dataDept = await resDept.json();
+
+                
+                revenueChart.updateSeries([{ data: dataRevenue }]);
+
+                
+                salesChart.updateSeries([{ data: dataSales }]);
+
+                
+                materialsChart.updateSeries([{ data: dataMaterials }]);
+
+
+                monthlySalesChart.updateSeries([{ data: dataMonthly }]);
+
+                
+                const deptLabels = dataDept.map(d => d.label);
+                const deptTotals = dataDept.map(d => d.total);
+                departmentSalesChart.updateOptions({
+                    labels: deptLabels
+                });
+                departmentSalesChart.updateSeries(deptTotals);
+
+            } catch (err) {
+                console.error("Erro ao buscar e atualizar gráficos 7d supplier:", err);
+            }
+        }
     </script>
 }
-
-
