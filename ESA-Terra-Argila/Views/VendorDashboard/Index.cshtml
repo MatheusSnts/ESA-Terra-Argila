@@ -2,22 +2,19 @@
 
 @{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
-    ViewData["Title"] = "Vendor Dashboard 7d";
+    ViewData["Title"] = "Vendor Dashboard";
 }
 
 <h2 class="my-4">Vendor Dashboard</h2>
 
-<!-- Botão para alternar CardView <-> ChartView -->
 <div class="d-flex justify-content-end mb-3">
     <button id="toggleViewBtn" class="btn btn-outline-primary">
         <i class="bi bi-graph-up me-1"></i> Ver em gráfico
     </button>
 </div>
 
-<!-- Área de Cartões -->
 <div id="cardView">
     <div class="row">
-        <!-- Exibe @Model.TotalProducts, @Model.TotalSales, etc. -->
         <div class="col-md-3">
             <div class="card p-3 shadow-sm">
                 <h5>Total Produtos</h5>
@@ -53,28 +50,25 @@
     </div>
 </div>
 
-
 <div id="chartView" style="display: none;">
-    
+    <div class="d-flex gap-2 mb-3">
+        <button class="btn btn-sm btn-outline-secondary range-btn" data-range="24h">24h</button>
+        <button class="btn btn-sm btn-outline-secondary range-btn" data-range="7d">7 dias</button>
+    </div>
+
     <div class="chart-container rounded shadow p-4 mb-4 bg-white">
         <h4>Faturação</h4>
         <div id="revenueChart"></div>
     </div>
-
-    
     <div class="chart-container rounded shadow p-4 mb-4 bg-white">
-        <h4>Vendas </h4>
+        <h4>Vendas</h4>
         <div id="salesChart"></div>
     </div>
-
-    
     <div class="chart-container rounded shadow p-4 mb-4 bg-white">
         <h4>Produtos</h4>
         <div id="productsChart"></div>
     </div>
-
-    
-    <div class="chart-container rounded shadow p-4 bg-white">
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
         <h4>Produtos Vendidos</h4>
         <div id="departmentSalesChart"></div>
     </div>
@@ -84,7 +78,6 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
-        
         const toggleBtn = document.getElementById("toggleViewBtn");
         const cardView = document.getElementById("cardView");
         const chartView = document.getElementById("chartView");
@@ -98,52 +91,37 @@
                 : `<i class="bi bi-graph-up me-1"></i> Ver em gráfico`;
         });
 
-        
         let revenueChart, salesChart, productsChart, monthlySalesChart, departmentSalesChart;
 
         document.addEventListener("DOMContentLoaded", () => {
-            
             revenueChart = new ApexCharts(document.querySelector("#revenueChart"), {
                 chart: { type: 'area', height: 300 },
                 series: [{ name: 'Faturação', data: [] }],
-                xaxis: {
-                    
-                    categories: ['', '', '', '', '', '', '']
-                }
+                xaxis: { categories: [] }
             });
             revenueChart.render();
 
-            
             salesChart = new ApexCharts(document.querySelector("#salesChart"), {
                 chart: { type: 'area', height: 300 },
                 series: [{ name: 'Vendas', data: [] }],
-                xaxis: {
-                    categories: ['', '', '', '', '', '', '']
-                }
+                xaxis: { categories: [] }
             });
             salesChart.render();
 
-            
             productsChart = new ApexCharts(document.querySelector("#productsChart"), {
                 chart: { type: 'area', height: 300 },
                 series: [{ name: 'Produtos', data: [] }],
-                xaxis: {
-                    categories: ['', '', '', '', '', '', '']
-                }
+                xaxis: { categories: [] }
             });
             productsChart.render();
 
-            
             monthlySalesChart = new ApexCharts(document.querySelector("#monthlySalesChart"), {
                 chart: { type: 'area', height: 300 },
-                series: [{ name: 'Monthly Sales', data: [] }],
-                xaxis: {
-                    categories: ['', '', '', '', '', '', '']
-                }
+                series: [{ name: 'MonthlySales', data: [] }],
+                xaxis: { categories: [] }
             });
             monthlySalesChart.render();
 
-            
             departmentSalesChart = new ApexCharts(document.querySelector("#departmentSalesChart"), {
                 chart: { type: 'donut', height: 300 },
                 labels: [],
@@ -152,46 +130,58 @@
             });
             departmentSalesChart.render();
 
-            
-            fetchAll7d();
+            document.querySelectorAll('.range-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const range = btn.getAttribute('data-range');
+                    fetchAll(range);
+                });
+            });
+
+            fetchAll("24h");
         });
 
-        async function fetchAll7d() {
+        async function fetchAll(range) {
             try {
-                
-                const [
-                    resRevenue,
-                    resSales,
-                    resProducts,
-                    resMonthly,
-                    resDept
-                ] = await Promise.all([
-                    fetch('/VendorDashboard/GetRevenueData7d'),
-                    fetch('/VendorDashboard/GetSalesData7d'),
-                    fetch('/VendorDashboard/GetProductsData7d'),
-                    fetch('/VendorDashboard/GetMonthlySales7d'),
-                    fetch('/VendorDashboard/GetDepartmentSales7d')
+                const [resRevenue, resSales, resProducts, resMonthly, resDept] = await Promise.all([
+                    fetch(`/VendorDashboard/GetRevenueData?range=${range}`),
+                    fetch(`/VendorDashboard/GetSalesData?range=${range}`),
+                    fetch(`/VendorDashboard/GetProductsData?range=${range}`),
+                    fetch(`/VendorDashboard/GetMonthlySalesData?range=${range}`),
+                    fetch(`/VendorDashboard/GetDepartmentSalesData?range=${range}`)
                 ]);
-
                 const dataRevenue = await resRevenue.json();
                 const dataSales = await resSales.json();
                 const dataProducts = await resProducts.json();
                 const dataMonthly = await resMonthly.json();
                 const dataDept = await resDept.json();
 
-                
-                revenueChart.updateSeries([{ data: dataRevenue }]);
+                let categories = [];
+                if (range === "24h") {
+                    for (let i = 0; i < 24; i++) {
+                        categories.push(i.toString().padStart(2, '0') + "h");
+                    }
+                } else {
+                    for (let i = 0; i < 7; i++) {
+                        categories.push("Dia " + i);
+                    }
+                }
 
-                
-                salesChart.updateSeries([{ data: dataSales }]);
-
-                
-                productsChart.updateSeries([{ data: dataProducts }]);
-
-                
-                monthlySalesChart.updateSeries([{ data: dataMonthly }]);
-
-                
+                revenueChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataRevenue }]
+                });
+                salesChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataSales }]
+                });
+                productsChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataProducts }]
+                });
+                monthlySalesChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataMonthly }]
+                });
                 const deptLabels = dataDept.map(d => d.label);
                 const deptTotals = dataDept.map(d => d.total);
                 departmentSalesChart.updateOptions({
@@ -200,7 +190,7 @@
                 departmentSalesChart.updateSeries(deptTotals);
 
             } catch (err) {
-                console.error("Erro ao buscar e atualizar graficos 7d vendor:", err);
+                console.error("Erro ao buscar e atualizar graficos Vendor 24h/7d:", err);
             }
         }
     </script>

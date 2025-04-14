@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -29,7 +29,6 @@ namespace ESA_Terra_Argila.Controllers
             _context = context;
         }
 
-        // Exibe a View com os cartões (VendorDashboardViewModel)
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -37,148 +36,178 @@ namespace ESA_Terra_Argila.Controllers
             return View(viewModel);
         }
 
-        // 1) Faturação (7 dias) - soma .Amount em Payments, 
-        // onde Payment.Order.UserId == user.Id
         [HttpGet]
-        public async Task<IActionResult> GetRevenueData7d()
+        public async Task<IActionResult> GetRevenueData(string range)
         {
             var user = await _userManager.GetUserAsync(User);
-            var now = DateTime.UtcNow.Date;
-            var start = now.AddDays(-6);
-
-            // Carrega Payments do período e filtra pelos pedidos deste Vendor
-            var payments = await _context.Payments
-                .Include(p => p.Order)
-                .Where(p => p.PaymentDateTime >= start
-                         && p.Order.UserId == user.Id)
-                .ToListAsync();
-
-            // Dicionário para 7 dias
-            var dailyTotals = new Dictionary<DateTime, decimal>();
-            for (int i = 0; i < 7; i++)
+            var now = DateTime.UtcNow;
+            DateTime start;
+            int count;
+            if (range == "24h")
             {
-                dailyTotals[start.AddDays(i)] = 0m;
+                start = now.AddHours(-23);
+                count = 24;
             }
-
-            foreach (var pay in payments)
+            else
             {
-                var day = pay.PaymentDateTime.Date;
-                if (dailyTotals.ContainsKey(day))
-                {
-                    dailyTotals[day] += (decimal)pay.Amount;
-                }
+                start = now.Date.AddDays(-6);
+                count = 7;
             }
-
-            var result = dailyTotals.OrderBy(x => x.Key).Select(x => x.Value).ToList();
-            return Json(result);
-        }
-
-        // 2) Vendas (quantidade) - soma .Quantity em OrderItems, 
-        // onde Order.UserId == user.Id
-        [HttpGet]
-        public async Task<IActionResult> GetSalesData7d()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var now = DateTime.UtcNow.Date;
-            var start = now.AddDays(-6);
-
-            // Carrega OrderItems do período e filtra pelos pedidos do Vendor
             var orderItems = await _context.OrderItems
                 .Include(oi => oi.Order)
-                .Where(oi => oi.Order.CreatedAt >= start
-                          && oi.Order.UserId == user.Id)
+                .Include(oi => oi.Item)
+                .Where(oi => oi.Order.UserId == user.Id
+                    && (
+                        (range == "24h" && oi.Order.CreatedAt >= start)
+                        || (range != "24h" && oi.Order.CreatedAt.Date >= start.Date)
+                    )
+                )
                 .ToListAsync();
-
-            var dailyTotals = new Dictionary<DateTime, float>();
-            for (int i = 0; i < 7; i++)
-            {
-                dailyTotals[start.AddDays(i)] = 0f;
-            }
-
+            var intervals = new decimal[count];
             foreach (var oi in orderItems)
             {
-                var day = oi.Order.CreatedAt.Date;
-                if (dailyTotals.ContainsKey(day))
+                var val = (decimal)(oi.Item.Price * oi.Quantity);
+                if (range == "24h")
                 {
-                    dailyTotals[day] += oi.Quantity;
+                    var index = (int)(oi.Order.CreatedAt - start).TotalHours;
+                    if (index >= 0 && index < count) intervals[index] += val;
+                }
+                else
+                {
+                    var index = (oi.Order.CreatedAt.Date - start.Date).Days;
+                    if (index >= 0 && index < count) intervals[index] += val;
                 }
             }
-
-            var result = dailyTotals.OrderBy(x => x.Key).Select(x => x.Value).ToList();
-            return Json(result);
+            return Json(intervals);
         }
 
-        // 3) TotalProdutos (7 dias) - repete o valor atual, pois não há histórico
         [HttpGet]
-        public async Task<IActionResult> GetProductsData7d()
+        public async Task<IActionResult> GetSalesData(string range)
         {
             var user = await _userManager.GetUserAsync(User);
+            var now = DateTime.UtcNow;
+            DateTime start;
+            int count;
+            if (range == "24h")
+            {
+                start = now.AddHours(-23);
+                count = 24;
+            }
+            else
+            {
+                start = now.Date.AddDays(-6);
+                count = 7;
+            }
+            var orderItems = await _context.OrderItems
+                .Include(oi => oi.Order)
+                .Where(oi => oi.Order.UserId == user.Id
+                    && (
+                        (range == "24h" && oi.Order.CreatedAt >= start)
+                        || (range != "24h" && oi.Order.CreatedAt.Date >= start.Date)
+                    )
+                )
+                .ToListAsync();
+            var intervals = new float[count];
+            foreach (var oi in orderItems)
+            {
+                if (range == "24h")
+                {
+                    var index = (int)(oi.Order.CreatedAt - start).TotalHours;
+                    if (index >= 0 && index < count) intervals[index] += oi.Quantity;
+                }
+                else
+                {
+                    var index = (oi.Order.CreatedAt.Date - start.Date).Days;
+                    if (index >= 0 && index < count) intervals[index] += oi.Quantity;
+                }
+            }
+            return Json(intervals);
+        }
 
-            // Quantidade de produtos do vendor
+        [HttpGet]
+        public async Task<IActionResult> GetProductsData(string range)
+        {
+            var user = await _userManager.GetUserAsync(User);
             var totalProducts = await _context.Items
                 .OfType<Product>()
                 .Where(p => p.UserId == user.Id)
                 .CountAsync();
-
-            // Repete esse valor 7 vezes
-            var arr = Enumerable.Repeat((float)totalProducts, 7).ToList();
+            int count = (range == "24h") ? 24 : 7;
+            var arr = Enumerable.Repeat((float)totalProducts, count).ToList();
             return Json(arr);
         }
 
-        // 4) "MonthlySales" (7 dias) - soma .Quantity
-        // onde Order.UserId == user.Id
         [HttpGet]
-        public async Task<IActionResult> GetMonthlySales7d()
+        public async Task<IActionResult> GetMonthlySalesData(string range)
         {
             var user = await _userManager.GetUserAsync(User);
-            var now = DateTime.UtcNow.Date;
-            var start = now.AddDays(-6);
-
+            var now = DateTime.UtcNow;
+            DateTime start;
+            int count;
+            if (range == "24h")
+            {
+                start = now.AddHours(-23);
+                count = 24;
+            }
+            else
+            {
+                start = now.Date.AddDays(-6);
+                count = 7;
+            }
             var orderItems = await _context.OrderItems
                 .Include(oi => oi.Order)
-                .Where(oi => oi.Order.CreatedAt >= start
-                          && oi.Order.UserId == user.Id)
+                .Include(oi => oi.Item)
+                .Where(oi => oi.Order.UserId == user.Id
+                    && (
+                        (range == "24h" && oi.Order.CreatedAt >= start)
+                        || (range != "24h" && oi.Order.CreatedAt.Date >= start.Date)
+                    )
+                )
                 .ToListAsync();
-
-            var dailyTotals = new Dictionary<DateTime, float>();
-            for (int i = 0; i < 7; i++)
-            {
-                dailyTotals[start.AddDays(i)] = 0f;
-            }
-
+            var intervals = new float[count];
             foreach (var oi in orderItems)
             {
-                var day = oi.Order.CreatedAt.Date;
-                if (dailyTotals.ContainsKey(day))
+                var val = (float)oi.Quantity;
+                if (range == "24h")
                 {
-                    dailyTotals[day] += oi.Quantity;
+                    var index = (int)(oi.Order.CreatedAt - start).TotalHours;
+                    if (index >= 0 && index < count) intervals[index] += val;
+                }
+                else
+                {
+                    var index = (oi.Order.CreatedAt.Date - start.Date).Days;
+                    if (index >= 0 && index < count) intervals[index] += val;
                 }
             }
-
-            var result = dailyTotals.OrderBy(x => x.Key).Select(x => x.Value).ToList();
-            return Json(result);
+            return Json(intervals);
         }
 
-        // 5) DepartmentSales7d - agrupa .Item.Name e soma .Quantity
-        // Filtra pelos pedidos do Vendor, sem checar Item.UserId
         [HttpGet]
-        public async Task<IActionResult> GetDepartmentSales7d()
+        public async Task<IActionResult> GetDepartmentSalesData(string range)
         {
             var user = await _userManager.GetUserAsync(User);
-            var now = DateTime.UtcNow.Date;
-            var start = now.AddDays(-6);
-
-            // Carrega OrderItems (com .Item se quiser exibir .Item.Name)
+            var now = DateTime.UtcNow;
+            DateTime start;
+            if (range == "24h")
+            {
+                start = now.AddHours(-23);
+            }
+            else
+            {
+                start = now.Date.AddDays(-6);
+            }
             var orderItems = await _context.OrderItems
                 .Include(oi => oi.Item)
                 .Include(oi => oi.Order)
-                .Where(oi => oi.Order.CreatedAt >= start
-                          && oi.Order.UserId == user.Id)
+                .Where(oi => oi.Order.UserId == user.Id
+                    && (
+                        (range == "24h" && oi.Order.CreatedAt >= start)
+                        || (range != "24h" && oi.Order.CreatedAt.Date >= start.Date)
+                    )
+                )
                 .ToListAsync();
-
-            // Agrupa por oi.Item.Name e soma .Quantity
             var grouped = orderItems
-                .Where(oi => oi.Item != null)  // caso hajam registros nulos
+                .Where(oi => oi.Item != null)
                 .GroupBy(oi => oi.Item.Name)
                 .Select(g => new {
                     label = g.Key,
@@ -186,7 +215,6 @@ namespace ESA_Terra_Argila.Controllers
                 })
                 .OrderByDescending(x => x.total)
                 .ToList();
-
             return Json(grouped);
         }
     }

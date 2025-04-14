@@ -7,14 +7,12 @@
 
 <h2 class="my-4">Dashboard do Administrador</h2>
 
-<!-- Botão de alternância -->
 <div class="d-flex justify-content-end mb-3">
     <button id="toggleViewBtn" class="btn btn-outline-primary">
         <i class="bi bi-graph-up me-1"></i> Ver em gráfico
     </button>
 </div>
 
-<!-- Vista de Cartões -->
 <div id="cardView">
     <div class="row g-3">
         <div class="col-md-3"><div class="card shadow p-3"><h6>Total de Utilizadores</h6><h4>@Model.TotalUsers</h4></div></div>
@@ -44,7 +42,6 @@
     </div>
 </div>
 
-<!-- Vista de Gráficos -->
 <div id="chartView" style="display: none;">
     <div class="d-flex gap-2 mb-3">
         <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="24h">24h</button>
@@ -58,15 +55,29 @@
         <div id="activityChart"></div>
     </div>
 
-    <div class="chart-container rounded shadow p-4 bg-white">
+    <div class="chart-container rounded shadow p-4 bg-white mb-4">
         <h4>Gráfico de Faturação</h4>
         <div id="revenueChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 bg-white mb-4">
+        <h4>Novos Utilizadores</h4>
+        <div id="usersChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 bg-white mb-4">
+        <h4>Novos Produtos</h4>
+        <div id="productsChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 bg-white">
+        <h4>Novos Materiais</h4>
+        <div id="materialsChart"></div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
     <script>
         const toggleBtn = document.getElementById("toggleViewBtn");
         const cardView = document.getElementById("cardView");
@@ -85,52 +96,65 @@
             chart: { type: 'area', height: 350, toolbar: { show: false } },
             series: [{ name: 'Acessos', data: [] }],
             xaxis: { categories: [], labels: { rotate: -45 } },
-            tooltip: {
-                y: {
-                    formatter: val => val + ' acessos'
-                }
-            },
+            tooltip: { y: { formatter: val => val + ' acessos' } },
             dataLabels: { enabled: false },
-            fill: {
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.5,
-                    opacityTo: 0
-                }
-            }
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
         });
 
         const revenueChart = new ApexCharts(document.querySelector("#revenueChart"), {
             chart: { type: 'area', height: 350, toolbar: { show: false } },
             series: [{ name: 'Faturação', data: [] }],
             xaxis: { categories: [], labels: { rotate: -45 } },
-            tooltip: {
-                y: {
-                    formatter: val => `€${val.toFixed(2)}`
-                }
-            },
+            tooltip: { y: { formatter: val => `€${val.toFixed(2)}` } },
             dataLabels: { enabled: false },
-            fill: {
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.5,
-                    opacityTo: 0
-                }
-            }
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
+
+        const usersChart = new ApexCharts(document.querySelector("#usersChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Novos Utilizadores', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
+
+        const productsChart = new ApexCharts(document.querySelector("#productsChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Novos Produtos', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
+
+        const materialsChart = new ApexCharts(document.querySelector("#materialsChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Novos Materiais', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
         });
 
         activityChart.render();
         revenueChart.render();
+        usersChart.render();
+        productsChart.render();
+        materialsChart.render();
 
         async function fetchAndUpdateCharts(range) {
             try {
-                const [activityRes, revenueRes] = await Promise.all([
+                const [activityRes, revenueRes, usersRes, productsRes, materialsRes] = await Promise.all([
                     fetch(`/Admin/GetActivityData?range=${range}`),
-                    fetch(`/Admin/GetRevenueData?range=${range}`)
+                    fetch(`/Admin/GetRevenueData?range=${range}`),
+                    fetch(`/Admin/GetUsersData?range=${range}`),
+                    fetch(`/Admin/GetProductsData?range=${range}`),
+                    fetch(`/Admin/GetMaterialsData?range=${range}`)
                 ]);
 
                 const activityData = await activityRes.json();
                 const revenueData = await revenueRes.json();
+                const usersData = await usersRes.json();
+                const productsData = await productsRes.json();
+                const materialsData = await materialsRes.json();
 
                 activityChart.updateOptions({
                     xaxis: { categories: activityData.map(d => d.label) },
@@ -141,6 +165,21 @@
                     xaxis: { categories: revenueData.map(d => d.label) },
                     series: [{ name: 'Faturação', data: revenueData.map(d => d.total) }]
                 });
+
+                usersChart.updateOptions({
+                    xaxis: { categories: usersData.map(d => d.label) },
+                    series: [{ name: 'Novos Utilizadores', data: usersData.map(d => d.total) }]
+                });
+
+                productsChart.updateOptions({
+                    xaxis: { categories: productsData.map(d => d.label) },
+                    series: [{ name: 'Novos Produtos', data: productsData.map(d => d.total) }]
+                });
+
+                materialsChart.updateOptions({
+                    xaxis: { categories: materialsData.map(d => d.label) },
+                    series: [{ name: 'Novos Materiais', data: materialsData.map(d => d.total) }]
+                });
             } catch (err) {
                 console.error("Erro ao carregar os dados:", err);
             }
@@ -148,12 +187,11 @@
 
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const range = btn.getAttribute("data-range");
+                const range = btn.getAttribute('data-range');
                 fetchAndUpdateCharts(range);
             });
         });
 
-        // Inicialização com 24h
         fetchAndUpdateCharts("24h");
     </script>
 }
