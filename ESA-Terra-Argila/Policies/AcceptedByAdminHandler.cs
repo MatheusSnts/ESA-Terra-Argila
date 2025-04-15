@@ -24,6 +24,13 @@ namespace ESA_Terra_Argila.Policies
 
             if (user == null)
                 return;
+                
+            // Verifica se o usuário está bloqueado
+            if (user.LockoutEnabled && user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow)
+            {
+                // Usuário está bloqueado, não autoriza
+                return;
+            }
 
             // Verifica se o usuário é um customer (consumidor)
             var isCustomer = await _userManager.IsInRoleAsync(user, "Customer");

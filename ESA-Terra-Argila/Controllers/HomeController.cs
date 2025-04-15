@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -77,6 +78,39 @@ namespace ESA_Terra_Argila.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        // Adicionar um método temporário para testes
+        [Authorize]
+        public async Task<IActionResult> TestLockout()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            
+            if (user != null)
+            {
+                // Verifique se o usuário está bloqueado
+                if (user.LockoutEnabled && user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow)
+                {
+                    ViewBag.LockoutStatus = "Usuário ESTÁ bloqueado até " + user.LockoutEnd.Value.ToString();
+                }
+                else
+                {
+                    ViewBag.LockoutStatus = "Usuário NÃO está bloqueado";
+                }
+
+                ViewBag.UserDetails = new {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    LockoutEnabled = user.LockoutEnabled,
+                    LockoutEnd = user.LockoutEnd
+                };
+            }
+            else
+            {
+                ViewBag.LockoutStatus = "Usuário não encontrado";
+            }
+
+            return View();
         }
     }
 }

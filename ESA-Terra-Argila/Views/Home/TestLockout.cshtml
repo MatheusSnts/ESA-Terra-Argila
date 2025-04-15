@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Teste de Bloqueio de Conta";
+}
+
+<div class="container mt-4">
+    <h1>Teste de Bloqueio de Conta</h1>
+    
+    <div class="alert @(ViewBag.LockoutStatus?.Contains("NÃO") == true ? "alert-success" : "alert-danger")">
+        <h4>Status do Bloqueio:</h4>
+        <p>@ViewBag.LockoutStatus</p>
+    </div>
+
+    @if (ViewBag.UserDetails != null)
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4>Detalhes do Usuário</h4>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th>Nome de Usuário:</th>
+                        <td>@ViewBag.UserDetails.UserName</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>@ViewBag.UserDetails.Email</td>
+                    </tr>
+                    <tr>
+                        <th>Bloqueio Habilitado:</th>
+                        <td>@ViewBag.UserDetails.LockoutEnabled</td>
+                    </tr>
+                    <tr>
+                        <th>Fim do Bloqueio:</th>
+                        <td>@(ViewBag.UserDetails.LockoutEnd?.ToString() ?? "N/A")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    }
+
+    <div class="mt-4">
+        <p>Este é um endpoint de teste para verificar se o middleware de verificação de bloqueio está funcionando corretamente.</p>
+        <p>Se o seu usuário estiver bloqueado, você não deveria estar vendo esta página!</p>
+    </div>
+</div> 

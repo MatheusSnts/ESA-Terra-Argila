@@ -11,6 +11,7 @@ using Stripe;
 using ESA_Terra_Argila.Policies.AuthorizationRequirements;
 using ESA_Terra_Argila.Policies;
 using Microsoft.AspNetCore.Authorization;
+using ESA_Terra_Argila.Middlewares;
 
 
 
@@ -52,7 +53,7 @@ builder.Services.AddScoped<IAuthorizationHandler, AcceptedByAdminHandler>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-// Configurações de Lockout
+// ConfiguraÃ§Ãµes de Lockout
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 3;
     options.Lockout.AllowedForNewUsers = true;
@@ -103,6 +104,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseLockoutCheck();
 
 
 app.MapRazorPages();

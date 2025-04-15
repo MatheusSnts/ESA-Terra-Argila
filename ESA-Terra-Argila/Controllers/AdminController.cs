@@ -19,12 +19,14 @@ namespace ESA_Terra_Argila.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly AdminDashboardService _dashboardService;
+        private readonly UserActivityService _userActivityService;
 
-        public AdminController(ApplicationDbContext context, UserManager<User> userManager, AdminDashboardService dashboardService)
+        public AdminController(ApplicationDbContext context, UserManager<User> userManager, AdminDashboardService dashboardService, UserActivityService userActivityService)
         {
             _context = context;
             _userManager = userManager;
             _dashboardService = dashboardService;
+            _userActivityService = userActivityService;
         }
 
         public async Task<IActionResult> AcceptUsers()
@@ -426,6 +428,101 @@ namespace ESA_Terra_Argila.Controllers
             return await _context.Users
                 .Where(u => u.DeletedAt != null)
                 .ToListAsync();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ManageUserLockouts()
+        {
+            var users = await _userManager.Users
+                .Where(u => u.DeletedAt == null)
+                .OrderBy(u => u.UserName)
+                .ToListAsync();
+            
+            return View(users);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> LockUser(string userId, int lockoutMinutes = 5)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "ID de usuário inválido";
+                return RedirectToAction(nameof(ManageUserLockouts));
+            }
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Usuário não encontrado";
+                return RedirectToAction(nameof(ManageUserLockouts));
+            }
+            
+            // Define o bloqueio
+            var result = await _userManager.SetLockoutEnabledAsync(user, true);
+            if (result.Succeeded)
+            {
+                var endDate = DateTimeOffset.UtcNow.AddMinutes(lockoutMinutes);
+                await _userManager.SetLockoutEndDateAsync(user, endDate);
+                
+                TempData["SuccessMessage"] = $"Usuário {user.UserName} bloqueado com sucesso até {endDate}";
+                
+                // Registra a atividade
+                await _userActivityService.LogActivityAsync(
+                    user.Id,
+                    "Conta Bloqueada",
+                    $"Conta bloqueada manualmente por admin até {endDate}",
+                    false,
+                    $"Admin: {User.Identity?.Name}"
+                );
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Erro ao bloquear usuário: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            }
+            
+            return RedirectToAction(nameof(ManageUserLockouts));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnlockUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "ID de usuário inválido";
+                return RedirectToAction(nameof(ManageUserLockouts));
+            }
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Usuário não encontrado";
+                return RedirectToAction(nameof(ManageUserLockouts));
+            }
+            
+            // Desbloqueia a conta
+            var lockoutResult = await _userManager.SetLockoutEndDateAsync(user, null);
+            if (lockoutResult.Succeeded)
+            {
+                TempData["SuccessMessage"] = $"Usuário {user.UserName} desbloqueado com sucesso";
+                
+                // Registra a atividade
+                await _userActivityService.LogActivityAsync(
+                    user.Id,
+                    "Conta Desbloqueada",
+                    "Conta desbloqueada manualmente por admin",
+                    true,
+                    $"Admin: {User.Identity?.Name}"
+                );
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Erro ao desbloquear usuário: " + string.Join(", ", lockoutResult.Errors.Select(e => e.Description));
+            }
+            
+            return RedirectToAction(nameof(ManageUserLockouts));
         }
     }
 }
