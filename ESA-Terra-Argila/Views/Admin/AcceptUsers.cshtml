@@ -1,53 +1,80 @@
-﻿@using ESA_Terra_Argila.Helpers
-@model IEnumerable<ESA_Terra_Argila.Models.User>
+﻿@using ESA_Terra_Argila.Helpers          
+@model IEnumerable<ESA_Terra_Argila.ViewModels.UserViewModel>    
 @{
-    ViewData["Title"] = "Utilizadores";
-    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewData["Title"] = "Utilizadores";   
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";   
 }
 
 <div class="col-md-12 d-flex align-items-center mt-3 gap-5">
-    <h2>Utilizadores</h2>
+    <!-- Container para o cabeçalho -->
+    <h2>Utilizadores</h2>                <!-- Exibe o título da página -->
 </div>
+
 <table id="datatable" class="display">
+    <!-- Inicia a tabela de usuários -->
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.FullName)</th>
-            <th>@Html.DisplayNameFor(model => model.Email)</th>
-            <th>@Html.DisplayNameFor(model => model.Role)</th>
-            <th>Opções</th>
+            <th>@Html.DisplayNameFor(model => model.First().FullName)</th>   
+            <th>@Html.DisplayNameFor(model => model.First().Email)</th>        
+            <th>@Html.DisplayNameFor(model => model.First().Role)</th>         
+            <th>Bloqueado?</th>                                               
+            <th>Opções</th>                                                   
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @foreach (var user in Model)        
         {
             <tr>
-                <td>@user.FullName</td>
-                <td>@user.Email</td>
-                <td>@user.Role.GetRoleTranslation()</td>
+                <td>@user.FullName</td>      
+                <td>@user.Email</td>         
+                <td>@user.Role</td>          
+                <td>
+                    @if (user.IsLocked)      
+                    {
+                        <span class="text-danger">Sim</span>
+                        
+                    }
+                    else
+                    {
+                        <span class="text-success">Não</span>
+                        
+                    }
+                </td>
                 <td>
                     <form asp-action="AcceptUser" method="post" class="d-inline rounded-1">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@user.Id" />
+                        
+                        @Html.AntiForgeryToken()   
+                        <input type="hidden" name="id" value="@user.Id" />   
                         <button type="submit" class="text-success text-decoration-none" title="Aprovar utilizador">
-                            <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            
+                            <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />   
                             </svg>
                         </button>
-                    </form>
+                    </form>   
                     <form asp-action="Delete" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@user.Id" />
-                        <button type="submit" class="text-danger text-decoration-none" title="Remover utilizador" onclick="return confirm('Tem a certeza que deseja reprovar este cadastro?');">
-                            <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        
+                        @Html.AntiForgeryToken()   
+                        <input type="hidden" name="id" value="@user.Id" />   
+                        <button type="submit" class="text-danger text-decoration-none" title="Remover utilizador"
+                                onclick="return confirm('Tem a certeza que deseja reprovar este cadastro?');">
+                            
+                            <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />   
                             </svg>
                         </button>
-                    </form>
-                    
+                    </form>   
                 </td>
             </tr>
+            
         }
     </tbody>
-</table>
+</table>   
+
+
 
 
