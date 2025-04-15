@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace ESA_Terra_Argila.Tests.Controllers
 {
@@ -29,6 +30,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
         private readonly Category _category;
         private readonly string _userId = "test-user-id";
         private readonly Mock<UserManager<User>> _mockUserManager;
+        private readonly ILogger<ProductsController> _logger;
 
         public ProductInventoryTests()
         {
@@ -107,7 +109,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
             }, "mock"));
 
             // Configurar o controller com o context real e o usuario
-            _controller = new ProductsController(_context, _mockUserManager.Object)
+            _controller = new ProductsController(_context, _mockUserManager.Object, _logger)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -160,7 +162,7 @@ namespace ESA_Terra_Argila.Tests.Controllers
                 new Claim(ClaimTypes.NameIdentifier, _userId),
             }, "mock"));
 
-            var controller = new ProductsController(_context, _mockUserManager.Object)
+            var controller = new ProductsController(_context, _mockUserManager.Object,_logger)
             {
                 ControllerContext = new ControllerContext
                 {

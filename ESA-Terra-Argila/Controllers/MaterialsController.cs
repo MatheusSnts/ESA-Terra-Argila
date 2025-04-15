@@ -551,12 +551,7 @@ namespace ESA_Terra_Argila.Controllers
         {
             return _context.Items.Any(e => e.Id == id);
         }
-        
-        /// <summary>
-        /// Exibe o histórico de movimentações de estoque de um material.
-        /// </summary>
-        /// <param name="id">ID do material a ser consultado.</param>
-        /// <returns>A visão com o histórico de movimentações de estoque.</returns>
+
         public async Task<IActionResult> StockHistory(int id)
         {
             var material = await _context.Items
@@ -571,7 +566,7 @@ namespace ESA_Terra_Argila.Controllers
             }
 
             var movements = await _context.StockMovements
-                .Where(m => m.MaterialId == id)
+                .Where(m => m.ItemId == id)
                 .OrderByDescending(m => m.Date)
                 .Include(m => m.User)
                 .ToListAsync();
@@ -587,7 +582,10 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>A visão do formulário de criação de movimentação de estoque.</returns>
         public IActionResult CreateStockMovement(int id)
         {
-            var material = _context.Items.Find(id);
+            var material = _context.Items
+                .OfType<Material>()
+                .FirstOrDefault(m => m.Id == id);
+
             if (material == null)
             {
                 TempData["ErrorMessage"] = "Material não encontrado!";
@@ -596,7 +594,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var movement = new StockMovement
             {
-                MaterialId = material.Id
+                ItemId = material.Id
             };
 
             return View(movement);
@@ -609,11 +607,14 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>Redirecionamento para a página de índice em caso de sucesso.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateStockMovement([Bind("MaterialId,Quantity,Type")] StockMovement movement)
+        public async Task<IActionResult> CreateStockMovement([Bind("ItemId,Quantity,Type")] StockMovement movement)
         {
             _logger.LogInformation("Entrou no método CreateStockMovement");
 
-            var material = await _context.Items.FindAsync(movement.MaterialId);
+            var material = await _context.Items
+                .OfType<Material>()
+                .FirstOrDefaultAsync(i => i.Id == movement.ItemId);
+
             if (material == null)
             {
                 TempData["ErrorMessage"] = "Material não encontrado!";
@@ -638,6 +639,7 @@ namespace ESA_Terra_Argila.Controllers
             // Guardar a movimentação no histórico
             movement.Date = DateTime.UtcNow;
             _context.StockMovements.Add(movement);
+
             await _context.SaveChangesAsync();
 
             // Registrar log do movimento

@@ -40,8 +40,8 @@ namespace ESA_Terra_Argila.Services
                 : "None";
 
             var bestSelling = await _context.StockMovements
-                .Where(sm => sm.Type == "Venda" && materials.Select(m => m.Id).Contains(sm.MaterialId))
-                .GroupBy(sm => sm.MaterialId)
+                .Where(sm => sm.Type == "Venda" && materials.Select(m => m.Id).Contains(sm.ItemId))
+                .GroupBy(sm => sm.ItemId)
                 .OrderByDescending(g => g.Sum(s => s.Quantity))
                 .Select(g => new { MaterialId = g.Key, Total = g.Sum(s => s.Quantity) })
                 .FirstOrDefaultAsync();

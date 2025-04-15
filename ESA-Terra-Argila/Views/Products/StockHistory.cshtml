@@ -1,11 +1,11 @@
 ﻿@model List<ESA_Terra_Argila.Models.StockMovement>
 @{
-    var material = (ESA_Terra_Argila.Models.Material)ViewData["Material"];
-    ViewData["Title"] = "Histórico de Stock - " + material.Name;
+    var product = (ESA_Terra_Argila.Models.Product)ViewData["Product"];
+    ViewData["Title"] = "Histórico de Stock - " + product.Name;
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<h2 class="mt-3"> Histórico de Estoque - @material.Name</h2>
+<h2 class="mt-3"> Histórico de Estoque - @product.Name</h2>
 <table id="datatable" class="table">
     <thead>
         <tr>
