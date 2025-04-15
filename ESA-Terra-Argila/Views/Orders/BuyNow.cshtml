@@ -54,11 +54,11 @@
             </div>
 
             <div class="mt-4 text-end">
-                <div class="mt-4 text-end">
-                    <button type="button" class="btn btn-primary" onclick="iniciarPagamento(event, @Model.Id)">Finalizar Compra</button>
-                </div>
+                <form method="post" action="/api/pagamento/checkout/@Model.Id">
+                    <button type="submit" class="btn btn-primary">Finalizar Compra</button>
+                </form>
             </div>
-
+           
 
 
         </div>
