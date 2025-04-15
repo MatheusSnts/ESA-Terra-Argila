@@ -7,207 +7,191 @@
 
 <h2 class="my-4">Dashboard do Administrador</h2>
 
-<!-- Botão para alternar entre cartões e gráfico -->
 <div class="d-flex justify-content-end mb-3">
-    <button id="toggleViewBtn" class="btn btn-outline-primary">Ver em gráfico</button>
+    <button id="toggleViewBtn" class="btn btn-outline-primary">
+        <i class="bi bi-graph-up me-1"></i> Ver em gráfico
+    </button>
 </div>
 
-<!-- Vista de Cartões -->
 <div id="cardView">
     <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Total de Utilizadores</h6>
-                <h4>@Model.TotalUsers</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Utilizadores Aprovados</h6>
-                <h4>@Model.ApprovedUsers</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Produtos Ativos</h6>
-                <h4>@Model.TotalProducts</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Materiais Ativos</h6>
-                <h4>@Model.TotalMaterials</h4>
-            </div>
-        </div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Total de Utilizadores</h6><h4>@Model.TotalUsers</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Utilizadores Aprovados</h6><h4>@Model.ApprovedUsers</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Produtos Ativos</h6><h4>@Model.TotalProducts</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Materiais Ativos</h6><h4>@Model.TotalMaterials</h4></div></div>
     </div>
-
-    <hr />
-
-    <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Utilizadores Únicos (24h)</h6>
-                <h4>@Model.UniqueUsers24h</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Utilizadores Únicos (7d)</h6>
-                <h4>@Model.UniqueUsers7d</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Utilizadores Únicos (Mês)</h6>
-                <h4>@Model.UniqueUsersMonth</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Utilizadores Únicos (Ano)</h6>
-                <h4>@Model.UniqueUsersYear</h4>
-            </div>
-        </div>
-    </div>
-
-    <hr />
-
-    <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Utilizadores Únicos (Total)</h6>
-                <h4>@Model.UniqueUsersTotal</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Acessos (24h)</h6>
-                <h4>@Model.ActiveUsers24h</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Acessos (7d)</h6>
-                <h4>@Model.ActiveUsers7d</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Acessos (Mês)</h6>
-                <h4>@Model.ActiveUsersMonth</h4>
-            </div>
-        </div>
-    </div>
-
     <hr />
     <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card shadow p-3 bg-light">
-                <h6>Total de Acessos</h6>
-                <h4>@Model.ActiveUsersTotal</h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <h6>Total de Encomendas</h6>
-                <h4>@Model.TotalOrders</h4>
-            </div>
-        </div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Utilizadores Únicos (24h)</h6><h4>@Model.UniqueUsers24h</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Utilizadores Únicos (7d)</h6><h4>@Model.UniqueUsers7d</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Utilizadores Únicos (Mês)</h6><h4>@Model.UniqueUsersMonth</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Utilizadores Únicos (Ano)</h6><h4>@Model.UniqueUsersYear</h4></div></div>
+    </div>
+    <hr />
+    <div class="row g-3">
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Utilizadores Únicos (Total)</h6><h4>@Model.UniqueUsersTotal</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Acessos (24h)</h6><h4>@Model.ActiveUsers24h</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Acessos (7d)</h6><h4>@Model.ActiveUsers7d</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Acessos (Mês)</h6><h4>@Model.ActiveUsersMonth</h4></div></div>
+    </div>
+    <hr />
+    <div class="row g-3">
+        <div class="col-md-3"><div class="card shadow p-3 bg-light"><h6>Total de Acessos</h6><h4>@Model.ActiveUsersTotal</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Total de Vendas</h6><h4>@Model.TotalOrders</h4></div></div>
+        <div class="col-md-3"><div class="card shadow p-3"><h6>Total Faturação</h6><h4>@Model.TotalAdminRevenue.ToString("C")</h4></div></div>
     </div>
 </div>
 
-<!-- Vista de Gráfico -->
 <div id="chartView" style="display: none;">
-    <h4>Gráfico de Atividade</h4>
     <div class="d-flex gap-2 mb-3">
         <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="24h">24h</button>
         <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="7d">7 dias</button>
         <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="month">Mês</button>
         <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="year">Ano</button>
-        <button class="btn btn-sm btn-outline-secondary filter-btn" data-range="total">Total</button>
     </div>
-    <div class="chart-container rounded shadow mb-4">
-        <canvas class="chart rounded" id="activityChart"></canvas>
+
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Gráfico de Atividade</h4>
+        <div id="activityChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 bg-white mb-4">
+        <h4>Gráfico de Faturação</h4>
+        <div id="revenueChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 bg-white mb-4">
+        <h4>Novos Utilizadores</h4>
+        <div id="usersChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 bg-white mb-4">
+        <h4>Novos Produtos</h4>
+        <div id="productsChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 bg-white">
+        <h4>Novos Materiais</h4>
+        <div id="materialsChart"></div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        const btn = document.getElementById("toggleViewBtn");
+        const toggleBtn = document.getElementById("toggleViewBtn");
         const cardView = document.getElementById("cardView");
         const chartView = document.getElementById("chartView");
 
-        const ctx = document.getElementById('activityChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Acessos',
-                    data: [],
-                    borderWidth: 2,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    tension: 0.3,
-                    fill: true,
-                    pointRadius: 5,
-                }]
-            },
-                   options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        ticks: {
-                            autoSkip: false 
-                        }
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-       
-        btn.addEventListener("click", () => {
+        toggleBtn.addEventListener("click", () => {
             const showingCards = cardView.style.display !== "none";
             cardView.style.display = showingCards ? "none" : "block";
             chartView.style.display = showingCards ? "block" : "none";
-            btn.textContent = showingCards ? "Ver em cartões" : "Ver em gráfico";
-
-            if (!showingCards) {
-                chart.resize();
-            }
+            toggleBtn.innerHTML = showingCards
+                ? `<i class="bi bi-grid me-1"></i> Ver em cartões`
+                : `<i class="bi bi-graph-up me-1"></i> Ver em gráfico`;
         });
 
-        
-        async function fetchAndUpdateChart(range) {
-            try {
-                const response = await fetch(`/Admin/GetActivityData?range=${range}`);
-                const data = await response.json();
+        const activityChart = new ApexCharts(document.querySelector("#activityChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Acessos', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            tooltip: { y: { formatter: val => val + ' acessos' } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
 
-                chart.data.labels = data.map(d => d.label);
-                chart.data.datasets[0].data = data.map(d => d.count); 
-                chart.update();
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
+        const revenueChart = new ApexCharts(document.querySelector("#revenueChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Faturação', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            tooltip: { y: { formatter: val => `€${val.toFixed(2)}` } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
+
+        const usersChart = new ApexCharts(document.querySelector("#usersChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Novos Utilizadores', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
+
+        const productsChart = new ApexCharts(document.querySelector("#productsChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Novos Produtos', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
+
+        const materialsChart = new ApexCharts(document.querySelector("#materialsChart"), {
+            chart: { type: 'area', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Novos Materiais', data: [] }],
+            xaxis: { categories: [], labels: { rotate: -45 } },
+            dataLabels: { enabled: false },
+            fill: { gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0 } }
+        });
+
+        activityChart.render();
+        revenueChart.render();
+        usersChart.render();
+        productsChart.render();
+        materialsChart.render();
+
+        async function fetchAndUpdateCharts(range) {
+            try {
+                const [activityRes, revenueRes, usersRes, productsRes, materialsRes] = await Promise.all([
+                    fetch(`/Admin/GetActivityData?range=${range}`),
+                    fetch(`/Admin/GetRevenueData?range=${range}`),
+                    fetch(`/Admin/GetUsersData?range=${range}`),
+                    fetch(`/Admin/GetProductsData?range=${range}`),
+                    fetch(`/Admin/GetMaterialsData?range=${range}`)
+                ]);
+
+                const activityData = await activityRes.json();
+                const revenueData = await revenueRes.json();
+                const usersData = await usersRes.json();
+                const productsData = await productsRes.json();
+                const materialsData = await materialsRes.json();
+
+                activityChart.updateOptions({
+                    xaxis: { categories: activityData.map(d => d.label) },
+                    series: [{ name: 'Acessos', data: activityData.map(d => d.count) }]
+                });
+
+                revenueChart.updateOptions({
+                    xaxis: { categories: revenueData.map(d => d.label) },
+                    series: [{ name: 'Faturação', data: revenueData.map(d => d.total) }]
+                });
+
+                usersChart.updateOptions({
+                    xaxis: { categories: usersData.map(d => d.label) },
+                    series: [{ name: 'Novos Utilizadores', data: usersData.map(d => d.total) }]
+                });
+
+                productsChart.updateOptions({
+                    xaxis: { categories: productsData.map(d => d.label) },
+                    series: [{ name: 'Novos Produtos', data: productsData.map(d => d.total) }]
+                });
+
+                materialsChart.updateOptions({
+                    xaxis: { categories: materialsData.map(d => d.label) },
+                    series: [{ name: 'Novos Materiais', data: materialsData.map(d => d.total) }]
+                });
+            } catch (err) {
+                console.error("Erro ao carregar os dados:", err);
             }
         }
 
-        
-        fetchAndUpdateChart("24h");
-
-       
-        document.querySelectorAll('.filter-btn').forEach(btn =>
+        document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const range = btn.getAttribute("data-range");
-                fetchAndUpdateChart(range);
-            })
-        );
+                const range = btn.getAttribute('data-range');
+                fetchAndUpdateCharts(range);
+            });
+        });
+
+        fetchAndUpdateCharts("24h");
     </script>
 }
-
-
-

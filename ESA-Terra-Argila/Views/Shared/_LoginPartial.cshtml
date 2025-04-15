@@ -15,12 +15,12 @@
         }
         else if (User.IsInRole("Vendor"))
         {
-            redirectController = "Products";
+            redirectController = "VendorDashboard";
             redirectAction = "Index";
         }
         else if (User.IsInRole("Supplier"))
         {
-            redirectController = "Materials";
+            redirectController = "SupplierDashboard";
             redirectAction = "Index";
         }
     }
