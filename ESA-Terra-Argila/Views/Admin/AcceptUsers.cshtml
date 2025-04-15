@@ -1,8 +1,8 @@
-﻿@using ESA_Terra_Argila.Helpers          // Importa os helpers do projeto
-@model IEnumerable<ESA_Terra_Argila.ViewModels.UserViewModel>    // Define que o modelo é uma coleção de UserViewModel
+﻿@using ESA_Terra_Argila.Helpers          
+@model IEnumerable<ESA_Terra_Argila.ViewModels.UserViewModel>    
 @{
-    ViewData["Title"] = "Utilizadores";   // Define o título da página
-    Layout = "~/Views/Shared/_DashboardLayout.cshtml";   // Define o layout compartilhado
+    ViewData["Title"] = "Utilizadores";   
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";   
 }
 
 <div class="col-md-12 d-flex align-items-center mt-3 gap-5">
@@ -14,66 +14,66 @@
     <!-- Inicia a tabela de usuários -->
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.First().FullName)</th>   // Cabeçalho: Nome Completo
-            <th>@Html.DisplayNameFor(model => model.First().Email)</th>        // Cabeçalho: Email
-            <th>@Html.DisplayNameFor(model => model.First().Role)</th>         // Cabeçalho: Role
-            <th>Bloqueado?</th>                                               // Cabeçalho: Status de bloqueio
-            <th>Opções</th>                                                   // Cabeçalho: Ações disponíveis
+            <th>@Html.DisplayNameFor(model => model.First().FullName)</th>   
+            <th>@Html.DisplayNameFor(model => model.First().Email)</th>        
+            <th>@Html.DisplayNameFor(model => model.First().Role)</th>         
+            <th>Bloqueado?</th>                                               
+            <th>Opções</th>                                                   
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)         // Itera sobre cada usuário do modelo
+        @foreach (var user in Model)        
         {
             <tr>
-                <td>@user.FullName</td>      // Exibe o nome completo do usuário
-                <td>@user.Email</td>         // Exibe o email do usuário
-                <td>@user.Role</td>          // Exibe a role do usuário
+                <td>@user.FullName</td>      
+                <td>@user.Email</td>         
+                <td>@user.Role</td>          
                 <td>
-                    @if (user.IsLocked)      // Verifica se o usuário está bloqueado
+                    @if (user.IsLocked)      
                     {
                         <span class="text-danger">Sim</span>
-                        // Exibe "Sim" em vermelho se estiver bloqueado
+                        
                     }
                     else
                     {
                         <span class="text-success">Não</span>
-                        // Exibe "Não" em verde se não estiver bloqueado
+                        
                     }
                 </td>
                 <td>
                     <form asp-action="AcceptUser" method="post" class="d-inline rounded-1">
-                        // Formulário para aprovar o usuário
-                        @Html.AntiForgeryToken()   // Gera o token anti-CSRF
-                        <input type="hidden" name="id" value="@user.Id" />   // Campo oculto com o ID do usuário
+                        
+                        @Html.AntiForgeryToken()   
+                        <input type="hidden" name="id" value="@user.Id" />   
                         <button type="submit" class="text-success text-decoration-none" title="Aprovar utilizador">
-                            // Botão de aprovação
+                            
                             <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                                  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                // Ícone SVG para aprovação
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />   // Desenha o ícone
+                                
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />   
                             </svg>
                         </button>
-                    </form>   // Fim do formulário de aprovação
+                    </form>   
                     <form asp-action="Delete" method="post" class="d-inline">
-                        // Formulário para remover o usuário
-                        @Html.AntiForgeryToken()   // Gera o token anti-CSRF
-                        <input type="hidden" name="id" value="@user.Id" />   // Campo oculto com o ID do usuário
+                        
+                        @Html.AntiForgeryToken()   
+                        <input type="hidden" name="id" value="@user.Id" />   
                         <button type="submit" class="text-danger text-decoration-none" title="Remover utilizador"
                                 onclick="return confirm('Tem a certeza que deseja reprovar este cadastro?');">
-                            // Botão de remoção com confirmação
+                            
                             <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                                  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                // Ícone SVG para remoção
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />   // Desenha o ícone
+                                
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />   
                             </svg>
                         </button>
-                    </form>   // Fim do formulário de remoção
+                    </form>   
                 </td>
             </tr>
-            // Fim da linha para o usuário
+            
         }
     </tbody>
-</table>   // Fim da tabela
+</table>   
 
 
 
