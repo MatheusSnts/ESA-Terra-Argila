@@ -160,7 +160,17 @@ namespace ESA_Terra_Argila.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    
+                    // Adicionar o usuário à role especificada
                     await _userManager.AddToRoleAsync(user, Input.Role);
+                    
+                    // Se for um Customer (consumidor), aprovação automática
+                    if (Input.Role == "Customer")
+                    {
+                        user.AcceptedByAdmin = true;
+                        await _userManager.UpdateAsync(user);
+                    }
+                    
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

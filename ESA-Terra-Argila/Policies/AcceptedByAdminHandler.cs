@@ -25,9 +25,20 @@ namespace ESA_Terra_Argila.Policies
             if (user == null)
                 return;
 
-            var isInRole = await _userManager.IsInRoleAsync(user, "Vendor") || await _userManager.IsInRoleAsync(user, "Supplier");
+            // Verifica se o usuário é um customer (consumidor)
+            var isCustomer = await _userManager.IsInRoleAsync(user, "Customer");
+            
+            // Se for um customer, aprova automaticamente sem verificar AcceptedByAdmin
+            if (isCustomer)
+            {
+                context.Succeed(requirement);
+                return;
+            }
 
-            if (isInRole && user.AcceptedByAdmin)
+            // Para Vendor e Supplier, continua verificando se foram aprovados pelo admin
+            var isVendorOrSupplier = await _userManager.IsInRoleAsync(user, "Vendor") || await _userManager.IsInRoleAsync(user, "Supplier");
+
+            if (isVendorOrSupplier && user.AcceptedByAdmin)
             {
                 context.Succeed(requirement);
             }

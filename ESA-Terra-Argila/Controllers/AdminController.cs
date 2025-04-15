@@ -31,12 +31,21 @@ namespace ESA_Terra_Argila.Controllers
         {
             var users = _context.Users.Where(u => !u.AcceptedByAdmin && u.DeletedAt == null);
             var list = await users.ToListAsync();
+            
+            var filteredList = new List<User>();
+            
             foreach (var usr in list)
             {
                 var roles = await _userManager.GetRolesAsync(usr);
                 usr.Role = UserRoleHelper.GetUserRoleFromString(roles.FirstOrDefault());
+                
+                if (usr.Role != Enums.UserRole.Customer)
+                {
+                    filteredList.Add(usr);
+                }
             }
-            return View(list);
+            
+            return View(filteredList);
         }
 
         public async Task<IActionResult> Dashboard()
