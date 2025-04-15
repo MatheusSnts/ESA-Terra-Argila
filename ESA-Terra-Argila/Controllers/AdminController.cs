@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using ESA_Terra_Argila.ViewModels;
 
 namespace ESA_Terra_Argila.Controllers
 {
@@ -29,15 +30,32 @@ namespace ESA_Terra_Argila.Controllers
 
         public async Task<IActionResult> AcceptUsers()
         {
-            var users = _context.Users.Where(u => !u.AcceptedByAdmin && u.DeletedAt == null);
-            var list = await users.ToListAsync();
-            foreach (var usr in list)
+            var users = await _context.Users
+                .Where(u => !u.AcceptedByAdmin && u.DeletedAt == null)
+                .ToListAsync();
+
+            var model = new List<UserViewModel>();
+
+            foreach (var user in users)
             {
-                var roles = await _userManager.GetRolesAsync(usr);
-                usr.Role = UserRoleHelper.GetUserRoleFromString(roles.FirstOrDefault());
+                var roles = await _userManager.GetRolesAsync(user);
+                // Atribui diretamente a primeira role ou um valor padrão se nenhum for encontrada
+                var roleString = roles.FirstOrDefault() ?? "Sem Role";
+
+                model.Add(new UserViewModel
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Role = roleString, // Atribuição direta sem converter
+                    IsLocked = user.LockoutEnd.HasValue &&
+                               user.LockoutEnd.Value > DateTimeOffset.UtcNow
+                });
             }
-            return View(list);
+
+            return View(model);
         }
+
 
         public async Task<IActionResult> Dashboard()
         {
