@@ -15,7 +15,7 @@
             @foreach (var product in Model)
             {
                 <div style="height: 60vh; width: 23%; background-color: white;" class="d-flex flex-column position-relative list-card rounded border shadow">
-                    <a asp-action="Details" asp-route-id="" style="height: 45%" class="border-bottom rounded">
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" style="height: 45%" class="border-bottom rounded">
                         <img id="main-image" src="@(product.Images.FirstOrDefault()?.Path ?? "~/images/logo.png")" />
                     </a>
                     <div class="col-md-12 px-2 flex-grow-1 d-flex flex-column">
@@ -29,8 +29,8 @@
                             <h2 style="margin-top: -0.7rem" class="col-md-12">@product.Price.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</h2>
                         </div>
                         <div style="font-size: 12px;" class="col-md-12 d-flex flex-column gap-2 flex-grow-1 justify-content-end mb-2">
-                            <a asp-controller="Orders" asp-action="BuyNow" asp-route-id="@product.Id" class="secondary-button col-md-12 text-center shadow-sm">Comprar agora</a>
-                            <a asp-controller="Orders" asp-action="AddToCart" asp-route-id="@product.Id" class="add-button col-md-12 text-center shadow-sm">Adicionar ao carrinho</a>
+                            <a href="#" data-url="@Url.Action("BuyNow", "Orders", new { id = product.Id })" class="secondary-button col-md-12 text-center shadow-sm buy-now-btn">Comprar agora</a>
+                            <a href="#" data-url="@Url.Action("AddToCart", "Orders", new { id = product.Id })" class="add-button col-md-12 text-center shadow-sm add-to-cart-btn">Adicionar ao carrinho</a>
                         </div>
                     </div>
                 </div>
@@ -59,9 +59,21 @@
 
 
 @section Scripts {
-    @* <script> *@
-    @*     $(document).ready(function(){ *@
-    @*       $(".owl-carousel").owlCarousel(); *@
-    @*     }); *@
-    @* </script> *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const isAuthenticated = @User.Identity.IsAuthenticated.ToString().ToLower(); 
+
+            document.querySelectorAll(".buy-now-btn, .add-to-cart-btn").forEach(btn => {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    if (isAuthenticated) {
+                        window.location.href = this.dataset.url;
+                    } else {
+                        window.location.href = '/Identity/Account/Login';
+                    }
+                });
+            });
+        });
+    </script>
 }
