@@ -260,5 +260,39 @@ namespace ESA_Terra_Argila.Controllers
         {
             return _context.Categories.Any(e => e.Id == id);
         }
+
+        /// <summary>
+        /// Cria uma nova categoria via AJAX, para ser usada em outras telas como a de produtos.
+        /// </summary>
+        /// <param name="category">Dados da categoria a ser criada</param>
+        /// <returns>JSON com o resultado da operação e a nova categoria criada</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAjax([FromBody] Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                category.UserId = userId;
+                category.CreatedAt = DateTime.UtcNow;
+                _context.Add(category);
+                await _context.SaveChangesAsync();
+                
+                return Json(new { 
+                    success = true, 
+                    message = "Categoria criada com sucesso!", 
+                    category = new { 
+                        id = category.Id, 
+                        name = category.Name 
+                    } 
+                });
+            }
+            
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+                
+            return Json(new { success = false, message = "Erro ao criar categoria!", errors });
+        }
     }
 }

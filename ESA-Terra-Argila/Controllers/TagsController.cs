@@ -234,5 +234,39 @@ namespace ESA_Terra_Argila.Controllers
         {
             return _context.Tags.Any(e => e.Id == id);
         }
+
+        /// <summary>
+        /// Cria uma nova tag via AJAX, para ser usada em outras telas como a de produtos.
+        /// </summary>
+        /// <param name="tag">Dados da tag a ser criada</param>
+        /// <returns>JSON com o resultado da operação e a nova tag criada</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAjax([FromBody] Tag tag)
+        {
+            if (ModelState.IsValid)
+            {
+                tag.CreatedAt = DateTime.UtcNow;
+                tag.UserId = userId;
+                _context.Add(tag);
+                await _context.SaveChangesAsync();
+                
+                return Json(new { 
+                    success = true, 
+                    message = "Tag criada com sucesso!", 
+                    tag = new { 
+                        id = tag.Id, 
+                        name = tag.Name 
+                    } 
+                });
+            }
+            
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+                
+            return Json(new { success = false, message = "Erro ao criar tag!", errors });
+        }
     }
 }
