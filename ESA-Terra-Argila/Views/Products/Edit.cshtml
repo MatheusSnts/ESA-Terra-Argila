@@ -117,31 +117,221 @@
             <div class="col-md-4 form-section pt-2 pb-3 px-4">
                 <div class="form-group">
                     <label>Categoria</label>
-                    <select class="form-control" asp-for="CategoryId" asp-items="@(ViewData["Categories"] as SelectList)" name="CategoryId">
-                        <option hidden disabled selected>Categoria</option>
-                    </select>
+                    <div class="d-flex gap-2">
+                        <select class="form-control" asp-for="CategoryId" asp-items="@(ViewData["Categories"] as SelectList)" name="CategoryId" id="category-select">
+                            <option hidden disabled selected>Categoria</option>
+                        </select>
+                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
                     <span asp-validation-for="CategoryId" class="text-danger asp-validation"></span>
                 </div>
                 <div class="form-group">
                     <label>Tags</label>
-                    <select class="select2-tags" name="Tags" multiple="multiple">
-                        @foreach (var tag in (SelectList)ViewData["Tags"])
-                        {
-                            var isSelected = Model.Tags.Any(t => t.Id == Convert.ToInt32(tag.Value));
-                            if (isSelected)
+                    <div class="d-flex gap-2">
+                        <select class="select2-tags w-100" name="Tags" multiple="multiple" id="tags-select">
+                            @foreach (var tag in (SelectList)ViewData["Tags"])
                             {
-                                <option value="@tag.Value" selected>@tag.Text</option>
+                                var isSelected = Model.Tags.Any(t => t.Id == Convert.ToInt32(tag.Value));
+                                if (isSelected)
+                                {
+                                    <option value="@tag.Value" selected>@tag.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@tag.Value">@tag.Text</option>
+                                }
                             }
-                            else
-                            {
-                                <option value="@tag.Value">@tag.Text</option>
-                            }
-
-                        }
-                    </select>
+                        </select>
+                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#tagModal">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
                 </div>
                 <input type="submit" value="Guardar" class="add-button col-md-12 mt-2 text-center">
             </div>
         </div>
     </div>
 </form>
+
+<!-- Modal para criar nova categoria -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">Nova Categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="category-error-messages" class="alert alert-danger" style="display:none;"></div>
+                <div class="form-group mb-3">
+                    <label>Nome</label>
+                    <input type="text" id="category-name" class="form-control" placeholder="Nome da categoria...">
+                </div>
+                <div class="form-group">
+                    <label>Referência</label>
+                    <input type="text" id="category-reference" class="form-control" placeholder="Referência da categoria...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="save-category">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para criar nova tag -->
+<div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="tagModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tagModalLabel">Nova Tag</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="tag-error-messages" class="alert alert-danger" style="display:none;"></div>
+                <div class="form-group mb-3">
+                    <label>Nome</label>
+                    <input type="text" id="tag-name" class="form-control" placeholder="Nome da tag...">
+                </div>
+                <div class="form-group mb-3">
+                    <label>Referência</label>
+                    <input type="text" id="tag-reference" class="form-control" placeholder="Referência da tag...">
+                </div>
+                <div class="form-group">
+                    <label>Visibilidade</label>
+                    <select id="tag-is-public" class="form-control">
+                        <option value="true">Pública</option>
+                        <option value="false">Privada</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="save-tag">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Função para obter o token CSRF
+        function getAntiForgeryToken() {
+            return $('input[name="__RequestVerificationToken"]').val();
+        }
+
+        // Criar nova categoria
+        $("#save-category").click(function() {
+            var name = $("#category-name").val();
+            var reference = $("#category-reference").val();
+            var data = {
+                Name: name,
+                Reference: reference
+            };
+
+            // Limpar mensagens de erro anteriores
+            $("#category-error-messages").hide().empty();
+
+            $.ajax({
+                url: '@Url.Action("CreateAjax", "Categories")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                headers: {
+                    'RequestVerificationToken': getAntiForgeryToken()
+                },
+                success: function(result) {
+                    if (result.success) {
+                        // Adicionar nova categoria ao dropdown
+                        $("#category-select").append(new Option(result.category.name, result.category.id, true, true));
+                        // Fechar o modal
+                        $("#categoryModal").modal("hide");
+                        // Limpar formulário
+                        $("#category-name").val("");
+                        $("#category-reference").val("");
+                        // Mostrar mensagem de sucesso
+                        toastr.success(result.message);
+                    } else {
+                        // Mostrar erros
+                        var errorDiv = $("#category-error-messages");
+                        errorDiv.empty();
+                        
+                        if (result.errors && result.errors.length) {
+                            $.each(result.errors, function(index, error) {
+                                errorDiv.append("<p>" + error + "</p>");
+                            });
+                        } else {
+                            errorDiv.append("<p>" + result.message + "</p>");
+                        }
+                        
+                        errorDiv.show();
+                    }
+                },
+                error: function() {
+                    $("#category-error-messages").html("<p>Ocorreu um erro ao processar a solicitação.</p>").show();
+                }
+            });
+        });
+
+        // Criar nova tag
+        $("#save-tag").click(function() {
+            var name = $("#tag-name").val();
+            var reference = $("#tag-reference").val();
+            var isPublic = $("#tag-is-public").val() === "true";
+            var data = {
+                Name: name,
+                Reference: reference,
+                IsPublic: isPublic
+            };
+
+            // Limpar mensagens de erro anteriores
+            $("#tag-error-messages").hide().empty();
+
+            $.ajax({
+                url: '@Url.Action("CreateAjax", "Tags")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                headers: {
+                    'RequestVerificationToken': getAntiForgeryToken()
+                },
+                success: function(result) {
+                    if (result.success) {
+                        // Adicionar nova tag ao dropdown (select2)
+                        var newOption = new Option(result.tag.name, result.tag.id, true, true);
+                        $("#tags-select").append(newOption).trigger('change');
+                        
+                        // Fechar o modal
+                        $("#tagModal").modal("hide");
+                        // Limpar formulário
+                        $("#tag-name").val("");
+                        $("#tag-reference").val("");
+                        $("#tag-is-public").val("true");
+                        // Mostrar mensagem de sucesso
+                        toastr.success(result.message);
+                    } else {
+                        // Mostrar erros
+                        var errorDiv = $("#tag-error-messages");
+                        errorDiv.empty();
+                        
+                        if (result.errors && result.errors.length) {
+                            $.each(result.errors, function(index, error) {
+                                errorDiv.append("<p>" + error + "</p>");
+                            });
+                        } else {
+                            errorDiv.append("<p>" + result.message + "</p>");
+                        }
+                        
+                        errorDiv.show();
+                    }
+                },
+                error: function() {
+                    $("#tag-error-messages").html("<p>Ocorreu um erro ao processar a solicitação.</p>").show();
+                }
+            });
+        });
+    </script>
+}
