@@ -39,6 +39,7 @@ namespace ESA_Terra_Argila.Tests
         }
 
         [Fact]
+        [Trait("Category", "Selenium")]
         public void RegisterSupplier_AndApproveAsAdmin()
         {
             //RegistrarSupplier
