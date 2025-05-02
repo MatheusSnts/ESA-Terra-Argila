@@ -97,6 +97,8 @@ namespace ESA_Terra_Argila.Models
         [JsonIgnore]
         public ICollection<Material> Materials { get; set; }
 
+        
+
         /// <summary>
         /// Coleção de materiais marcados como favoritos por este usuário.
         /// </summary>

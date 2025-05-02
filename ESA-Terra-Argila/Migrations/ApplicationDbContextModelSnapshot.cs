@@ -310,7 +310,7 @@ namespace ESA_Terra_Argila.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MaterialId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<float>("Quantity")
@@ -325,7 +325,7 @@ namespace ESA_Terra_Argila.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MaterialId");
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("UserId");
 
@@ -798,9 +798,9 @@ namespace ESA_Terra_Argila.Migrations
 
             modelBuilder.Entity("ESA_Terra_Argila.Models.StockMovement", b =>
                 {
-                    b.HasOne("ESA_Terra_Argila.Models.Material", "Material")
+                    b.HasOne("ESA_Terra_Argila.Models.Item", "Item")
                         .WithMany()
-                        .HasForeignKey("MaterialId")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -808,7 +808,7 @@ namespace ESA_Terra_Argila.Migrations
                         .WithMany()
                         .HasForeignKey("UserId");
 
-                    b.Navigation("Material");
+                    b.Navigation("Item");
 
                     b.Navigation("User");
                 });

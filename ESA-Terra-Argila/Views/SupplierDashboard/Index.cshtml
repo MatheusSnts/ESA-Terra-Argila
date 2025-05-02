@@ -1,50 +1,235 @@
-﻿
-@model ESA_Terra_Argila.Models.SupplierDashboardViewModel
+﻿@model ESA_Terra_Argila.Models.SupplierDashboardViewModel
 
 @{
-    ViewData["Title"] = "Supplier Dashboard";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewData["Title"] = "Supplier Dashboard";
 }
 
 <h2 class="my-4">Supplier Dashboard</h2>
 
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Total Materiais</h5>
-            <p class="display-6">@Model.TotalMaterials</p>
-            <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver Materiais</a>
-        </div>
-    </div>
+<div class="d-flex justify-content-end mb-3">
+    <button id="toggleViewBtn" class="btn btn-outline-primary">
+        <i class="bi bi-graph-up me-1"></i> Ver em gráfico
+    </button>
+</div>
 
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Total Stock</h5>
-            <p class="display-6">@Model.TotalStock</p>
-        </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Material Favorito</h5>
-            <p><strong>@Model.MostFavoritedMaterial</strong></p>
-            <p>Nº Favoritos: @Model.MostFavoritedCount</p>
+<div id="cardView">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Total Materiais</h5>
+                <p class="display-6">@Model.TotalMaterials</p>
+                <a class="btn btn-primary" asp-controller="Materials" asp-action="Index">Ver Materiais</a>
+            </div>
         </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card p-3 shadow-sm">
-            <h5>Melhor Material</h5>
-            <p><strong>@Model.BestSellingMaterial</strong></p>
-            <p>Vendidos: @Model.BestSellingQuantity</p>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Total Vendas</h5>
+                <p class="display-6">@Model.TotalSales</p>
+            </div>
         </div>
-    </div>
-
-    <div class="col-md-12 mt-4">
-        <div class="card p-3 shadow-sm">
-            <h5>Total Faturação</h5>
-            <p class="display-6">€@Model.TotalRevenue.ToString("F2")</p>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Material Favorito</h5>
+                <p><strong>@Model.MostFavoritedMaterial</strong></p>
+                <p>Nº Favoritos: @Model.MostFavoritedCount</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Melhor Material</h5>
+                <p><strong>@Model.BestSellingMaterial</strong></p>
+                <p>Vendidos: @Model.BestSellingQuantity</p>
+            </div>
+        </div>
+        <div class="col-md-12 mt-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Total Faturação</h5>
+                <p class="display-6">@Model.TotalRevenue.ToString("C")</p>
+            </div>
         </div>
     </div>
 </div>
+
+
+<div id="chartView" style="display: none;">
+    
+    <div class="d-flex gap-2 mb-3">
+        <button class="btn btn-sm btn-outline-secondary range-btn" data-range="24h">24h</button>
+        <button class="btn btn-sm btn-outline-secondary range-btn" data-range="7d">7 dias</button>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Faturação</h4>
+        <div id="revenueChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Vendas</h4>
+        <div id="salesChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Materiais</h4>
+        <div id="materialsChart"></div>
+    </div>
+
+    <div class="chart-container rounded shadow p-4 mb-4 bg-white">
+        <h4>Materiais vendidos</h4>
+        <div id="departmentSalesChart"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        
+        const toggleBtn = document.getElementById("toggleViewBtn");
+        const cardView = document.getElementById("cardView");
+        const chartView = document.getElementById("chartView");
+
+        toggleBtn.addEventListener("click", () => {
+            const showingCards = cardView.style.display !== "none";
+            cardView.style.display = showingCards ? "none" : "block";
+            chartView.style.display = showingCards ? "block" : "none";
+            toggleBtn.innerHTML = showingCards
+                ? `<i class="bi bi-grid me-1"></i> Ver em cartões`
+                : `<i class="bi bi-graph-up me-1"></i> Ver em gráfico`;
+        });
+
+        
+        let revenueChart, salesChart, materialsChart, monthlySalesChart, departmentSalesChart;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            revenueChart = new ApexCharts(document.querySelector("#revenueChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Faturação', data: [] }],
+                xaxis: { categories: [] },
+                tooltip: { y: { formatter: val => val + " €" } }
+            });
+            revenueChart.render();
+
+           
+            salesChart = new ApexCharts(document.querySelector("#salesChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Vendas', data: [] }],
+                xaxis: { categories: [] }
+            });
+            salesChart.render();
+
+            
+            materialsChart = new ApexCharts(document.querySelector("#materialsChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Materiais', data: [] }],
+                xaxis: { categories: [] }
+            });
+            materialsChart.render();
+
+            
+            monthlySalesChart = new ApexCharts(document.querySelector("#monthlySalesChart"), {
+                chart: { type: 'area', height: 300 },
+                series: [{ name: 'Monthly Sales', data: [] }],
+                xaxis: { categories: [] }
+            });
+            monthlySalesChart.render();
+
+            
+            departmentSalesChart = new ApexCharts(document.querySelector("#departmentSalesChart"), {
+                chart: { type: 'donut', height: 300 },
+                labels: [],
+                series: [],
+                legend: { position: 'bottom' }
+            });
+            departmentSalesChart.render();
+
+            
+            document.querySelectorAll('.range-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const range = btn.getAttribute('data-range');
+                    fetchAll(range);
+                });
+            });
+
+
+            fetchAll("24h");
+        });
+
+        async function fetchAll(range) {
+            try {
+                
+                const [
+                    resRevenue,
+                    resSales,
+                    resMaterials,
+                    resMonthly,
+                    resDept
+                ] = await Promise.all([
+                    fetch(`/SupplierDashboard/GetRevenueData?range=${range}`),
+                    fetch(`/SupplierDashboard/GetSalesData?range=${range}`),
+                    fetch(`/SupplierDashboard/GetMaterialsData?range=${range}`),
+                    fetch(`/SupplierDashboard/GetMonthlySalesData?range=${range}`),
+                    fetch(`/SupplierDashboard/GetDepartmentSalesData?range=${range}`)
+                ]);
+
+                const dataRevenue = await resRevenue.json();
+                const dataSales = await resSales.json();
+                const dataMaterials = await resMaterials.json();
+                const dataMonthly = await resMonthly.json();
+                const dataDept = await resDept.json();
+
+                
+                let categories = [];
+                if (range === "24h") {
+                    
+                    for (let i = 0; i < 24; i++) {
+                        categories.push(i.toString().padStart(2, '0') + "h");
+                    }
+                } else {
+                    
+                    for (let i = 0; i < 7; i++) {
+                        categories.push("Dia " + i);
+                    }
+                }
+
+                
+                revenueChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataRevenue }]
+                });
+
+                
+                salesChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataSales }]
+                });
+
+                
+                materialsChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataMaterials }]
+                });
+
+                
+                monthlySalesChart.updateOptions({
+                    xaxis: { categories },
+                    series: [{ data: dataMonthly }]
+                });
+
+                
+                const deptLabels = dataDept.map(d => d.label);
+                const deptTotals = dataDept.map(d => d.total);
+                departmentSalesChart.updateOptions({
+                    labels: deptLabels
+                });
+                departmentSalesChart.updateSeries(deptTotals);
+
+            } catch (err) {
+                console.error("Erro ao buscar/atualizar Supplier 24h/7d:", err);
+            }
+        }
+    </script>
+}

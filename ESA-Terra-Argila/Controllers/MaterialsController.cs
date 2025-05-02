@@ -571,7 +571,7 @@ namespace ESA_Terra_Argila.Controllers
             }
 
             var movements = await _context.StockMovements
-                .Where(m => m.MaterialId == id)
+                .Where(m => m.ItemId == id)
                 .OrderByDescending(m => m.Date)
                 .Include(m => m.User)
                 .ToListAsync();
@@ -587,7 +587,10 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>A visão do formulário de criação de movimentação de estoque.</returns>
         public IActionResult CreateStockMovement(int id)
         {
-            var material = _context.Items.Find(id);
+            var material = _context.Items
+                .OfType<Material>()
+                .FirstOrDefault(m => m.Id == id);
+
             if (material == null)
             {
                 TempData["ErrorMessage"] = "Material não encontrado!";
@@ -596,7 +599,7 @@ namespace ESA_Terra_Argila.Controllers
 
             var movement = new StockMovement
             {
-                MaterialId = material.Id
+                ItemId = material.Id
             };
 
             return View(movement);
@@ -609,16 +612,20 @@ namespace ESA_Terra_Argila.Controllers
         /// <returns>Redirecionamento para a página de índice em caso de sucesso.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateStockMovement([Bind("MaterialId,Quantity,Type")] StockMovement movement)
+        public async Task<IActionResult> CreateStockMovement([Bind("ItemId,Quantity,Type")] StockMovement movement)
         {
             _logger.LogInformation("Entrou no método CreateStockMovement");
 
-            var material = await _context.Items.FindAsync(movement.MaterialId);
+            var material = await _context.Items
+                 .OfType<Material>()
+                 .FirstOrDefaultAsync(i => i.Id == movement.ItemId);
+
             if (material == null)
             {
                 TempData["ErrorMessage"] = "Material não encontrado!";
                 return RedirectToAction(nameof(Index));
             }
+
 
             // Atualizar o stock
             if (movement.Type == "Entrada")
@@ -656,13 +663,16 @@ namespace ESA_Terra_Argila.Controllers
         public async Task<IActionResult> AtualizarStock(int id, int novoStock)
         {
             var material = await _context.Items.FindAsync(id);
+
             if (material == null)
             {
                 return NotFound();
             }
 
             material.Stock = novoStock;
+
             _context.Update(material);
+
             await _context.SaveChangesAsync();
 
             // Chama o método de envio de e-mail se o stock for 0
@@ -672,25 +682,31 @@ namespace ESA_Terra_Argila.Controllers
             }
 
             return Ok(new { message = "Stock atualizado." });
+
         }
 
         
 
     }
 
+
     /// <summary>
     /// Modelo que representa uma solicitação para marcar/desmarcar um material como favorito.
     /// </summary>
     public class FavoriteRequestModel
     {
+
+
         /// <summary>
         /// ID do material a ser marcado/desmarcado como favorito.
         /// </summary>
         public int Id { get; set; }
         
+
         /// <summary>
         /// Indica se o material deve ser marcado como favorito (true) ou desmarcado (false).
         /// </summary>
         public bool IsFavorite { get; set; }
+
     }
 }

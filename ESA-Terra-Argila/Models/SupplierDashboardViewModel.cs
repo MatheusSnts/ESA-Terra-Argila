@@ -6,7 +6,7 @@
 
         public int TotalMaterials { get; set; }
 
-        public float TotalStock { get; set; }
+        public int TotalSales { get; set; }
 
         public string MostFavoritedMaterial { get; set; }
 
@@ -14,7 +14,7 @@
 
         public string BestSellingMaterial { get; set; }
 
-        public float BestSellingQuantity { get; set; }
+        public int BestSellingQuantity { get; set; }
 
         public decimal TotalRevenue { get; set; }
     }

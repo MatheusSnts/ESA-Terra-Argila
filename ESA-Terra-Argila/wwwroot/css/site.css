@@ -550,3 +550,40 @@ img {
         line-height: 1; 
     }
 
+.payment-success-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+}
+
+.icon-container {
+    margin-bottom: 20px;
+}
+
+.check-icon {
+    width: 80px;
+    height: 80px;
+    color: green;
+}
+
+.success-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.btn-voltar {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-voltar:hover {
+        background-color: #0056b3;
+    }

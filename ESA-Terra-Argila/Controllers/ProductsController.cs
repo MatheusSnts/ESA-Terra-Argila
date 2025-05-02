@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using X.PagedList.Extensions;
 using ESA_Terra_Argila.Enums;
 
+
 namespace ESA_Terra_Argila.Controllers
 {
     /// <summary>
@@ -30,16 +31,19 @@ namespace ESA_Terra_Argila.Controllers
         private readonly ApplicationDbContext _context;
         private string? userId;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<ProductsController> _logger;
 
         /// <summary>
         /// Construtor do ProductsController.
         /// </summary>
         /// <param name="context">Contexto da base de dados</param>
         /// <param name="userManager">Gerenciador de usuários</param>
-        public ProductsController(ApplicationDbContext context, UserManager<User> userManager)
+        /// <param name="logger">Logger para registrar eventos</param>
+        public ProductsController(ApplicationDbContext context, UserManager<User> userManager, ILogger<ProductsController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         /// <summary>
@@ -482,6 +486,89 @@ Product product,
         {
             return _context.Items.Any(e => e.Id == id);
         }
+        public async Task<IActionResult> StockHistory(int id)
+        {
+            var product = await _context.Items
+                .OfType<Product>()
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null)
+            {
+                TempData["ErrorMessage"] = "Produto não encontrado!";
+                return NotFound();
+            }
+
+            var movements = await _context.StockMovements
+                .Where(m => m.ItemId == id)
+                .OrderByDescending(m => m.Date)
+                .Include(m => m.User)
+                .ToListAsync();
+
+            ViewData["Product"] = product;
+            return View(movements);
+        }
+
+        public IActionResult CreateStockMovement(int id)
+        {
+            var product = _context.Items
+                .OfType<Product>()
+                .FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                TempData["ErrorMessage"] = "Produto não encontrado!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var movement = new StockMovement
+            {
+                ItemId = product.Id
+            };
+
+            return View(movement);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateStockMovement([Bind("ItemId,Quantity,Type")] StockMovement movement)
+        {
+            _logger.LogInformation("Entrou no método CreateStockMovement");
+
+            var product = await _context.Items
+                .OfType<Product>()
+                .FirstOrDefaultAsync(i => i.Id == movement.ItemId);
+
+            if (product == null)
+            {
+                TempData["ErrorMessage"] = "Produto não encontrado!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (movement.Type == "Entrada")
+            {
+                product.Stock += movement.Quantity;
+            }
+            else if (movement.Type == "Saída")
+            {
+                if (product.Stock < movement.Quantity)
+                {
+                    TempData["ErrorMessage"] = "Estoque insuficiente!";
+                    return View(movement);
+                }
+                product.Stock -= movement.Quantity;
+            }
+
+            movement.Date = DateTime.UtcNow;
+            _context.StockMovements.Add(movement);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Movimento registado: {movement.Type} de {movement.Quantity} para o produto {product.Name}.");
+
+            TempData["SuccessMessage"] = "Movimentação de estoque registada!";
+            return RedirectToAction("Index", "Products");
+        }
+
 
     }
 }
