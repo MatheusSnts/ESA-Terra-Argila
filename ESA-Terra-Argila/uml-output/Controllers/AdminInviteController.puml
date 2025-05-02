@@ -1,0 +1,14 @@
+@startuml
+class AdminInviteController {
+    + AdminInviteController(context:ApplicationDbContext, userManager:UserManager<User>, emailSender:IEmailSender)
+    + <<async>> SendInvitation(request:InvitationRequest) : Task<IActionResult>
+    + <<async>> Register(token:string, email:string) : Task<IActionResult>
+    + InviteSupplier() : IActionResult
+    + InviteVendor() : IActionResult
+}
+class InvitationRequest {
+    + Email : string <<get>> <<set>>
+    + Role : string <<get>> <<set>>
+}
+Controller <|-- AdminInviteController
+@enduml

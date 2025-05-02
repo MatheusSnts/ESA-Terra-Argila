@@ -1,0 +1,6 @@
+@startuml
+class OrdersListModel {
+    + OnGet() : void
+}
+PageModel <|-- OrdersListModel
+@enduml

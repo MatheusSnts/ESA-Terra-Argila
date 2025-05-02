@@ -1,0 +1,10 @@
+@startuml
+class Product {
+    + Product()
+}
+class "ICollection`1"<T> {
+}
+Item <|-- Product
+Product --> "ProductMaterials<ProductMaterial>" "ICollection`1"
+Product --> "Tags<Tag>" "ICollection`1"
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+class AdminController {
+    + AdminController(context:ApplicationDbContext, userManager:UserManager<User>, dashboardService:AdminDashboardService)
+    + <<async>> AcceptUsers() : Task<IActionResult>
+    + <<async>> Dashboard() : Task<IActionResult>
+    + <<async>> Vendors() : Task<IActionResult>
+    + <<async>> Suppliers() : Task<IActionResult>
+    + <<async>> Customers() : Task<IActionResult>
+    + <<async>> AcceptUser(id:string) : Task<IActionResult>
+    + <<async>> Delete(id:string) : Task<IActionResult>
+    + <<async>> BlockUser(id:string) : Task<IActionResult>
+    + <<async>> InviteVendor(id:string) : Task<IActionResult>
+    + <<async>> InviteSupplier(id:string) : Task<IActionResult>
+    + <<async>> GetActivityData(range:string) : Task<IActionResult>
+    + <<async>> GetRevenueData(range:string) : Task<IActionResult>
+    + <<async>> GetUsersData(range:string) : Task<IActionResult>
+    + <<async>> GetProductsData(range:string) : Task<IActionResult>
+    + <<async>> GetMaterialsData(range:string) : Task<IActionResult>
+}
+Controller <|-- AdminController
+@enduml

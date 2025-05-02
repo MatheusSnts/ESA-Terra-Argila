@@ -1,0 +1,10 @@
+@startuml
+class ProductMaterial {
+    + ProductId : int <<get>> <<set>>
+    + MaterialId : int <<get>> <<set>>
+    + Quantity : float <<get>> <<set>> = 0
+    + Stock : float <<get>> <<set>> = 0
+}
+ProductMaterial --> "Product" Product
+ProductMaterial --> "Material" Material
+@enduml

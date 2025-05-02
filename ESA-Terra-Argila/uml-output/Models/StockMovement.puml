@@ -1,0 +1,12 @@
+@startuml
+class StockMovement {
+    + Id : int <<get>> <<set>>
+    + ItemId : int <<get>> <<set>>
+    + Quantity : float <<get>> <<set>>
+    + Type : string <<get>> <<set>>
+    + UserId : string? <<get>> <<set>>
+}
+StockMovement --> "Item" Item
+StockMovement --> "Date" DateTime
+StockMovement --> "User" User
+@enduml

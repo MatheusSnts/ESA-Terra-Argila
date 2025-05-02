@@ -1,0 +1,9 @@
+@startuml
+class Invitation {
+    + Id : int <<get>> <<set>>
+    + Email : string <<get>> <<set>>
+    + Token : string <<get>> <<set>>
+    + Used : bool <<get>> <<set>>
+}
+Invitation --> "ExpirationDate" DateTime
+@enduml

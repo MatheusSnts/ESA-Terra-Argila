@@ -1,0 +1,21 @@
+@startuml
+abstract class Item {
+    + Id : int <<get>> <<set>>
+    + UserId : string? <<get>> <<set>>
+    + CategoryId : int? <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + Reference : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + Price : float <<get>> <<set>>
+    + Stock : float <<get>> <<set>> = 0
+    + Unit : string <<get>> <<set>>
+    + IsSustainable : bool <<get>> <<set>> = false
+}
+class "ICollection`1"<T> {
+}
+Item --> "CreatedAt" DateTime
+Item --> "Category" Category
+Item --> "User" User
+Item --> "Images<ItemImage>" "ICollection`1"
+Item --> "DeletedAt" DateTime
+@enduml

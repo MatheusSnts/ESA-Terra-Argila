@@ -1,0 +1,14 @@
+@startuml
+class Order {
+    + Id : int <<get>> <<set>>
+    + UserId : string? <<get>> <<set>>
+    + Order()
+    + GetTotal() : float
+}
+class "ICollection`1"<T> {
+}
+Order --> "Status" OrderStatus
+Order --> "User" User
+Order --> "CreatedAt" DateTime
+Order --> "OrderItems<OrderItem>" "ICollection`1"
+@enduml

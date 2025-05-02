@@ -1,0 +1,9 @@
+@startuml
+class LogEntry {
+    + Id : int <<get>> <<set>>
+    + UserEmail : string <<get>> <<set>>
+    + Action : string <<get>> <<set>>
+    + Ip : string <<get>> <<set>>
+}
+LogEntry --> "Timestamp" DateTime
+@enduml

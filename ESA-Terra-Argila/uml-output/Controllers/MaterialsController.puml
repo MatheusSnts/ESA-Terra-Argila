@@ -1,0 +1,26 @@
+@startuml
+class MaterialsController {
+    + MaterialsController(context:ApplicationDbContext, userManager:UserManager<User>, logger:ILogger<MaterialsController>)
+    + <<override>> OnActionExecuting(context:ActionExecutingContext) : void
+    + <<async>> Index() : Task<IActionResult>
+    + <<async>> List(page:int?, orderBy:string?, priceMin:float?, priceMax:float?, suppliers:List<string>?) : Task<IActionResult>
+    + <<async>> SetFavorite(request:FavoriteRequestModel) : Task<IActionResult>
+    + <<async>> UnsetFavorite(id:int) : Task<IActionResult>
+    + <<async>> Details(id:int?) : Task<IActionResult>
+    + Create() : IActionResult
+    + <<async>> Create(material:Material, Images:List<IFormFile>, Tags:List<int>) : Task<IActionResult>
+    + <<async>> Edit(id:int?) : Task<IActionResult>
+    + <<async>> Edit(id:int, material:Material, Images:List<IFormFile>, Tags:List<int>) : Task<IActionResult>
+    + <<async>> Delete(id:int?) : Task<IActionResult>
+    + <<async>> DeleteConfirmed(id:int) : Task<IActionResult>
+    + <<async>> StockHistory(id:int) : Task<IActionResult>
+    + CreateStockMovement(id:int) : IActionResult
+    + <<async>> CreateStockMovement(movement:StockMovement) : Task<IActionResult>
+    + <<async>> AtualizarStock(id:int, novoStock:int) : Task<IActionResult>
+}
+class FavoriteRequestModel {
+    + Id : int <<get>> <<set>>
+    + IsFavorite : bool <<get>> <<set>>
+}
+Controller <|-- MaterialsController
+@enduml

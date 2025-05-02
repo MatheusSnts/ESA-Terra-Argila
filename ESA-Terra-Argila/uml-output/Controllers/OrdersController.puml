@@ -1,0 +1,20 @@
+@startuml
+class OrdersController {
+    + OrdersController(context:ApplicationDbContext, userManager:UserManager<User>)
+    + <<override>> OnActionExecuting(context:ActionExecutingContext) : void
+    + <<async>> Cart() : Task<IActionResult>
+    + <<async>> AddToCart(id:int) : Task<IActionResult>
+    + <<async>> BuyNow(id:int) : Task<IActionResult>
+    + <<async>> AddQuantity(request:AddQuantityRequestModel) : Task<IActionResult>
+    + <<async>> GetCartItemCount() : Task<IActionResult>
+    + <<async>> DeleteOrder(orderId:int) : Task<IActionResult>
+    + <<async>> OrdersList() : Task<IActionResult>
+    + <<async>> DeleteItem(id:int?) : Task<IActionResult>
+}
+class AddQuantityRequestModel {
+    + Id : int <<get>> <<set>>
+    + Value : int <<get>> <<set>>
+}
+Controller <|-- OrdersController
+OrdersController +-- AddQuantityRequestModel
+@enduml

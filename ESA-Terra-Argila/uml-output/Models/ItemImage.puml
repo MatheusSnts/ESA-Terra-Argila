@@ -1,0 +1,9 @@
+@startuml
+class ItemImage {
+    + Id : int <<get>> <<set>>
+    + ItemId : int? <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + Path : string <<get>> <<set>>
+}
+ItemImage --> "Item" Item
+@enduml

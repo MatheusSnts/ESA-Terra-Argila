@@ -1,0 +1,8 @@
+@startuml
+class PaymentController {
+    + PaymentController(context:ApplicationDbContext, emailSender:IEmailSender, userManager:UserManager<User>)
+    + <<async>> CriarSessaoPagamento(orderId:int) : Task<IActionResult>
+    + <<async>> RecordPayment(orderId:int) : Task<IActionResult>
+}
+ControllerBase <|-- PaymentController
+@enduml

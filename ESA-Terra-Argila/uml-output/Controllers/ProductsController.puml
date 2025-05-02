@@ -1,0 +1,19 @@
+@startuml
+class ProductsController {
+    + ProductsController(context:ApplicationDbContext, userManager:UserManager<User>, logger:ILogger<ProductsController>)
+    + <<override>> OnActionExecuting(context:ActionExecutingContext) : void
+    + <<async>> Index() : Task<IActionResult>
+    + <<async>> List(page:int?, orderBy:string?, priceMin:float?, priceMax:float?, vendors:List<string>?, search:string?) : Task<IActionResult>
+    + <<async>> Details(id:int?) : Task<IActionResult>
+    + Create() : IActionResult
+    + <<async>> Create(product:Product, Images:List<IFormFile>, Tags:List<int>, Materials:List<int>, MaterialsQty:List<float?>) : Task<IActionResult>
+    + <<async>> Edit(id:int?) : Task<IActionResult>
+    + <<async>> Edit(id:int, product:Product, Images:List<IFormFile>, Tags:List<int>, Materials:List<int>, MaterialsQty:List<float?>) : Task<IActionResult>
+    + <<async>> Delete(id:int?) : Task<IActionResult>
+    + <<async>> DeleteConfirmed(id:int) : Task<IActionResult>
+    + <<async>> StockHistory(id:int) : Task<IActionResult>
+    + CreateStockMovement(id:int) : IActionResult
+    + <<async>> CreateStockMovement(movement:StockMovement) : Task<IActionResult>
+}
+Controller <|-- ProductsController
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+class TagsController {
+    + TagsController(context:ApplicationDbContext, userManager:UserManager<User>)
+    + <<override>> OnActionExecuting(context:ActionExecutingContext) : void
+    + <<async>> Index() : Task<IActionResult>
+    + <<async>> Details(id:int?) : Task<IActionResult>
+    + Create() : IActionResult
+    + <<async>> Create(tag:Tag) : Task<IActionResult>
+    + <<async>> Edit(id:int?) : Task<IActionResult>
+    + <<async>> Edit(id:int, tag:Tag) : Task<IActionResult>
+    + <<async>> Delete(id:int?) : Task<IActionResult>
+    + <<async>> DeleteConfirmed(id:int) : Task<IActionResult>
+    + <<async>> CreateAjax(tag:Tag) : Task<IActionResult>
+}
+Controller <|-- TagsController
+@enduml

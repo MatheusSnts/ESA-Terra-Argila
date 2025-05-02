@@ -1,0 +1,14 @@
+@startuml
+class UserActivity {
+    + Id : int <<get>> <<set>>
+    + UserId : string <<get>> <<set>>
+    + ActivityType : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + IpAddress : string? <<get>> <<set>>
+    + UserAgent : string? <<get>> <<set>>
+    + IsSuccess : bool <<get>> <<set>>
+    + AdditionalInfo : string? <<get>> <<set>>
+}
+UserActivity --> "User" User
+UserActivity o-> "Timestamp" DateTime
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+class Material {
+    + Material()
+}
+class "ICollection`1"<T> {
+}
+Item <|-- Material
+Material --> "ProductMaterials<ProductMaterial>" "ICollection`1"
+Material --> "Tags<Tag>" "ICollection`1"
+Material --> "FavoritedByUsers<UserMaterialFavorite>" "ICollection`1"
+@enduml

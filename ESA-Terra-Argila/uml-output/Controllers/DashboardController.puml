@@ -1,0 +1,7 @@
+@startuml
+class DashboardController {
+    + Item() : IActionResult
+    + Index() : IActionResult
+}
+Controller <|-- DashboardController
+@enduml

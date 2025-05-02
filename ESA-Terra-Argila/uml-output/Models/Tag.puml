@@ -1,0 +1,16 @@
+@startuml
+class Tag {
+    + Id : int <<get>> <<set>>
+    + Reference : string <<get>> <<set>>
+    + UserId : string? <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + IsPublic : bool <<get>> <<set>> = true
+    + Tag()
+}
+class "ICollection`1"<T> {
+}
+Tag --> "CreatedAt" DateTime
+Tag --> "Materials<Material>" "ICollection`1"
+Tag --> "Products<Product>" "ICollection`1"
+Tag --> "User" User
+@enduml

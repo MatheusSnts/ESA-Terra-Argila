@@ -1,0 +1,9 @@
+@startuml
+class Payment {
+    + Id : int <<get>> <<set>>
+    + OrderId : int <<get>> <<set>>
+    + Amount : float <<get>> <<set>>
+}
+Payment --> "Order" Order
+Payment --> "PaymentDateTime" DateTime
+@enduml

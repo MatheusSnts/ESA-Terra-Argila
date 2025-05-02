@@ -1,0 +1,11 @@
+@startuml
+class OrderItem {
+    + Id : int <<get>> <<set>>
+    + Quantity : float <<get>> <<set>>
+    + OrderId : int? <<get>> <<set>>
+    + ItemId : int? <<get>> <<set>>
+    + GetTotal() : float
+}
+OrderItem --> "Order" Order
+OrderItem --> "Item" Item
+@enduml

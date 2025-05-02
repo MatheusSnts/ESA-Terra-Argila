@@ -1,0 +1,12 @@
+@startuml
+class VendorDashboardController {
+    + VendorDashboardController(dashboardService:VendorDashboardService, userManager:UserManager<User>, context:ApplicationDbContext)
+    + <<async>> Index() : Task<IActionResult>
+    + <<async>> GetRevenueData(range:string) : Task<IActionResult>
+    + <<async>> GetSalesData(range:string) : Task<IActionResult>
+    + <<async>> GetProductsData(range:string) : Task<IActionResult>
+    + <<async>> GetMonthlySalesData(range:string) : Task<IActionResult>
+    + <<async>> GetDepartmentSalesData(range:string) : Task<IActionResult>
+}
+Controller <|-- VendorDashboardController
+@enduml

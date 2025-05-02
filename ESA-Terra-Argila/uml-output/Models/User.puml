@@ -1,0 +1,23 @@
+@startuml
+class User {
+    + <<required>> FullName : string <<get>> <<set>>
+    + Street : string? <<get>> <<set>>
+    + StreetNumber : string? <<get>> <<set>>
+    + City : string? <<get>> <<set>>
+    + ZipCode : string? <<get>> <<set>>
+    + Website : string? <<get>> <<set>>
+    + Description : string? <<get>> <<set>>
+    + AcceptedByAdmin : bool <<get>> <<set>> = false
+    + User()
+}
+class "ICollection`1"<T> {
+}
+IdentityUser <|-- User
+User --> "CreatedAt" DateTime
+User --> "Role" UserRole
+User --> "Products<Product>" "ICollection`1"
+User --> "Materials<Material>" "ICollection`1"
+User --> "FavoriteMaterials<UserMaterialFavorite>" "ICollection`1"
+User --> "Orders<Order>" "ICollection`1"
+User --> "DeletedAt" DateTime
+@enduml
