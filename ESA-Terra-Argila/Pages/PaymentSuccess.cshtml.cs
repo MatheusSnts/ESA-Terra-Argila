@@ -9,6 +9,7 @@ namespace ESA_Terra_Argila.Pages
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
+
         public PaymentSuccessModel(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
@@ -16,6 +17,8 @@ namespace ESA_Terra_Argila.Pages
 
         public async Task<IActionResult> OnGetAsync(int orderId)
         {
+            var domain = $"{Request.Scheme}://{Request.Host}";
+            var successUrl = $"{domain}/PaymentSuccess?orderId={orderId}";
             Console.WriteLine($"[DEBUG] Received orderId: {orderId}");
 
             if (orderId <= 0)
@@ -25,7 +28,7 @@ namespace ESA_Terra_Argila.Pages
 
             var client = _httpClientFactory.CreateClient();
 
-            var response = await client.PostAsync($"https://localhost:7197/api/pagamento/record/{orderId}", null);
+            var response = await client.PostAsync($"{domain}/api/pagamento/record/{orderId}", null);
 
             if (!response.IsSuccessStatusCode)
             {
