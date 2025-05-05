@@ -73,12 +73,14 @@ using (var scope = app.Services.CreateScope())
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<User>>();
     var context = services.GetRequiredService<ApplicationDbContext>();
+    var env = services.GetRequiredService<IWebHostEnvironment>();
 
     await context.Database.MigrateAsync();
 
     // SEEDERS
     await Seeder.SeedRoles(roleManager);
     await Seeder.SeedUsersAsync(userManager);
+    await Seeder.SeedItems(context, userManager, env);
 }
 
 
